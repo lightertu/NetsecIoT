@@ -1,10 +1,4 @@
 ## To finished up the configuration process
-Traverse to the menu to:
-'''
-Networking support
-  --> Networking options
-      --> IEEE Std 802.15.4 Low-Rate Wireless Personal Area Networks support
-'''
 * First we enable 802.15.4 and 6LoWPAN support in our kernel.  
 We traverse the menu to:
 ```
