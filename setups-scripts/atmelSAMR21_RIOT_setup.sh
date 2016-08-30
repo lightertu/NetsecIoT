@@ -32,7 +32,6 @@ TMP=$(mktemp) &&
     make &&
     sudo make install
 
- installing the toolchain
 sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi
 sudo apt-get update
 sudo apt-get install gcc-arm-none-eabi
