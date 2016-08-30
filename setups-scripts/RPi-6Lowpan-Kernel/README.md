@@ -39,7 +39,8 @@ Then we hit **`< Ok >`** and got back to the root menu.
 There we hit **`< Save >`** and store the configuration in the proposed file (**`.config`**) followed by 
 **`< Exit >`** to leave the kernel configuration menu.
 
-### Use the new kernel
+
+## Use the new kernel
 Now that we built a recent kernel we need to copy with the modules and the firmware to our SDCard.  
 First the kernel:
 ```
@@ -76,6 +77,7 @@ for the Raspberry 2, we append
      So, we unmount the SDCard, plug it in the Raspberry Pi and let it boot.
      If everything went fine, we should see the usual boot process.
      If you see a colored screen permanently (in case you plugged a monitor to your Raspberry Pi) something went wrong.
+
 
 ## Install some needed packets on the Pi: 
 ```
