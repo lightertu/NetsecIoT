@@ -32,7 +32,9 @@ TMP=$(mktemp) &&
     make &&
     sudo make install
 
+# Installing ARM tool chain
 sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi
+sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
 sudo apt-get update
-sudo apt-get install gcc-arm-none-eabi
+sudo apt-get install gcc-arm-embedded
 
