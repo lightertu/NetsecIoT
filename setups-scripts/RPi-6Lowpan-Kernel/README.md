@@ -1,6 +1,8 @@
 ## Config the new kernel
 To build the new kernel first add the cross compiler to your PATH environment variable
-```
+by editing the following line in `config.sh`
+
+```bash
 export PATH=$PATH:~/<directory contains your uuncompressed download>/gcc-linaro-4.9-2014.11-x86_64_arm-linux-gnueabihf/bin
 ```
 
@@ -48,24 +50,24 @@ There we hit **`< Save >`** and store the configuration in the proposed file (**
 
 
 ## build the new kernel
-```
+```bash
 bash ./build_RPi_6lowpan_kernel.sh
 ```
 
 ## Use the new kernel
 Now that we built a recent kernel we need to copy with the modules and the firmware to our SDCard.  
 First the kernel:
-```
+```bash
 sudo cp arch/arm/boot/dts/*.dtb /media/<myusername>/boot/
 sudo cp arch/arm/boot/dts/overlays/*.dtb* /media/<myusername>/boot/overlays
 sudo scripts/mkknlimg arch/arm/boot/zImage /media/<myusername>/boot/kernel.img
 ```
 After this, we copy the modules:
-```
+```bash
 sudo cp -r .mods/lib/* /media/<myusername>/<SDCardpatitionname>/lib
 ```
 and the prebuilt firmware files for hard fp:
-```
+```bash
 cd ..
 cd firmware
 sudo rm -rf /media/<myusername>/<SDCardpatitionname>/opt/vc
