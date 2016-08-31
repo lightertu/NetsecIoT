@@ -1,6 +1,8 @@
 ## Config the new kernel
 To build the new kernel first add the cross compiler to your PATH environment variable
+```
 export PATH=$PATH:~/<directory contains your uuncompressed download>/gcc-linaro-4.9-2014.11-x86_64_arm-linux-gnueabihf/bin
+```
 
 ## To finished up the configuration process
 * First we enable 802.15.4 and 6LoWPAN support in our kernel.  
