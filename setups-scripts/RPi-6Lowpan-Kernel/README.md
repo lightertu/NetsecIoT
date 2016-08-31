@@ -1,3 +1,8 @@
+## Config the new kernel
+```
+To build the new kernel first add the cross compiler to your PATH environment variable
+```
+
 ## To finished up the configuration process
 * First we enable 802.15.4 and 6LoWPAN support in our kernel.  
 We traverse the menu to:
@@ -39,6 +44,12 @@ Then we hit **`< Ok >`** and got back to the root menu.
 There we hit **`< Save >`** and store the configuration in the proposed file (**`.config`**) followed by 
 **`< Exit >`** to leave the kernel configuration menu.
 
+
+
+## build the new kernel
+```
+bash ./build_RPi_6lowpan_kernel.sh
+```
 
 ## Use the new kernel
 Now that we built a recent kernel we need to copy with the modules and the firmware to our SDCard.  

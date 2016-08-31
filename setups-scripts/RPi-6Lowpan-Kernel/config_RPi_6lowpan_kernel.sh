@@ -2,7 +2,7 @@
 # First download the cross compiler binaries for your target machine from:
 # http://releases.linaro.org/14.11/components/toolchain/binaries/arm-linux-gnueabihf/
 # export PATH=$PATH:/home/<directory contains your uuncompressed download>/gcc-linaro-4.9-2014.11-x86_64_arm-linux-gnueabihf/bin
-export PATH=$PATH:/home/SDKs/gcc-linaro-4.9-2014.11-x86_64_arm-linux-gnueabihf/bin
+export PATH=$PATH:~/SDKs/gcc-linaro-4.9-2014.11-x86_64_arm-linux-gnueabihf/bin
 # Second download the latest Raspberry Pi Kernel sources from their Git and the
 # latest firmwares
 git clone --depth 1 https://github.com/raspberrypi/linux.git linux-rpi
