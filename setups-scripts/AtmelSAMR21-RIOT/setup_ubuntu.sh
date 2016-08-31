@@ -1,4 +1,5 @@
 #!bin/bash
+
 # installing required packages
 # sudo apt-get update
 sudo apt-get install git pkg-config autoconf libudev-dev libusb-1.0-0-dev libtool unzip valgrind
