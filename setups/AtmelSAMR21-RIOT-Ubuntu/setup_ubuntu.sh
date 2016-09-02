@@ -39,3 +39,5 @@ sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
 sudo apt-get update
 sudo apt-get install gcc-arm-embedded
 
+# make sure serial module works
+sudo apt-get install python-serial python3-serial
