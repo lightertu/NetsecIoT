@@ -10,7 +10,7 @@ export PATH=$PATH:~/SDKs/gcc-linaro-4.9-2014.11-x86_64_arm-linux-gnueabihf/bin
 git clone --depth 1 https://github.com/raspberrypi/linux.git linux-rpi
 cd linux-rpi
 BRANCH_NAME_STRING='rpi-4.8.y'
-BRANCH_NAME= rpi-4.8.y
+BRANCH_NAME=rpi-4.8.y
 git remote set-branches origin $BRANCH_NAME_STRING
 git fetch --depth 1 origin $BRANCH_NAME
 git checkout $BRANCH_NAME
@@ -39,25 +39,27 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- bcm2709_defconfig
 # SPI transceiver may be plugged over SPI (Pins 15-26) to it. 
 rpi1_dts=arch/arm/boot/dts/bcm2835-rpi-b.dts
 rpi2_dts=arch/arm/boot/dts/bcm2709-rpi-2-b.dts
-echo "&spi0 {
-    status="okay";
-    spidev@0{
-        status = "disabled";
-    };
-    spidev@1{
-        status = "disabled";
-    };
-    at86rf233@0 {
-        compatible = "atmel,at86rf233";
-        reg = <0>;
-        interrupts = <23 4>;
-        interrupt-parent = <&gpio>;
-        reset-gpio = <&gpio 24 1>;
-        sleep-gpio = <&gpio 25 1>;
-        spi-max-frequency = <3000000>;
-        xtal-trim = /bits/ 8 <0x0F>;
-    };
-};" >> $rpi2_dts # choose your version here
+sed -i '/audio {/i \
+&spi0 {\
+    status=\"okay\";\
+    spidev@0{\
+        status = \"disabled\";\
+    };\
+    spidev@1{\
+        status = \"disabled\";\
+    };\
+    at86rf233@0 {\
+        compatible = \"atmel,at86rf233\";\
+        reg = <0>;\
+        interrupts = <23 4>;\
+        interrupt-parent = <&gpio>;\
+        reset-gpio = <&gpio 24 1>;\
+        sleep-gpio = <&gpio 25 1>;\
+        spi-max-frequency = <3000000>;\
+        xtal-trim = /bits/ 8 <0x0F>;\
+    };\
+};' $rpi2_dts
+
 
 # configure our kernel for providing 802.15.4, 6LoWPAN and the 
 # transceiver device drivers.
