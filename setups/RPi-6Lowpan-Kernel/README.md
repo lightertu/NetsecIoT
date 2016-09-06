@@ -51,10 +51,10 @@ There we hit **`< Save >`** and store the configuration in the proposed file (**
 
 ## build the new kernel
 ```bash
-bash ./build_RPi_6lowpan_kernel.sh
+bash ./build.sh
 ```
 
-## Use the new kernel
+## Use the new kernel (Does not work on mac)
 Now that we built a recent kernel we need to copy with the modules and the firmware to our SDCard.  
 First the kernel:
 ```bash
@@ -64,14 +64,14 @@ sudo scripts/mkknlimg arch/arm/boot/zImage /media/<myusername>/boot/kernel.img
 ```
 After this, we copy the modules:
 ```bash
-sudo cp -r .mods/lib/* /media/<myusername>/<SDCardpatitionname>/lib
+sudo cp -R .mods/lib/* /media/<myusername>/<SDCardpatitionname>/lib
 ```
 and the prebuilt firmware files for hard fp:
 ```bash
 cd ..
 cd firmware
 sudo rm -rf /media/<myusername>/<SDCardpatitionname>/opt/vc
-sudo cp -r hardfp/opt/* /media/<myusername>/<SDCardpatitionname>/opt
+sudo cp -R hardfp/opt/* /media/<myusername>/<SDCardpatitionname>/opt
 ```
 
 As last step we need to tell the bootloader which device configuration it should use, i.e. **`bcm2835-rpi-b.dtb`**.
