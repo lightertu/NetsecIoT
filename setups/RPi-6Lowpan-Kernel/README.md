@@ -1,4 +1,7 @@
 # Config the new kernel
+
+**If you use Virtualbox use an usb sd card reader.**
+
 To build the new kernel first add the cross compiler to your PATH environment variable
 by editing the following line in `config.sh`
 
