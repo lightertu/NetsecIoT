@@ -101,14 +101,15 @@ wpan0     Link encap:UNSPEC  HWaddr 18-C0-FF-EE-1A-C0-FF-EE-00-00-00-00-00-00-00
           collisions:0 txqueuelen:300
           RX bytes:672 (672.0 B)  TX bytes:5565 (5.4 KiB)
 ```
-Look for if you have the `lowpan0` and wpan0` interfaces running. If everything looks promising
+Look for if you have the `lowpan0` and `wpan0` interfaces running. If everything looks promising
 you can go ahead to ping the RPi from our SAMR21
 
 * First you find which channel is our 802.15.4 radio on by issuing
 ```
 iwpan phy
 ```
-you will see something like
+  you will see something like
+
 ```
 ........
 wpan_phy phy0
@@ -150,8 +151,7 @@ ping6 3 fdaa:bb:cc:dd::12 3 2000
       | +----------------------------- Target address
       +------------------------------- Number of pings
 ```
-If successful, Openlab Module is successfully set. 
-
+  If successful, Openlab Module is successfully set. 
 
 * have a look at the [README](https://github.com/RIOT-Makers/wpan-raspbian/blob/master/README.md) for details
 
