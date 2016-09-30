@@ -40,7 +40,7 @@ CFLAGS += -DDEFAULT_CHANNEL=$(DEFAULT_CHANNEL)
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
 # development process:
-CFLAGS += -DDEVELHELP
+#CFLAGS += -DDEVELHELP
 
 # Comment this out to join RPL DODAGs even if DIOs do not contain
 # DODAG Configuration Options (see the doc for more info)

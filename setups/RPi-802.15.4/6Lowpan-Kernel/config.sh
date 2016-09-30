@@ -9,7 +9,7 @@ export PATH=$PATH:~/SDKs/gcc-linaro-4.9-2014.11-x86_64_arm-linux-gnueabihf/bin
 # latest firmwares
 git clone --depth 1 https://github.com/raspberrypi/linux.git linux-rpi
 cd linux-rpi
-BRANCH_NAME='rpi-4.8.y'
+BRANCH_NAME='rpi-4.7.y'
 git remote set-branches origin $BRANCH_NAME
 git fetch --depth 1 origin $BRANCH_NAME
 git checkout $BRANCH_NAME
