@@ -2,7 +2,7 @@
 
 sudo cp arch/arm/boot/dts/*.dtb /media/rui/boot/
 sudo cp arch/arm/boot/dts/overlays/*.dtb* /media/rui/boot/overlays
-sudo scripts/mkknlimg arch/arm/boot/zImage /media/rui/boot/kernel.img
+sudo scripts/mkknlimg arch/arm/boot/zImage /media/rui/boot/kernel7.img
 
 sudo cp -R .mods/lib/* /media/rui/<SDCardpatitionname>/lib
 
@@ -12,4 +12,5 @@ sudo rm -rf /media/rui/<SDCardpatitionname>/opt/vc
 sudo cp -R hardfp/opt/* /media/rui/<SDCardpatitionname>/opt
 
 echo "device_tree=bcm2709-rpi-2-b.dtb
-device_tree_address=0x100" >> /media/rui/boot/config.txt
+device_tree_address=0x100
+dtoverlay=at86rf233,speed=3000000" >> /media/rui/boot/config.txt
