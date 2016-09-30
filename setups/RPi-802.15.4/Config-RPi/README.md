@@ -1,55 +1,197 @@
-## Install some needed packets on the Pi: 
+# Spice up Raspbian for the IoT
+
+## Overview
+
+Using the basic WPAN enabled Raspbian image we created using [the first guide](https://github.com/RIOT-Makers/wpan-raspbian/wiki/Create-a-generic-Raspbian-image-with-6LoWPAN-support), we now want to add some software and convenience functionality to use the Pi in IoT projects. That means to init a 6LoWPAN device on system startup and add support for common IoT protocols to Raspbian.
+
+## Install useful tools and packages
+
+* useful tools when using the terminal
 ```
-sudo apt-get install libnl-3-dev libnl-genl-3-dev wireshark
+sudo apt install vim screen htop cmake
+```
+* some Python add ons 
+```
+sudo apt install virtualenv python-all-dev python-pip python3-pip
 ```
 
-## Build and install the WPAN tools
-After logging in, we need the WPAN tools to setup and use one of our 802.15.14 devices.
-First we need to install the `dh-autoreconf` package to be able to build the recent WPAN tools.
-We type
+## Systemd lowpan
+
+Wouldn't it be nice to have your 6LoWPAN network interface up and running right on system boot? Unfortunately, wpan integration is not fully functionally so you cannot setup these devices using `/etc/network/interfaces` like for your other ethernet or wlan interfaces such as `eth0` or `wlan0`. However, with a little work around providing some helper scripts and a system service definition you can achieve the same. Proceed as follows:
+
+* first clone this repository
 ```
-sudo apt-get install dh-autoreconf
+sudo mkdir -p /opt/src
+sudo chown pi /opt/src
+cd /opt/src
+git clone https://github.com/riot-makers/wpan-raspbian
+cd wpan-raspbian
+```
+* next copy some helper (shell) scripts to a well-known location:
+```
+sudo cp -r usr/local/sbin/* /usr/local/sbin/.
+sudo chmod +x /usr/local/sbin/*
+```
+* afterwards copy files for _systemd_ integration
+```
+sudo cp etc/default/lowpan /etc/default/.
+sudo cp etc/systemd/system/lowpan.service /etc/systemd/system/.
+```
+* modify _channel_ and _pan id_ in `/etc/default/lowpan` as needed
+* _optional_ you can also set the MAC/LLADDR of the lowpan interface, it changes with every boot on default
+* and finally activate the low pan autostart in systemd
+```
+sudo systemctl enable lowpan.service
+```
+* you can check if everything works as expected by running
+```
+sudo systemctl start lowpan.service
+ifconfig
+# ^^^^ you should see a lowpan0 device, and wpan0
+sudo systemctl stop lowpan.service
+ifconfig
+# ^^^^ lowpan0 device should be gone, only wpan0 
 ```
 
-Then we clone the latest wpan-tools sources
+##Test to See if Everything Works fine
+If you type `ifconfig` on RPi you will see what's below. 
 ```
-git clone https://github.com/linux-wpan/wpan-tools
-cd wpan-tools
-```
-build them
-```
-./autogen.sh
-./configure CFLAGS='-g -O0' --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib
-make
-```
-and finally install them
-```
-sudo make install
-```
-## Configure your WPAN device
-Please note: 
-Before we can begin to setup our connected device with the previously built **`wpan-tools`**,
-we need to put the connected interface, e.g. **`wpan0`**, down. (Be cautious, it might be that the at86 adapter will get assigned a different name, e.g. **`wpan1`** if another wireless interface is connected.)
-To check if the device is up and active we enter **`ifconfig`** and should be presented with a list of running interfaces including our **`wpan0`**.  
-Now usually the **`ifplugd`** daemon is active in Raspbian. Basically it activates connected interfaces automatically.  
-So before we can set our **`wpan0`** interface down, we need to prevent that the **`ifplugd`** daemon reactivates the device back immediately.  
-So we enter:
-```
-ps -ax | grep ifplugd 
-```
-look for the line with our WPAN device, and **`kill`** the corresponding daemon.  
-For instance entering the above may present us with (or similar):
-```
-...
-1706 ?    S   0:07 /usr/sbin/ifplugd -i wpan0 -q -f -u0 -d10 -w -I
-...
-```
-then we **`kill`** this specific daemon instance be entering
-```
-sudo kill -KILL 1706
-```
-After this we can set our **`wpan0`** interface down, and it stays down.
-Now we can start to configure our device.
+eth0      Link encap:Ethernet  HWaddr b8:27:eb:27:4c:14
+          inet6 addr: fe80::cdb8:9f89:b0de:bd3e/64 Scope:Link
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
-For testing, follow some of the instructions at 
-http://wpan.cakelab.org/#_how_to_8217_s
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:137 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:137 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1
+          RX bytes:11576 (11.3 KiB)  TX bytes:11576 (11.3 KiB)
+
+lowpan0   Link encap:UNSPEC  HWaddr 18-C0-FF-EE-1A-C0-FF-EE-00-00-00-00-00-00-00-00
+***********************************************************************************
+          inet6 addr: fdaa:bb:cc:dd::1/64 Scope:Global
+          inet6 addr: fe80::1ac0:ffee:1ac0:ffee/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1280  Metric:1
+          RX packets:24 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:31 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1
+          RX bytes:1536 (1.5 KiB)  TX bytes:5393 (5.2 KiB)
+
+wlan0     Link encap:Ethernet  HWaddr 5c:f3:70:03:72:9b
+          inet addr:192.168.1.155  Bcast:192.168.1.255  Mask:255.255.255.0
+          inet6 addr: fe80::5344:5c3b:b1a8:79c7/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1346 errors:0 dropped:402 overruns:0 frame:0
+          TX packets:401 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:236913 (231.3 KiB)  TX bytes:61764 (60.3 KiB)
+
+
+wpan0     Link encap:UNSPEC  HWaddr 18-C0-FF-EE-1A-C0-FF-EE-00-00-00-00-00-00-00-00
+***********************************************************************************
+          UP BROADCAST RUNNING NOARP  MTU:123  Metric:1
+          RX packets:24 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:58 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:300
+          RX bytes:672 (672.0 B)  TX bytes:5565 (5.4 KiB)
+```
+Look for if you have the `lowpan0` and wpan0` interfaces running. If everything looks promising
+you can go ahead to ping the RPi from our SAMR21
+
+* First you find which channel is our 802.15.4 radio on by issuing
+```
+iwpan phy
+```
+you will see something like
+```
+........
+wpan_phy phy0
+supported channels:
+        page 0: 11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+        current_page: 0
+        current_channel: 26,  2480 MHz
+        *******************
+        cca_mode: (1) Energy above threshold
+        cca_ed_level: -77
+        tx_power: 4
+.......,
+```
+* Second, From running the `ifconfig` above we can get the global IPv6 address as well as the 
+link scope IPv6 address of RPi
+
+* Third, we start SAMR21's RIOT OS terminal by issuing `make term`
+in the terminal you will type:
+```bash
+
+# according to my example
+ifconfig 7 set channel 26 
+
+# set the global IPv6 address of RPi
+# "inet6 addr: fdaa:bb:cc:dd::1/64 Scope:Global" from ifconfig
+ifconfig 7 add ffdaa:00bb:00cc:00dd:0000:1/64
+
+# Set default route
+# "inet6 addr: fe80::1ac0:ffee:1ac0:ffee/64 Scope:Link" from ifconfig
+fibroute add :: via fe80::1ac0:ffee:1ac0:ffee/64
+```
+* Then you ping the RPi
+```
+# ping RPI's global address
+ping6 3 fdaa:bb:cc:dd::12 3 2000
+      | |                 | |
+      | |                 | +------- Timeout in milliseconds
+      | |                 +--------- Size in bytes
+      | +----------------------------- Target address
+      +------------------------------- Number of pings
+```
+If successful, Openlab Module is successfully set. 
+
+
+* have a look at the [README](https://github.com/RIOT-Makers/wpan-raspbian/blob/master/README.md) for details
+
+## COAP support
+
+COAP is one of the major protocols for the Internet of Things, simply said it implements a HTTP-like protocol to query sensors that provide a RESTful interface. For further information on COAP see [here](http://coap.technology) and if you want to use COAP for development or testing you may want to install one of the following libraries and tools.
+
+### C/C++: libcoap
+
+* clone [libcoap](https://github.com/obgm/libcoap) from Github
+```
+$ cd /opt/src
+$ git clone https://github.com/obgm/libcoap.git
+```
+* configure and build
+```
+$ cd /opt/src/libcoap
+$ ./autogen.sh
+$ ./configure --disable-documentation
+$ make
+$ sudo make install
+```
+* we disable documentation, because otherwise you'll have to install >2GB of dependencies
+* _Note_: `libcoap` comes with a nice tool for testing named `coap-client`, so if you have a sensor node with a 802.15.4 transceiver that uses for instance [RIOT-OS](https://github.com/RIOT-OS/RIOT) with [microcoap](https://github.com/1248/microcoap) you can query that node. 
+* to run `coap-client` you have to update the dynamic linker cache before:
+```
+sudo ldconfig -f /etc/ld.so.conf
+coap-client -m GET coap://[ff02::1]/.well-known/core
+```
+
+### Python2: txThings
+
+* install [txThings](https://github.com/siskin/txThings) using `pip2`:
+```
+sudo pip2 install txThings
+```
+
+### Python3: aiocoap
+
+* install [aiocoap](https://github.com/chrysn/aiocoap) using `pip3`:
+```
+sudo pip3 install aiocoap
+```
