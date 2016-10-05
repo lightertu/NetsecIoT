@@ -5,7 +5,7 @@ APPLICATION = hello-world
 BOARD ?= samr21-xpro
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE=/home/rui/SDKs/RIOT
+RIOTBASE=/home/pi/SDKs/RIOT
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
@@ -16,3 +16,4 @@ CFLAGS += -DDEVELHELP
 QUIET ?= 1
 
 include $(RIOTBASE)/Makefile.include
+include ../Makefile.rpi
