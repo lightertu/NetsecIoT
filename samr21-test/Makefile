@@ -5,7 +5,7 @@ APPLICATION = hello-world
 BOARD ?= samr21-xpro
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE=/home/pi/SDKs/RIOT
+RIOTBASE=/home/$(shell whoami)/SDKs/RIOT
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
