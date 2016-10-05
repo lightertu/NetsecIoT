@@ -1,5 +1,5 @@
 HOSTDIR=./
-REMOTEDIR=~/Projects/6Lowpan-testbed/${PWD##*/}
+REMOTEDIR=~/Projects/6Lowpan-testbed/$(shell basename $(CURDIR))
 RSYNC_FLAG=-rt
 REMOTE_ADDR=pi@mypi2
 EXCLUDE="Makefile"
