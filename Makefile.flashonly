@@ -1,0 +1,8 @@
+#include $(RIOTBASE)/Makefile.include
+flashonly:
+	@command -v $(FLASHER) >/dev/null 2>&1 || \
+		{ $(COLOR_ECHO) \
+		'${COLOR_RED}Flash program $(FLASHER) not found. Aborting.${COLOR_RESET}'; \
+		exit 1; }
+	$(FLASHER) $(FFLAGS)
+
