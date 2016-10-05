@@ -1,0 +1,16 @@
+HOSTDIR=./
+REMOTEDIR=~/Projects/6Lowpan-testbed/${PWD##*/}
+RSYNC_FLAG=-rt
+REMOTE_ADDR=pi@mypi2
+EXCLUDE="Makefile"
+
+sync:
+	rsync $(RSYNC_FLAG) --progress --exclude=$(EXCLUDE) $(HOSTDIR) $(REMOTE_ADDR):$(REMOTEDIR)
+
+flashonly:
+	@command -v $(FLASHER) >/dev/null 2>&1 || \
+		{ $(COLOR_ECHO) \
+		'${COLOR_RED}Flash program $(FLASHER) not found. Aborting.${COLOR_RESET}'; \
+		exit 1; }
+	$(FLASHER) $(FFLAGS)
+
