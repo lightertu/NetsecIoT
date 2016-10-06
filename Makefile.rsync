@@ -1,8 +1,0 @@
-HOSTDIR=./
-REMOTEDIR=~/Projects/6lowpan-testbed/samr21-test
-RSYNC_FLAG=-rt
-REMOTE_ADDR=pi@mypi2
-EXCLUDE=".*"
-
-sync:
-		rsync $(RSYNC_FLAG) --progress --exclude=$(EXCLUDE) $(HOSTDIR) $(REMOTE_ADDR):$(REMOTEDIR)

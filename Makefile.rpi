@@ -1,11 +1,11 @@
 HOSTDIR=./
 REMOTEDIR=~/Projects/6Lowpan-testbed/$(shell basename $(CURDIR))
 RSYNC_FLAG=-rt
-REMOTE_ADDR=pi@mypi2
+HOSTNAME ?= hostname
 EXCLUDE="Makefile"
 
 sync:
-	rsync $(RSYNC_FLAG) --progress --exclude=$(EXCLUDE) $(HOSTDIR) $(REMOTE_ADDR):$(REMOTEDIR)
+	rsync $(RSYNC_FLAG) --progress --exclude=$(EXCLUDE) $(HOSTDIR) pi@$(HOSTNAME):$(REMOTEDIR)
 
 flashonly:
 	@command -v $(FLASHER) >/dev/null 2>&1 || \
