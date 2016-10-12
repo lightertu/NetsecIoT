@@ -6,6 +6,7 @@ BOARD ?= samr21-xpro
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..
+include ../../Makefile.testbed
 
 BOARD_INSUFFICIENT_MEMORY := airfy-beacon cc2650stk msb-430 msb-430h pca10000 pca10005 \
                              nrf51dongle nrf6310 nucleo-f103 nucleo-f334 \
@@ -27,6 +28,8 @@ endif
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
 USEMODULE += gnrc_netdev_default
+USEMODULE += gnrc_rpl
+USEMODULE += gnrc_udp
 USEMODULE += auto_init_gnrc_netif
 # Specify the mandatory networking modules for 6LoWPAN border router
 USEMODULE += gnrc_sixlowpan_border_router_default
