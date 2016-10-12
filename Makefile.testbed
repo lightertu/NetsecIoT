@@ -4,7 +4,7 @@ RSYNC_FLAG=-rt
 HOSTNAME ?= hostname
 EXCLUDE=""
 
-BOARD =? samr21-xpro
+BOARD=samr21-xpro
 RIOTBASE=/home/$(shell whoami)/SDKs/RIOT
 
 sync:
