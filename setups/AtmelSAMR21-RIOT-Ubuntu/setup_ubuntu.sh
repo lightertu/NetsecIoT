@@ -41,5 +41,5 @@ sudo apt-get install gcc-arm-embedded
 
 # make sure serial module works
 sudo apt-get install python-serial python3-serial
-sudo usermod --append --groups dialout pi
+sudo usermod --append --groups dialout rui
 sudo echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' > /etc/udev/rules.d/99-hidraw-permissions.rules

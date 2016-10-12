@@ -1,2 +1,0 @@
-BOARD=samr21-xpro
-RIOTBASE=/home/$(shell whoami)/SDKs/RIOT
