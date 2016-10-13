@@ -11,6 +11,7 @@ message_handler(struct coap_context_t *ctx, const coap_endpoint_t *local_interfa
 {
     unsigned char* data;
     size_t         data_len;
+    printf("Received: %s\n", data);
     if (COAP_RESPONSE_CLASS(received->hdr->code) == 2) 
     {
         if (coap_get_data(received, &data_len, &data))
@@ -31,15 +32,20 @@ int main(int argc, char* argv[])
     unsigned char     get_method = 1;
     /* Prepare coap socket*/
     coap_address_init(&src_addr);
-    src_addr.addr.sin.sin_family      = AF_INET;
-    src_addr.addr.sin.sin_port        = htons(0);
-    src_addr.addr.sin.sin_addr.s_addr = inet_addr("[fe80::1ac0:ffee:1ac0:ffee]");
+    src_addr.addr.sin6.sin6_family      = AF_INET6;
+    src_addr.addr.sin6.sin6_port        = htons(0);
+    src_addr.addr.sin6.sin6_scope_id    = 5;
+    inet_pton(AF_INET6, "fe80::1ac0:ffee:1ac0:ffee", &(src_addr.addr.sin6.sin6_addr) );
+    char str[INET6_ADDRSTRLEN];
+    inet_ntop(AF_INET6, &(src_addr.addr.sin6.sin6_addr), str, INET6_ADDRSTRLEN);
     ctx = coap_new_context(&src_addr);
+
     /* The destination endpoint */
     coap_address_init(&dst_addr);
-    dst_addr.addr.sin.sin_family      = AF_INET;
-    dst_addr.addr.sin.sin_port        = htons(5683);
-    dst_addr.addr.sin.sin_addr.s_addr = inet_addr("[fe80::5844:2342:656a:f846]");
+    dst_addr.addr.sin6.sin6_family      = AF_INET6;
+    dst_addr.addr.sin6.sin6_port        = htons(5683);
+    inet_pton(AF_INET6, "fe80::5844:2342:656a:f846", &(dst_addr.addr.sin6.sin6_addr) );
+
     /* Prepare the request */
     coap_split_uri(server_uri, strlen(server_uri), &uri);
     request            = coap_new_pdu();    
@@ -47,7 +53,8 @@ int main(int argc, char* argv[])
     request->hdr->id   = coap_new_message_id(ctx);
     request->hdr->code = get_method;
     coap_add_option(request, COAP_OPTION_URI_PATH, uri.path.length, uri.path.s);
-    /* Set the handler and send the request */
+
+    ///* Set the handler and send the request */
     coap_register_response_handler(ctx, message_handler);
     coap_send_confirmed(ctx, ctx->endpoint, &dst_addr, request);
     FD_ZERO(&readfds);
@@ -61,5 +68,6 @@ int main(int argc, char* argv[])
     {    
             coap_read( ctx );       
     } 
-  return 0;
+
+    return 0;
 }
