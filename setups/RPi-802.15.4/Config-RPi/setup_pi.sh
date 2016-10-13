@@ -28,3 +28,20 @@ sudo cp etc/systemd/system/lowpan.service /etc/systemd/system/.
 
 sudo systemctl enable lowpan.service
 
+# extra stuff
+# install coap
+cd /opt/src
+git clone https://github.com/obgm/libcoap.git
+
+cd /opt/src/libcoap
+./autogen.sh
+./configure --disable-documentation
+make
+sudo make install
+
+# install install txThings using
+# sudo pip2 install txThings
+
+# install install txThings using
+# sudo pip3 install aiocoap
+
