@@ -9,4 +9,4 @@ client:$(SOURCW)
 		gcc $(SOURCE) $(INCLUDE) $(LIBRARIES) $(CXXFLAGS) -g -o  client
 
 clean:
-	rm client
+	rm -f client
