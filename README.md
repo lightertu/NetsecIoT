@@ -11,4 +11,11 @@ An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
   
 ## Software
 * RIOT OS
-* Openthread (An open source Thread Protocol implementation released by Nest)
+* libcoap
+
+## How to setup the testbed
+* [Setup RIOT-OS development environment on Ubuntu for SAMR21-XPO Board](https://github.com/Lightertu/6Lowpan-testbed/tree/master/setups/AtmelSAMR21-RIOT-Ubuntu)
+* Setup a 6Lowpan and Openlab 802.15.4 radio enabled RPi
+  - [Compile a new Kernal](https://github.com/Lightertu/6Lowpan-testbed/tree/master/setups/RPi-802.15.4/6Lowpan-Kernel)
+  - [Raspberry pi for 6Lowpan and libcoap](https://github.com/Lightertu/6Lowpan-testbed/tree/master/setups/RPi-802.15.4/Config-RPi)
+  - [Turn RPi a 6Lowpan Border Router](https://github.com/Lightertu/6Lowpan-testbed/tree/master/setups/RPi-802.15.4/RPi-6LBR)
