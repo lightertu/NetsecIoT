@@ -1,4 +1,5 @@
 #include "coap.h"
+#include "coap_list.h"
 #include <stdio.h>
 
 /*
@@ -21,6 +22,10 @@ message_handler(struct coap_context_t *ctx, const coap_endpoint_t *local_interfa
     }
 }
 
+
+static coap_list_t *optlist = NULL;
+
+
 int main(int argc, char* argv[])
 {
     coap_context_t*   ctx;
@@ -35,7 +40,8 @@ int main(int argc, char* argv[])
     src_addr.addr.sin6.sin6_family      = AF_INET6;
     src_addr.addr.sin6.sin6_port        = htons(0);
     src_addr.addr.sin6.sin6_scope_id    = 5;
-    inet_pton(AF_INET6, "fe80::1ac0:ffee:1ac0:ffee", &(src_addr.addr.sin6.sin6_addr) );
+    //inet_pton(AF_INET6, "fe80::1ac0:ffee:1ac0:ffee", &(src_addr.addr.sin6.sin6_addr) );
+    inet_pton(AF_INET6, "::", &(src_addr.addr.sin6.sin6_addr) );
     ctx = coap_new_context(&src_addr);
 
     /* The destination endpoint */
@@ -46,11 +52,25 @@ int main(int argc, char* argv[])
 
     /* Prepare the request */
     coap_split_uri(server_uri, strlen(server_uri), &uri);
+    printf("uri path is: %s\n", uri.path.s);
+    printf("uri host is: %s\n", uri.host.s);
+    printf("uri port is: %d\n", uri.port);
+
+    unsigned char * buf;
+    size_t buflen;
+    //coap_split_path(uri.path.s, uri.path.length, buf, &buflen);
+    //printf("splited uri: %s\n", buf);
+
     request            = coap_new_pdu();    
     request->hdr->type = COAP_MESSAGE_CON;
     request->hdr->id   = coap_new_message_id(ctx);
     request->hdr->code = COAP_REQUEST_GET;
-    coap_add_option(request, COAP_OPTION_URI_PATH, uri.path.length, uri.path.s);
+    //coap_add_option(request, COAP_OPTION_URI_PATH, uri.path.length, uri.path.s);
+
+    unsigned char * s1 = "riot";
+    unsigned char * s2 = "board";
+    coap_add_option(request, COAP_OPTION_URI_PATH, strlen(s1), s1);
+    coap_add_option(request, COAP_OPTION_URI_PATH, strlen(s2), s2);
 
     /* Set the handler and send the request */
     coap_register_response_handler(ctx, message_handler);
