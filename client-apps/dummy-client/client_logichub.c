@@ -11,9 +11,8 @@ message_handler(struct coap_context_t *ctx, const coap_endpoint_t *local_interfa
 {
     unsigned char* data;
     size_t         data_len;
-    unsigned int rc = COAP_RESPONSE_CLASS(received->hdr->code);
-    printf("received response code: %s\n", rc);
-    if (rc == 2) 
+    printf("received response code: %d\n", COAP_RESPONSE_CLASS(received->hdr->code));
+    if (COAP_RESPONSE_CLASS(received->hdr->code) == 2) 
     {
         if (coap_get_data(received, &data_len, &data))
         {
@@ -60,6 +59,7 @@ int main(int argc, char* argv[])
     FD_ZERO(&readfds);
     FD_SET( ctx->sockfd, &readfds );
     int result = select( FD_SETSIZE, &readfds, 0, 0, NULL );
+
     if ( result < 0 ) /* socket error */
     {
         exit(EXIT_FAILURE);
