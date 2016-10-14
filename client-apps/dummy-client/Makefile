@@ -1,7 +1,7 @@
 LIBRARIES = -lcoap-1
 INCLUDE = -I /usr/local/include/coap/
 CXXFLAGS = -O2 -D_GNU_SOURCE -DWITH_POSIX
-SOURCE= client_logichub.c
+SOURCE= client_logichub.c coap_list.c
 
 all: client
 			

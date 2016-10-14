@@ -23,6 +23,24 @@ message_handler(struct coap_context_t *ctx, const coap_endpoint_t *local_interfa
 }
 
 
+static coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned char *data) {
+  coap_list_t *node;
+
+  node = coap_malloc(sizeof(coap_list_t) + sizeof(coap_option) + length);
+
+  if (node) {
+    coap_option *option;
+    option = (coap_option *)(node->data);
+    COAP_OPTION_KEY(*option) = key;
+    COAP_OPTION_LENGTH(*option) = length;
+    memcpy(COAP_OPTION_DATA(*option), data, length);
+  } else {
+    coap_log(LOG_DEBUG, "new_option_node: malloc\n");
+  }
+
+  return node;
+}
+
 static coap_list_t *optlist = NULL;
 
 
@@ -56,10 +74,18 @@ int main(int argc, char* argv[])
     printf("uri host is: %s\n", uri.host.s);
     printf("uri port is: %d\n", uri.port);
 
-    unsigned char * buf;
+    unsigned char _buf[40];
+    unsigned char * buf = _buf;
     size_t buflen;
-    //coap_split_path(uri.path.s, uri.path.length, buf, &buflen);
-    //printf("splited uri: %s\n", buf);
+    printf("uri path.length: %d\n", uri.path.length);
+    int res = coap_split_path(uri.path.s, uri.path.length, buf, &buflen);
+
+    while (res--) {
+        coap_insert(&optlist, new_option_node(COAP_OPTION_URI_PATH, COAP_OPT_LENGTH(buf), COAP_OPT_VALUE(buf)));
+        buf += COAP_OPT_SIZE(buf);
+    }
+
+    /* added option objects to an option list to be continued */
 
     request            = coap_new_pdu();    
     request->hdr->type = COAP_MESSAGE_CON;
