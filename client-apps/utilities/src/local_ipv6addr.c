@@ -14,7 +14,7 @@
 int main(int argc, char *argv[])
 {
    struct ifaddrs *ifaddr, *ifa;
-   int family, s, n, interface, islocal;
+   int family, s, n, interface = 1, islocal = 1;
    char host[NI_MAXHOST];
    char * interface_name;
 
@@ -70,7 +70,23 @@ int main(int argc, char *argv[])
                exit(EXIT_FAILURE);
            }
 
-           printf("\t\taddress: <%s>\n", host);
+           char* localaddr_mark = strchr(host, '%');
+           char* local_addr; 
+           char* global_addr;
+
+           if (localaddr_mark) {
+               local_addr = host;
+               //printf("\t\taddress: <%s>\n", host);
+           } else {
+               global_addr = host;
+           }
+
+           if (islocal) {
+               printf("\t\tlocal address: <%s>\n", local_addr);
+           } else {
+               printf("\t\tglobal address: <%s>\n", global_addr);
+           }
+
 
        } 
        /*
