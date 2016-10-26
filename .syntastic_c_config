@@ -1,0 +1,8 @@
+-I /usr/local/include/coap
+-lcoap-1
+-O2 
+-D_GNU_SOURCE 
+-DWITH_POSIX 
+-Wall
+-Wall
+-std=c99
