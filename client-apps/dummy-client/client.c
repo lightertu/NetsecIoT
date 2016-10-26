@@ -7,9 +7,9 @@
 #include <arpa/inet.h>
 
 #include "coap.h"
+
 #include "../utilities/coap_list.h"
-#include "../utilities/testbed_ipv6addr.h"
-#include "testbed_clientutil.h"
+#include "../utilities/testbed_clientutil.h"
 
 /*
  * The response handler
