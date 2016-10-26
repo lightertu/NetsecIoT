@@ -4,5 +4,4 @@
 -D_GNU_SOURCE 
 -DWITH_POSIX 
 -Wall
--Wall
 -std=c99
