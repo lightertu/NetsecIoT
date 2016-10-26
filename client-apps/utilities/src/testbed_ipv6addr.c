@@ -63,14 +63,12 @@ char * getipv6ifaddr(int interface, int islocal)
            char* localaddr_mark = strchr(host, '%');
 
            if (localaddr_mark != NULL && islocal) {
-               printf("local\n");
                *(localaddr_mark + 0) = '\0';
                result = host;
                break;
            } 
            
            if (localaddr_mark == NULL && !islocal) {
-               printf("global\n");
                result = host;
                break;
            }

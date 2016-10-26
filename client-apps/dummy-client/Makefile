@@ -7,7 +7,6 @@ SOURCE= client.c $(UTIL_BASE)/coap_list.c $(UTIL_BASE)/testbed_ipv6addr.c
 all: client
 			
 client:$(SOURCW)
-		sudo ldconfig -f /etc/ld.so.conf
 		gcc $(SOURCE) $(INCLUDE) $(LIBRARIES) $(CXXFLAGS) -g -o  client
 
 clean:
