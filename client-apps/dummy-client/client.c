@@ -1,5 +1,5 @@
 #include "coap.h"
-#include "coap_list.h"
+#include "../utilities/coap_list.h"
 #include <stdio.h>
 
 /*
@@ -46,7 +46,7 @@ static coap_list_t *optlist = NULL;
 
 int main(int argc, char* argv[])
 {
-    coap_context_t*   ctx;
+    coap_context_t*   ctx; /* coap packet */
     coap_address_t    dst_addr, src_addr;
     static coap_uri_t uri;
     fd_set            readfds; 
@@ -86,7 +86,6 @@ int main(int argc, char* argv[])
     }
 
     /* added option objects to an option list to be continued */
-
     request            = coap_new_pdu();    
     request->hdr->type = COAP_MESSAGE_CON;
     request->hdr->id   = coap_new_message_id(ctx);

@@ -15,7 +15,7 @@
 
 #include "debug.h"
 #include "mem.h"
-#include "coap_list.h"
+#include "../coap_list.h"
 
 
 int
