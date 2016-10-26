@@ -15,10 +15,13 @@
 typedef unsigned char method_t;
 unsigned char msgtype = COAP_MESSAGE_CON;
 static unsigned char _token_data[8];
-static coap_list_t *optlist = NULL;
 str the_token = { 0, _token_data };
 int flags = 0;
 coap_block_t block = { .num = 0, .m = 0, .szx = 6 };
+static str proxy = { 0, NULL };
+static unsigned short proxy_port = COAP_DEFAULT_PORT;
+
+coap_list_t *optlist = NULL;
 
 /*
  * The response handler
@@ -41,6 +44,7 @@ message_handler(struct coap_context_t *ctx, const coap_endpoint_t *local_interfa
 
 static coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned char *data) {
   coap_list_t *node;
+  //printf("created new node\n");
 
   node = coap_malloc(sizeof(coap_list_t) + sizeof(coap_option) + length);
 
@@ -122,7 +126,75 @@ static coap_pdu_t * coap_new_request(coap_context_t *ctx,
 }
 
 
+static void cmdline_uri(char *arg, coap_uri_t *request) {
+  unsigned char portbuf[2];
+#define BUFSIZE 40
+  unsigned char _buf[BUFSIZE];
+  unsigned char *buf = _buf;
+  size_t buflen;
+  int res;
+  coap_uri_t uri = *(request);
 
+  if (proxy.length) {   /* create Proxy-Uri from argument */
+    size_t len = strlen(arg);
+    while (len > 270) {
+      coap_insert(&optlist,
+                  new_option_node(COAP_OPTION_PROXY_URI,
+                  270,
+                  (unsigned char *)arg));
+
+      len -= 270;
+      arg += 270;
+    }
+
+    coap_insert(&optlist,
+                new_option_node(COAP_OPTION_PROXY_URI,
+                len,
+                (unsigned char *)arg));
+
+  } else {      /* split arg into Uri-* options */
+      coap_split_uri((unsigned char *)arg, strlen(arg), &uri );
+
+    if (uri.port != COAP_DEFAULT_PORT) {
+      coap_insert(&optlist,
+                  new_option_node(COAP_OPTION_URI_PORT,
+                  coap_encode_var_bytes(portbuf, uri.port),
+                  portbuf));
+    }
+
+    if (uri.path.length) {
+      buflen = BUFSIZE;
+      res = coap_split_path(uri.path.s, uri.path.length, buf, &buflen);
+
+      while (res--) {
+
+        //printf("res: %d, buf %s, buflen: %d\n", res, COAP_OPT_VALUE(buf), COAP_OPT_LENGTH(buf));
+
+        coap_insert(&optlist,
+                    new_option_node(COAP_OPTION_URI_PATH,
+                    COAP_OPT_LENGTH(buf),
+                    COAP_OPT_VALUE(buf)));
+
+        buf += COAP_OPT_SIZE(buf);
+      }
+    }
+
+    if (uri.query.length) {
+      buflen = BUFSIZE;
+      buf = _buf;
+      res = coap_split_query(uri.query.s, uri.query.length, buf, &buflen);
+
+      while (res--) {
+        coap_insert(&optlist,
+                    new_option_node(COAP_OPTION_URI_QUERY,
+                    COAP_OPT_LENGTH(buf),
+                    COAP_OPT_VALUE(buf)));
+
+        buf += COAP_OPT_SIZE(buf);
+      }
+    }
+  }
+}
 
 
 int main(int argc, char* argv[])
@@ -131,15 +203,14 @@ int main(int argc, char* argv[])
     coap_address_t    dst_addr, src_addr;
     static coap_uri_t uri;
     fd_set            readfds; 
-    coap_pdu_t*       request;
-    const char* server_uri = "coap://[fe80::5844:2342:656a:f846]/.well-known/core";
+    coap_pdu_t*       pdu;
+    char* server_uri = "coap://[fe80::5844:2342:656a:f846]/riot/board";
     char * src_lowpan_local = getipv6ifaddr(LOWPAN, LOCAL);
     /* Prepare coap socket*/
     coap_address_init(&src_addr);
     src_addr.addr.sin6.sin6_family      = AF_INET6;
     src_addr.addr.sin6.sin6_port        = htons(0);
     src_addr.addr.sin6.sin6_scope_id    = 5;
-    //inet_pton(AF_INET6, "fe80::1ac0:ffee:1ac0:ffee", &(src_addr.addr.sin6.sin6_addr) );
     inet_pton(AF_INET6, src_lowpan_local, &(src_addr.addr.sin6.sin6_addr) );
     ctx = coap_new_context(&src_addr);
 
@@ -149,42 +220,37 @@ int main(int argc, char* argv[])
     dst_addr.addr.sin6.sin6_port        = htons(5683);
     inet_pton(AF_INET6, "fe80::5844:2342:656a:f846", &(dst_addr.addr.sin6.sin6_addr) );
 
-    /* Prepare the request */
-    coap_split_uri((unsigned char *) server_uri, strlen(server_uri), &uri);
-    //printf("uri path is: %s\n", uri.path.s);
-    //printf("uri host is: %s\n", uri.host.s);
-    //printf("uri port is: %d\n", uri.port);
+    /* added option objects to an option list to be continued */
+    pdu            = coap_new_pdu();    
+    pdu->hdr->type = COAP_MESSAGE_CON;
+    pdu->hdr->id   = coap_new_message_id(ctx);
+    pdu->hdr->code = COAP_REQUEST_GET;
+    //coap_add_option(pdu, COAP_OPTION_URI_PATH, uri.path.length, uri.path.s);
 
-#define BUFSIZE 40
-    unsigned char _buf[BUFSIZE];
-    unsigned char * buf = _buf;
-    size_t buflen = BUFSIZE;
-    //printf("uri path.length: %d\n", uri.path.length);
-    //
-    int res = coap_split_path(uri.path.s, uri.path.length, buf, &buflen);
-    printf("res: %d\n", res);
-    printf("buf: %s\n", buf);
-    while (res--) {
-        coap_insert(&optlist, new_option_node(COAP_OPTION_URI_PATH, COAP_OPT_LENGTH(buf), COAP_OPT_VALUE(buf)));
-        buf += COAP_OPT_SIZE(buf);
+    /* at this point coap_list should be populated */
+    cmdline_uri(server_uri, &uri);
+
+
+    LL_SORT(optlist, order_opts);
+
+    coap_list_t * opt;
+    LL_FOREACH((optlist), opt) {
+      coap_option *o = (coap_option *)(opt->data);
+      coap_add_option(pdu,
+                      COAP_OPTION_KEY(*o),
+                      COAP_OPTION_LENGTH(*o),
+                      COAP_OPTION_DATA(*o));
     }
 
 
-    /* added option objects to an option list to be continued */
-    request            = coap_new_pdu();    
-    request->hdr->type = COAP_MESSAGE_CON;
-    request->hdr->id   = coap_new_message_id(ctx);
-    request->hdr->code = COAP_REQUEST_GET;
-    //coap_add_option(request, COAP_OPTION_URI_PATH, uri.path.length, uri.path.s);
 
-    const char * s1 = "riot";
-    const char * s2 = "board";
-    coap_add_option(request, COAP_OPTION_URI_PATH, strlen(s1), (unsigned char *) s1);
-    coap_add_option(request, COAP_OPTION_URI_PATH, strlen(s2), (unsigned char *) s2);
-
-    /* Set the handler and send the request */
+    //const char * s1 = "riot";
+    //const char * s2 = "board";
+    //coap_add_option(pdu, COAP_OPTION_URI_PATH, strlen(s1), (unsigned char *) s1);
+    //coap_add_option(pdu, COAP_OPTION_URI_PATH, strlen(s2), (unsigned char *) s2);
+    /* Set the handler and send the pdu */
     coap_register_response_handler(ctx, message_handler);
-    coap_send_confirmed(ctx, ctx->endpoint, &dst_addr, request);
+    coap_send_confirmed(ctx, ctx->endpoint, &dst_addr, pdu);
 
     FD_ZERO(&readfds);
     FD_SET( ctx->sockfd, &readfds );

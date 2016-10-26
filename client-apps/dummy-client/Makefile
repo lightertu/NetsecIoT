@@ -1,6 +1,6 @@
 LIBRARIES = -lcoap-1
 INCLUDE = -I /usr/local/include/coap/
-CXXFLAGS = -O2 -D_GNU_SOURCE -DWITH_POSIX -Wall
+CXXFLAGS = -O2 -D_GNU_SOURCE -DWITH_POSIX -Wall -std=c11
 UTIL_BASE = ../utilities/src
 SOURCE= client.c $(UTIL_BASE)/coap_list.c $(UTIL_BASE)/testbed_ipv6addr.c
 
