@@ -11,12 +11,13 @@
 
 #include "../local_ipv6addr.h"
 
-int main(int argc, char *argv[])
+char * getIPv6Addr_at_interface(int interface, int islocal)
 {
    struct ifaddrs *ifaddr, *ifa;
-   int family, s, n, interface = 1, islocal = 1;
+   int family, s, n;
    char host[NI_MAXHOST];
    char * interface_name;
+   char * result;
 
    if (getifaddrs(&ifaddr) == -1) {
        perror("getifaddrs");
@@ -26,40 +27,26 @@ int main(int argc, char *argv[])
    /* Walk through linked list, maintaining head pointer so we
       can free list later */
 
+   /* get the interface */
+   switch (interface) {
+       case(LOWPAN):
+           interface_name = "lowpan0";
+           break;
+       case(ETH):
+           interface_name = "eth0";
+           break;
+       default:
+           printf("Cannot regonize interface code %d", interface);
+           exit(EXIT_FAILURE);
+           freeifaddrs(ifaddr);
+           break;
+   }
+
    for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
        if (ifa->ifa_addr == NULL)
            continue;
 
        family = ifa->ifa_addr->sa_family;
-
-       /* Display interface name and family (including symbolic
-          form of the latter for the common families) */
-        
-       /*
-       printf("%-8s %s (%d)\n",
-              ifa->ifa_name,
-              (family == AF_PACKET) ? "AF_PACKET" :
-              (family == AF_INET) ? "AF_INET" :
-              (family == AF_INET6) ? "AF_INET6" : "???",
-              family);
-       */
-
-       /* For an AF_INET* interface address, display the address */
-
-       /* get the interface */
-       switch (interface) {
-           case(LOWPAN):
-               interface_name = "lowpan0";
-               break;
-           case(ETH):
-               interface_name = "eth0";
-               break;
-           default:
-               printf("Cannot regonize interface code %d", interface);
-               exit(EXIT_FAILURE);
-               break;
-       }
-
 
        if (family == AF_INET6 && (strcmp(ifa->ifa_name, interface_name) == 0) ) {
            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6),
@@ -71,36 +58,28 @@ int main(int argc, char *argv[])
            }
 
            char* localaddr_mark = strchr(host, '%');
-           char* local_addr; 
-           char* global_addr;
 
-           if (localaddr_mark) {
-               local_addr = host;
-               //printf("\t\taddress: <%s>\n", host);
-           } else {
-               global_addr = host;
+           if (localaddr_mark != NULL && islocal) {
+               printf("local\n");
+               *(localaddr_mark + 0) = '\0';
+               result = host;
+               break;
+           } 
+           
+           if (localaddr_mark == NULL && !islocal) {
+               printf("global\n");
+               result = host;
+               break;
            }
-
-           if (islocal) {
-               printf("\t\tlocal address: <%s>\n", local_addr);
-           } else {
-               printf("\t\tglobal address: <%s>\n", global_addr);
-           }
-
-
        } 
-       /*
-       else if (family == AF_PACKET && ifa->ifa_data != NULL) {
-           struct rtnl_link_stats *stats = ifa->ifa_data;
-
-           printf("\t\ttx_packets = %10u; rx_packets = %10u\n"
-                  "\t\ttx_bytes   = %10u; rx_bytes   = %10u\n",
-                  stats->tx_packets, stats->rx_packets,
-                  stats->tx_bytes, stats->rx_bytes);
-       }
-       */
    }
 
    freeifaddrs(ifaddr);
-   exit(EXIT_SUCCESS);
+   return result;
+}
+
+int main(void) {
+    char * host = getIPv6Addr_at_interface(LOWPAN, LOCAL);
+    printf("address: <%s>\n", host);
+    return 0;
 }
