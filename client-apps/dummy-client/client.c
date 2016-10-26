@@ -1,7 +1,14 @@
+/* have to specify which system in am writing the code for */ 
+#ifndef WITH_POSIX
+    #define WITH_POSIX
+#endif
+
+#include <stdio.h>
+#include <arpa/inet.h>
+
 #include "coap.h"
 #include "../utilities/coap_list.h"
 #include "../utilities/testbed_ipv6addr.h"
-#include <stdio.h>
 
 /*
  * The response handler
@@ -52,8 +59,7 @@ int main(int argc, char* argv[])
     static coap_uri_t uri;
     fd_set            readfds; 
     coap_pdu_t*       request;
-    const char*       server_uri = "coap://[fe80::5844:2342:656a:f846]/.well-known/core";
-    unsigned char     get_method = 1;
+    const char* server_uri = "coap://[fe80::5844:2342:656a:f846]/.well-known/core";
     char * src_lowpan_local = getipv6ifaddr(LOWPAN, LOCAL);
     /* Prepare coap socket*/
     coap_address_init(&src_addr);
@@ -71,7 +77,7 @@ int main(int argc, char* argv[])
     inet_pton(AF_INET6, "fe80::5844:2342:656a:f846", &(dst_addr.addr.sin6.sin6_addr) );
 
     /* Prepare the request */
-    coap_split_uri(server_uri, strlen(server_uri), &uri);
+    coap_split_uri((unsigned char *) server_uri, strlen(server_uri), &uri);
     printf("uri path is: %s\n", uri.path.s);
     printf("uri host is: %s\n", uri.host.s);
     printf("uri port is: %d\n", uri.port);
@@ -94,10 +100,10 @@ int main(int argc, char* argv[])
     request->hdr->code = COAP_REQUEST_GET;
     //coap_add_option(request, COAP_OPTION_URI_PATH, uri.path.length, uri.path.s);
 
-    unsigned char * s1 = "riot";
-    unsigned char * s2 = "board";
-    coap_add_option(request, COAP_OPTION_URI_PATH, strlen(s1), s1);
-    coap_add_option(request, COAP_OPTION_URI_PATH, strlen(s2), s2);
+    const char * s1 = "riot";
+    const char * s2 = "board";
+    coap_add_option(request, COAP_OPTION_URI_PATH, strlen(s1), (unsigned char *) s1);
+    coap_add_option(request, COAP_OPTION_URI_PATH, strlen(s2), (unsigned char *) s2);
 
     /* Set the handler and send the request */
     coap_register_response_handler(ctx, message_handler);
