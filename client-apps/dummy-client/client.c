@@ -1,5 +1,6 @@
 #include "coap.h"
 #include "../utilities/coap_list.h"
+#include "../utilities/testbed_ipv6addr.h"
 #include <stdio.h>
 
 /*
@@ -53,13 +54,14 @@ int main(int argc, char* argv[])
     coap_pdu_t*       request;
     const char*       server_uri = "coap://[fe80::5844:2342:656a:f846]/.well-known/core";
     unsigned char     get_method = 1;
+    char * src_lowpan_local = getipv6ifaddr(LOWPAN, LOCAL);
     /* Prepare coap socket*/
     coap_address_init(&src_addr);
     src_addr.addr.sin6.sin6_family      = AF_INET6;
     src_addr.addr.sin6.sin6_port        = htons(0);
     src_addr.addr.sin6.sin6_scope_id    = 5;
     //inet_pton(AF_INET6, "fe80::1ac0:ffee:1ac0:ffee", &(src_addr.addr.sin6.sin6_addr) );
-    inet_pton(AF_INET6, "::", &(src_addr.addr.sin6.sin6_addr) );
+    inet_pton(AF_INET6, src_lowpan_local, &(src_addr.addr.sin6.sin6_addr) );
     ctx = coap_new_context(&src_addr);
 
     /* The destination endpoint */
