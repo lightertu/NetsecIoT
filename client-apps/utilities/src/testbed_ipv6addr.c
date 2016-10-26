@@ -9,9 +9,9 @@
 #include <string.h>
 #include <linux/if_link.h>
 
-#include "../local_ipv6addr.h"
+#include "../testbed_ipv6addr.h"
 
-char * getIPv6Addr_at_interface(int interface, int islocal)
+char * getipv6ifaddr(int interface, int islocal)
 {
    struct ifaddrs *ifaddr, *ifa;
    int family, s, n;
@@ -76,10 +76,4 @@ char * getIPv6Addr_at_interface(int interface, int islocal)
 
    freeifaddrs(ifaddr);
    return result;
-}
-
-int main(void) {
-    char * host = getIPv6Addr_at_interface(LOWPAN, LOCAL);
-    printf("address: <%s>\n", host);
-    return 0;
 }
