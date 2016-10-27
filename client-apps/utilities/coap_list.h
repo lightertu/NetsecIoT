@@ -15,7 +15,7 @@
 
 typedef struct coap_list_t {
       struct coap_list_t *next;
-        char data[];
+      char data[];
 } coap_list_t;
 
 /**
