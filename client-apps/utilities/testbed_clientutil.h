@@ -18,6 +18,8 @@ coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned 
 
 int order_opts(void *a, void *b);
 
+int resolve_address(const str *urihost, struct sockaddr *dst);
+
 void cmdline_uri(coap_list_t ** ll, char *arg, coap_uri_t *uriArg);
 
 #define LOWPAN 1 // 6lowpan interface

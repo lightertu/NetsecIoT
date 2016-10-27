@@ -53,14 +53,13 @@ int order_opts(void *a, void *b) {
 }
 
 
-void cmdline_uri(coap_list_t ** optlist, char *arg, coap_uri_t *uriArg) {
+void cmdline_uri(coap_list_t ** optlist, char *arg, coap_uri_t *uri) {
   unsigned char portbuf[2];
 #define BUFSIZE 40
   unsigned char _buf[BUFSIZE];
   unsigned char *buf = _buf;
   size_t buflen;
   int res;
-  coap_uri_t uri = *(uriArg);
 
   if (proxy.length) {   /* create Proxy-Uri from argument */
     size_t len = strlen(arg);
@@ -80,18 +79,18 @@ void cmdline_uri(coap_list_t ** optlist, char *arg, coap_uri_t *uriArg) {
                 (unsigned char *)arg));
 
   } else {      /* split arg into Uri-* options */
-      coap_split_uri((unsigned char *)arg, strlen(arg), &uri );
+      coap_split_uri((unsigned char *)arg, strlen(arg), uri );
 
-    if (uri.port != COAP_DEFAULT_PORT) {
+    if (uri->port != COAP_DEFAULT_PORT) {
       coap_insert(optlist,
                   new_option_node(COAP_OPTION_URI_PORT,
-                  coap_encode_var_bytes(portbuf, uri.port),
+                  coap_encode_var_bytes(portbuf, uri->port),
                   portbuf));
     }
 
-    if (uri.path.length) {
+    if (uri->path.length) {
       buflen = BUFSIZE;
-      res = coap_split_path(uri.path.s, uri.path.length, buf, &buflen);
+      res = coap_split_path(uri->path.s, uri->path.length, buf, &buflen);
 
       while (res--) {
 
@@ -106,10 +105,10 @@ void cmdline_uri(coap_list_t ** optlist, char *arg, coap_uri_t *uriArg) {
       }
     }
 
-    if (uri.query.length) {
+    if (uri->query.length) {
       buflen = BUFSIZE;
       buf = _buf;
-      res = coap_split_query(uri.query.s, uri.query.length, buf, &buflen);
+      res = coap_split_query(uri->query.s, uri->query.length, buf, &buflen);
 
       while (res--) {
         coap_insert(optlist,
@@ -188,3 +187,45 @@ char * getipv6ifaddr(int interface, int islocal)
    freeifaddrs(ifaddr);
    return result;
 }
+
+
+// here server is uri.host
+int resolve_address(const str *urihost, struct sockaddr *dst) {
+  struct addrinfo *res, *ainfo;
+  struct addrinfo hints;
+  static char addrstr[256];
+  int error, len=-1;
+
+  memset(addrstr, 0, sizeof(addrstr));
+  if (urihost->length)
+    memcpy(addrstr, urihost->s, urihost->length);
+  else
+    memcpy(addrstr, "localhost", 9);
+
+  memset ((char *)&hints, 0, sizeof(hints));
+  hints.ai_socktype = SOCK_DGRAM;
+  hints.ai_family = AF_UNSPEC;
+
+  error = getaddrinfo(addrstr, NULL, &hints, &res);
+
+  if (error != 0) {
+    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(error));
+    return error;
+  }
+
+  for (ainfo = res; ainfo != NULL; ainfo = ainfo->ai_next) {
+    switch (ainfo->ai_family) {
+    case AF_INET6:
+    case AF_INET:
+      len = ainfo->ai_addrlen;
+      memcpy(dst, ainfo->ai_addr, len);
+      goto finish;
+    default:
+      ;
+    }
+  }
+
+ finish:
+  freeaddrinfo(res);
+  return len;
+}    
