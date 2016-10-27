@@ -5,3 +5,5 @@
 -DWITH_POSIX 
 -Wall
 -std=c99
+-Wno-unused-variable
+-Wno-unused-function

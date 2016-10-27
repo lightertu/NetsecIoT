@@ -21,7 +21,7 @@
 
 static str proxy = { 0, NULL };
 
-coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned char *data) {
+static coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned char *data) {
   coap_list_t *node;
 
   node = coap_malloc(sizeof(coap_list_t) + sizeof(coap_option) + length);
@@ -39,8 +39,7 @@ coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned 
   return node;
 }
 
-
-int order_opts(void *a, void *b) {
+static int order_opts(void *a, void *b) {
   coap_option *o1, *o2;
 
   if (!a || !b)
@@ -53,7 +52,6 @@ int order_opts(void *a, void *b) {
     ? -1
     : (COAP_OPTION_KEY(*o1) != COAP_OPTION_KEY(*o2));
 }
-
 
 void cmdline_uri(coap_list_t ** optlist, char *arg, coap_uri_t *uri) {
   unsigned char portbuf[2];
@@ -236,7 +234,7 @@ int resolve_address(const str *urihost, struct sockaddr *dst) {
 coap_pdu_t * coap_new_request(coap_context_t *ctx,
                  const method_t m,
                  coap_list_t **options,
-                 const str * the_token,
+                 const str * token,
                  const coap_block_t* block,
                  const int * flags,
                  const unsigned char msgtype,
@@ -252,8 +250,8 @@ coap_pdu_t * coap_new_request(coap_context_t *ctx,
   pdu->hdr->id = coap_new_message_id(ctx);
   pdu->hdr->code = m;
 
-  pdu->hdr->token_length = the_token->length;
-  if ( !coap_add_token(pdu, the_token->length, the_token->s)) {
+  pdu->hdr->token_length = token->length;
+  if ( !coap_add_token(pdu, token->length, token->s)) {
     debug("cannot add token to request\n");
   }
 
