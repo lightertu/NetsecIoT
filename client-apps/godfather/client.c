@@ -32,8 +32,11 @@ message_handler(struct coap_context_t *ctx, const coap_endpoint_t *local_interfa
 int main(int argc, char* argv[])
 {
     coap_context_t*   ctx; /* coap packet */
-    coap_address_t    dst_addr, src_addr;
-    static coap_uri_t uri;
+    coap_address_t    dst, src_addr; 
+    static char addr[INET6_ADDRSTRLEN]; /* buffer for storing the destination address string */
+    void * addrptr = NULL; /* points to the address field in which dst address will be copied to */ 
+    str payload = { 0, NULL }; /* string to store payload */
+    coap_uri_t uri;
     fd_set            readfds; 
     coap_pdu_t*       pdu;
     char* server_uri = "coap://[fe80::5844:2342:656a:f846]/riot/board";
@@ -49,10 +52,10 @@ int main(int argc, char* argv[])
     ctx = coap_new_context(&src_addr);
 
     /* The destination endpoint */
-    coap_address_init(&dst_addr);
-    dst_addr.addr.sin6.sin6_family      = AF_INET6;
-    dst_addr.addr.sin6.sin6_port        = htons(5683);
-    inet_pton(AF_INET6, "fe80::5844:2342:656a:f846", &(dst_addr.addr.sin6.sin6_addr) );
+    coap_address_init(&dst);
+    dst.addr.sin6.sin6_family      = AF_INET6;
+    dst.addr.sin6.sin6_port        = htons(5683);
+    inet_pton(AF_INET6, "fe80::5844:2342:656a:f846", &(dst.addr.sin6.sin6_addr) );
 
     /* added option objects to an option list to be continued */
     pdu            = coap_new_pdu();    
@@ -64,11 +67,21 @@ int main(int argc, char* argv[])
     /* at this point coap_list should be populated */
     cmdline_uri(&optlist, server_uri, &uri);
 
+    //printf("uri host %s\n", uri.host.s);
+    /*
+    int res = resolve_address(&uri.host, &dst.addr.sa);
+
+    if (res > 0) {
+        printf("successful family is %d\n\n", (dst.addr.sa.sa_family == AF_INET6) );
+    } else {
+        printf("not successful\n");
+    }
+    */
+
     /* populate pdu with options */
     LL_SORT(optlist, order_opts);
     coap_list_t * opt;
     LL_FOREACH((optlist), opt) {
-        printf("noshit\n");
       coap_option *o = (coap_option *)(opt->data);
       coap_add_option(pdu,
                       COAP_OPTION_KEY(*o),
@@ -78,7 +91,9 @@ int main(int argc, char* argv[])
 
     /* Set the handler and send the pdu */
     coap_register_response_handler(ctx, message_handler);
-    coap_send_confirmed(ctx, ctx->endpoint, &dst_addr, pdu);
+    coap_send_confirmed(ctx, ctx->endpoint, &dst, pdu);
+
+    
 
     FD_ZERO(&readfds);
     FD_SET( ctx->sockfd, &readfds );
