@@ -1,4 +1,5 @@
 -I /usr/local/include/coap
+-I ~/RIOT/
 -lcoap-1
 -O2 
 -D_GNU_SOURCE 
