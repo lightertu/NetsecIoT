@@ -6,7 +6,8 @@
  * directory for more details.
  */
 
-#include <coap.h>
+//#include <coap.h>
+#include "bin/pkg/samr21-xpro/microcoap/coap.h"
 #include <string.h>
 
 #define MAX_RESPONSE_LEN 500
@@ -22,18 +23,31 @@ static int handle_get_riot_board(coap_rw_buffer_t *scratch,
                                  coap_packet_t *outpkt,
                                  uint8_t id_hi, uint8_t id_lo);
 
+static int handle_get_sensor_temperature(coap_rw_buffer_t *scratch,
+                                 const coap_packet_t *inpkt,
+                                 coap_packet_t *outpkt,
+                                 uint8_t id_hi, uint8_t id_lo);
+
 static const coap_endpoint_path_t path_well_known_core =
         { 2, { ".well-known", "core" } };
 
 static const coap_endpoint_path_t path_riot_board =
         { 2, { "riot", "board" } };
 
+static const coap_endpoint_path_t path_sensor_temperature =
+        { 2, { "sensor", "temperature" } };
+
 const coap_endpoint_t endpoints[] =
 {
     { COAP_METHOD_GET,	handle_get_well_known_core,
         &path_well_known_core, "ct=40" },
+
     { COAP_METHOD_GET,	handle_get_riot_board,
         &path_riot_board,	   "ct=0"  },
+
+    { COAP_METHOD_GET,	handle_get_sensor_temperature,
+        &path_sensor_temperature,	"ct=0"  },
+
     /* marks the end of the endpoints array: */
     { (coap_method_t)0, NULL, NULL, NULL }
 };
@@ -96,6 +110,20 @@ static int handle_get_riot_board(coap_rw_buffer_t *scratch,
     int len = strlen(RIOT_BOARD);
 
     memcpy(response, riot_name, len);
+
+    return coap_make_response(scratch, outpkt, (const uint8_t *)response, len,
+                              id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT,
+                              COAP_CONTENTTYPE_TEXT_PLAIN);
+}
+
+static int handle_get_sensor_temperature(coap_rw_buffer_t *scratch,
+        const coap_packet_t *inpkt, coap_packet_t *outpkt,
+        uint8_t id_hi, uint8_t id_lo)
+{
+    const char *temperature = "temperature get";
+    int len = strlen(temperature);
+
+    memcpy(response, temperature, len);
 
     return coap_make_response(scratch, outpkt, (const uint8_t *)response, len,
                               id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT,
