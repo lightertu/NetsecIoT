@@ -10,6 +10,11 @@
 - procedure:
     - `coap_pdu_t.hdr.code = methodcode`
 
+- Method definitions:
+    = GET:
+        * if has Accept option, the data is the preferred content format of a response.
+        * if has Etag option, Etag will be validated.
+
 ### Responses:
 * Respond code:
     - identified by the code field in CoAP header being set to a Response Code.
@@ -26,5 +31,6 @@
         - A client that is connected to the general Internet SHOULD use at least 32 bits of randomness
         - An endpoint receiving a token it did not generate MUST treat the token as opaque and make no assumptions about 
           its content or structure.
+
 
 
