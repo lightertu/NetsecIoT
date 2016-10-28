@@ -17,9 +17,11 @@
 #include "../coap_list.h"
 #include "../testbed_clientutil.h"
 
+#define FLAGS_BLOCK 0x01
+
 static str proxy = { 0, NULL };
 
-coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned char *data) {
+static coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned char *data) {
   coap_list_t *node;
 
   node = coap_malloc(sizeof(coap_list_t) + sizeof(coap_option) + length);
@@ -37,8 +39,7 @@ coap_list_t * new_option_node(unsigned short key, unsigned int length, unsigned 
   return node;
 }
 
-
-int order_opts(void *a, void *b) {
+static int order_opts(void *a, void *b) {
   coap_option *o1, *o2;
 
   if (!a || !b)
@@ -51,7 +52,6 @@ int order_opts(void *a, void *b) {
     ? -1
     : (COAP_OPTION_KEY(*o1) != COAP_OPTION_KEY(*o2));
 }
-
 
 void cmdline_uri(coap_list_t ** optlist, char *arg, coap_uri_t *uri) {
   unsigned char portbuf[2];
@@ -225,7 +225,57 @@ int resolve_address(const str *urihost, struct sockaddr *dst) {
     }
   }
 
+
  finish:
   freeaddrinfo(res);
   return len;
 }    
+
+coap_pdu_t * coap_new_request(coap_context_t *ctx,
+                 const method_t m,
+                 coap_list_t **options,
+                 const str * token,
+                 const coap_block_t* block,
+                 const int * flags,
+                 const unsigned char msgtype,
+                 unsigned char *data,
+                 size_t length) {
+  coap_pdu_t *pdu;
+  coap_list_t *opt;
+
+  if ( ! ( pdu = coap_new_pdu() ) )
+    return NULL;
+
+  pdu->hdr->type = msgtype;
+  pdu->hdr->id = coap_new_message_id(ctx);
+  pdu->hdr->code = m;
+
+  pdu->hdr->token_length = token->length;
+  if ( !coap_add_token(pdu, token->length, token->s)) {
+    debug("cannot add token to request\n");
+  }
+
+  coap_show_pdu(pdu);
+
+  if (options) {
+    /* sort options for delta encoding */
+    LL_SORT((*options), order_opts);
+
+    LL_FOREACH((*options), opt) {
+      coap_option *o = (coap_option *)(opt->data);
+      coap_add_option(pdu,
+                      COAP_OPTION_KEY(*o),
+                      COAP_OPTION_LENGTH(*o),
+                      COAP_OPTION_DATA(*o));
+    }
+  }
+
+  if (length) {
+    if (((*flags) & FLAGS_BLOCK) == 0)
+      coap_add_data(pdu, length, data);
+    else
+      coap_add_block(pdu, length, data, block->num, block->szx);
+  }
+
+  return pdu;
+}

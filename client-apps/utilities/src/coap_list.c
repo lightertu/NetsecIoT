@@ -15,7 +15,7 @@
 
 #include "debug.h"
 #include "mem.h"
-#include "../coap_list.h"
+#include "coap_list.h"
 
 
 int
@@ -50,4 +50,3 @@ coap_delete_list(coap_list_t *queue) {
     coap_delete(elt);
   }
 }
-
