@@ -135,16 +135,14 @@ static int handle_get_sensor_temperature(coap_rw_buffer_t *scratch,
 {
     char temperature[4];
 
-    uint32_t t = read_temperature() & 0xFF;
+    int t = (int) read_temperature();
 
-    puts("temperature is");
  
     /* pack into buf string */
     temperature[0] = t >> 24;
     temperature[1] = t >> 16;
     temperature[2] = t >> 8;
     temperature[3] = t;
-    puts(temperature);
 
     int len = strlen(temperature);
     memcpy(response, temperature, len);
@@ -158,29 +156,23 @@ static int handle_put_actuator_led(coap_rw_buffer_t *scratch,
         const coap_packet_t *inpkt, coap_packet_t *outpkt,
         uint8_t id_hi, uint8_t id_lo)
 {
-    /*
-    char * ledstats = "";
-    //char * message;
-    int len;
+    char ledstats[MAX_RESPONSE_LEN] = { 0 };
+    int slen, len;
 
     memcpy(ledstats, inpkt->payload.p, inpkt->payload.len);
+    slen = inpkt->payload.len;
+    puts(ledstats);
 
     if (strcmp(ledstats, "ON") == 0) {
         led_switch(ON);
-        message = "LED0 is ON";
     } else if (strcmp(ledstats, "OFF") == 0) {
         led_switch(OFF);
-        message = "LED0 is OFF";
     } else {
-        message = ledstats;
+        puts("UNKNOWN command");
     }
 
-    len = strlen(message);
-    */
-
-    int len = inpkt->payload.len;
-    memcpy(response, inpkt->payload.p, inpkt->payload.len);
-
+    memcpy(response, ledstats, slen);
+    len = slen;
     return coap_make_response(scratch, outpkt, (const uint8_t *)response, len,
                               id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT,
                               COAP_CONTENTTYPE_TEXT_PLAIN);
