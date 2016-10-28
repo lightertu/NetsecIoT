@@ -6,11 +6,13 @@
  * directory for more details.
  */
 
-//#include <coap.h>
-#include "bin/pkg/samr21-xpro/microcoap/coap.h"
+#include <coap.h>
+#include <led.h>
 #include <string.h>
+#include "include/testbed-hardware.h"
 
 #define MAX_RESPONSE_LEN 500
+
 static uint8_t response[MAX_RESPONSE_LEN] = { 0 };
 
 static int handle_get_well_known_core(coap_rw_buffer_t *scratch,
@@ -28,6 +30,11 @@ static int handle_get_sensor_temperature(coap_rw_buffer_t *scratch,
                                  coap_packet_t *outpkt,
                                  uint8_t id_hi, uint8_t id_lo);
 
+static int handle_put_actuator_led(coap_rw_buffer_t *scratch,
+                                 const coap_packet_t *inpkt,
+                                 coap_packet_t *outpkt,
+                                 uint8_t id_hi, uint8_t id_lo);
+
 static const coap_endpoint_path_t path_well_known_core =
         { 2, { ".well-known", "core" } };
 
@@ -36,6 +43,9 @@ static const coap_endpoint_path_t path_riot_board =
 
 static const coap_endpoint_path_t path_sensor_temperature =
         { 2, { "sensor", "temperature" } };
+
+static const coap_endpoint_path_t path_actuator_led =
+        { 2, { "actuator", "led" } };
 
 const coap_endpoint_t endpoints[] =
 {
@@ -47,6 +57,9 @@ const coap_endpoint_t endpoints[] =
 
     { COAP_METHOD_GET,	handle_get_sensor_temperature,
         &path_sensor_temperature,	"ct=0"  },
+
+    { COAP_METHOD_PUT,	handle_put_actuator_led,
+        &path_actuator_led,	"ct=0"  },
 
     /* marks the end of the endpoints array: */
     { (coap_method_t)0, NULL, NULL, NULL }
@@ -120,10 +133,53 @@ static int handle_get_sensor_temperature(coap_rw_buffer_t *scratch,
         const coap_packet_t *inpkt, coap_packet_t *outpkt,
         uint8_t id_hi, uint8_t id_lo)
 {
-    const char *temperature = "temperature get";
-    int len = strlen(temperature);
+    char temperature[4];
 
+    uint32_t t = read_temperature() & 0xFF;
+
+    puts("temperature is");
+ 
+    /* pack into buf string */
+    temperature[0] = t >> 24;
+    temperature[1] = t >> 16;
+    temperature[2] = t >> 8;
+    temperature[3] = t;
+    puts(temperature);
+
+    int len = strlen(temperature);
     memcpy(response, temperature, len);
+
+    return coap_make_response(scratch, outpkt, (const uint8_t *)response, len,
+                              id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT,
+                              COAP_CONTENTTYPE_TEXT_PLAIN);
+}
+
+static int handle_put_actuator_led(coap_rw_buffer_t *scratch,
+        const coap_packet_t *inpkt, coap_packet_t *outpkt,
+        uint8_t id_hi, uint8_t id_lo)
+{
+    /*
+    char * ledstats = "";
+    //char * message;
+    int len;
+
+    memcpy(ledstats, inpkt->payload.p, inpkt->payload.len);
+
+    if (strcmp(ledstats, "ON") == 0) {
+        led_switch(ON);
+        message = "LED0 is ON";
+    } else if (strcmp(ledstats, "OFF") == 0) {
+        led_switch(OFF);
+        message = "LED0 is OFF";
+    } else {
+        message = ledstats;
+    }
+
+    len = strlen(message);
+    */
+
+    int len = inpkt->payload.len;
+    memcpy(response, inpkt->payload.p, inpkt->payload.len);
 
     return coap_make_response(scratch, outpkt, (const uint8_t *)response, len,
                               id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT,
