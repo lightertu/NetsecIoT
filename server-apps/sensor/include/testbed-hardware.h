@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2016 Rui Tu <ruit@uoregon.edu>
+ *
+ */
 #ifndef _TEST_BED_HARDWARE_H_
 #define _TEST_BED_HARDWARE_H_
 #include <string.h>

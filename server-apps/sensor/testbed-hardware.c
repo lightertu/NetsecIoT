@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2016 Rui Tu <ruit@uoregon.edu>
+ *
+ */
 #include <string.h>
 #include <random.h>
 #include <led.h>
