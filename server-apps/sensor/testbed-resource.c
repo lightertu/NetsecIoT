@@ -156,24 +156,26 @@ static int handle_put_actuator_led(coap_rw_buffer_t *scratch,
         const coap_packet_t *inpkt, coap_packet_t *outpkt,
         uint8_t id_hi, uint8_t id_lo)
 {
+    int relen;
     char ledstats[MAX_RESPONSE_LEN] = { 0 };
-    int slen, len;
+    char * message;
+
 
     memcpy(ledstats, inpkt->payload.p, inpkt->payload.len);
-    slen = inpkt->payload.len;
-    puts(ledstats);
 
     if (strcmp(ledstats, "ON") == 0) {
         led_switch(ON);
+        message = "LED is ON";
     } else if (strcmp(ledstats, "OFF") == 0) {
         led_switch(OFF);
+        message = "LED is OFF";
     } else {
-        puts("UNKNOWN command");
+        message = "Unknown command";
     }
 
-    memcpy(response, ledstats, slen);
-    len = slen;
-    return coap_make_response(scratch, outpkt, (const uint8_t *)response, len,
+    relen = strlen(message);
+    memcpy(response, (unsigned char *) message, relen);
+    return coap_make_response(scratch, outpkt, (const uint8_t *)response, relen,
                               id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT,
                               COAP_CONTENTTYPE_TEXT_PLAIN);
 }
