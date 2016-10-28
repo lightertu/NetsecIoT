@@ -133,21 +133,12 @@ static int handle_get_sensor_temperature(coap_rw_buffer_t *scratch,
         const coap_packet_t *inpkt, coap_packet_t *outpkt,
         uint8_t id_hi, uint8_t id_lo)
 {
-    char temperature[4];
 
-    int t = (int) read_temperature();
+    char * temperature = "21C";
+    int relen = strlen(temperature);
+    memcpy(response, (unsigned char *)temperature, relen);
 
- 
-    /* pack into buf string */
-    temperature[0] = t >> 24;
-    temperature[1] = t >> 16;
-    temperature[2] = t >> 8;
-    temperature[3] = t;
-
-    int len = strlen(temperature);
-    memcpy(response, temperature, len);
-
-    return coap_make_response(scratch, outpkt, (const uint8_t *)response, len,
+    return coap_make_response(scratch, outpkt, (const uint8_t *)response, relen,
                               id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT,
                               COAP_CONTENTTYPE_TEXT_PLAIN);
 }
