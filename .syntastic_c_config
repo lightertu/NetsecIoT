@@ -1,5 +1,6 @@
 -I /usr/local/include/coap
 -I /home/rui/SDKs/RIOT/core/include
+-I /home/rui/SDKs/RIOT/sys/include
 -I /home/rui/SDKs/RIOT/boards/samr21-xpro/include
 -I /home/rui/SDKs/RIOT/drivers/include
 
