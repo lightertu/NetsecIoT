@@ -75,9 +75,10 @@ public class Client {
         TemperatureReader temperatureClient = new TemperatureReader("coap://californium.eclipse.org:5683/obs");
         LEDcontroller ledClient = new LEDcontroller("coap://californium.eclipse.org:5683/obs");
 
-        int ctr = 0;
+        int ctr = 0,
+            time = 0;
 
-        while (true) {
+        while (time++ < 20) {
             String putResponse;
             if (ctr == 0) {
                 putResponse = ledClient.on();
