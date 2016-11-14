@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.netsec.iottestbed.nonembedded</groupId>
-  <artifactId>coapclient</artifactId>
+  <artifactId>coap-client</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
 
-  <name>coapclient</name>
+  <name>coap-client</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -37,5 +37,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>
