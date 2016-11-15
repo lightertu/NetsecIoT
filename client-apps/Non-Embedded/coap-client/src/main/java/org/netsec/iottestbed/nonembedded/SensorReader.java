@@ -9,7 +9,7 @@ class SensorReader {
     private String _sensorName;
 
     SensorReader(String address, String sensorName) {
-        _uri = "coap://" + address + "/sensor" + sensorName;
+        _uri = "coap://" + address + "/sensor/" + sensorName;
         _sensorClient = new CoapClient(_uri);
         _sensorName = sensorName;
     }
