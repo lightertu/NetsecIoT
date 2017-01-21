@@ -10,6 +10,7 @@
 
 #define ON 1
 #define OFF 0
+#define TOGGLE 2
 
 #define I2C_INTERFACE I2C_DEV(0)    /* I2C interface number */
 #define SENSOR_ADDR   (0x48 | 0x07) /* I2C temperature address on sensor */

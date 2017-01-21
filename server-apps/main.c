@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Freie Universität Berlin
+ * Copyright (c) 2015-2016 Ken Bannister. All rights reserved.
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -11,40 +11,43 @@
  * @{
  *
  * @file
- * @brief       Example application for demonstrating the RIOT network stack
+ * @brief       gcoap example
  *
- * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
+ * @author      Ken Bannister <kb2ma@runbox.com>
  *
  * @}
  */
 
 #include <stdio.h>
-
-#include "shell.h"
 #include "msg.h"
 
-#define MAIN_QUEUE_SIZE     (8)
+#include "net/gnrc/coap.h"
+#include "kernel_types.h"
+#include "shell.h"
+
+#define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
-extern int udp_cmd(int argc, char **argv);
+extern int gcoap_cli_cmd(int argc, char **argv);
+extern void gcoap_cli_init(void);
 
 static const shell_command_t shell_commands[] = {
-    { "udp", "send data over UDP and listen on UDP ports", udp_cmd },
+    { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
 };
 
 int main(void)
 {
-    /* we need a message queue for the thread running the shell in order to
-     * receive potentially fast incoming networking packets */
+    /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
-    puts("RIOT network stack example application");
+    gcoap_cli_init();
+    puts("gcoap example app");
 
     /* start shell */
     puts("All up, running the shell now");
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
 
-    /* should be never reached */
+    /* should never be reached */
     return 0;
 }

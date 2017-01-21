@@ -8,22 +8,24 @@
 #include <xtimer.h>
 #include "periph_conf.h"
 #include "periph/i2c.h"
-#include "./include/testbed-hardware.h"
+#include "testbed-hardware.h"
 
 
 uint32_t read_temperature_dummy(void) {
-    random_init(xtimer_now());
+    random_init(20);
     uint32_t curtmp;
     curtmp = random_uint32_range(20, 30);
 
     return curtmp;
 }
 
-void led_switch(int on) {
-    if (on) {
+void led_switch(int status) {
+    if (status == ON) {
         LED0_ON;
-    } else {
+    } else if (status == OFF){
         LED0_OFF;
+    } else if (status == TOGGLE) {
+        LED0_TOGGLE;
     }
 }
 
