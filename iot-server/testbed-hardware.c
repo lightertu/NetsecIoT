@@ -9,6 +9,7 @@
 #include "periph_conf.h"
 #include "periph/i2c.h"
 #include "testbed-hardware.h"
+#include <stdio.h>
 
 
 uint32_t read_temperature_dummy(void) {
