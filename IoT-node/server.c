@@ -21,10 +21,6 @@ static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _sensor_temperature_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _actuator_led_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
-/* this will be set to 1 if the node is discovered by client */
-int DISCOVERED = 0;
-char LAST_RESPONSE[MAX_RESPONSE_LEN];
-
 /* this saves the address of the last requester */
 /* uint8_t last_response_addr[URI_MAX_LEN]; */
 
@@ -88,12 +84,7 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu) {
         }
         else {
             printf(", %u bytes\n", pdu->payload_len);
-            DISCOVERED = 1;
-            memcpy(LAST_RESPONSE, (char *)pdu->payload, pdu->payload_len);
             od_hex_dump(pdu->payload, pdu->payload_len, OD_WIDTH_DEFAULT);
-
-            /* saves the last response sender address */
-            /* memcpy(last_response_addr, pdu->url, strlen(pdu->url)); */
         }
     }
     else {
@@ -166,6 +157,7 @@ static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str) {
     }
 
     bytes_sent = gcoap_req_send(buf, len, &addr, port, _resp_handler);
+    /* print("bytes sent, %d", bytes_sent); */
     if (bytes_sent > 0) {
         req_count++;
     }
@@ -230,35 +222,31 @@ int gcoap_cli_cmd(int argc, char **argv) {
 }
 
 
-int self_advertising(void) {
-    /* this uri means "all coap nodes" */
-    char * uri = "fe80::7495:6cff:fe11:fd8b";
-    char * path = "/devices/known-nodes";
+char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
+void *self_advertising_thread(void* args) {
+    char * uri = "fe80::1ac0:ffee:1ac0:ffee";
+    char * path = "/devices/nodes";
     char * greeting = "hello, world";
     char * port = "8888";
     int len;
 
+    printf("%s", (char*)args);
     while (1) {
         uint8_t buf[GCOAP_PDU_BUF_SIZE];
         coap_pkt_t pdu;
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_POST, path);
         memcpy(pdu.payload, greeting, strlen(greeting));
         len = gcoap_finish(&pdu, strlen(greeting), COAP_FORMAT_TEXT);
-
+        puts("Advertising thread is running");
         if (!_send(&buf[0], len, uri, port)) {
             puts("server: adversing message send failed");
-            return 0;
+            puts("re-advertise");
         } 
 
-        if (DISCOVERED) {
-            break;
-        }
-        
-        xtimer_sleep(1);
-        puts("re-advertise");
+        xtimer_sleep(5);
     }
 
-    return 1;
+    return NULL;
  }
 
 
@@ -267,8 +255,12 @@ void gcoap_cli_init(void) {
     gcoap_register_listener(&_request_stats_listener);
     gcoap_register_listener(&_sensor_temperature_listener);
 
-    if (self_advertising()) {
-        /* printf("Successfully got discovered by: %s", last_response_addr); */
-        printf("Successfully got discovered by %s", LAST_RESPONSE);
-    }
+    thread_create(self_advertising_thread_stack, 
+                  sizeof(self_advertising_thread_stack),
+                  THREAD_PRIORITY_MAIN - 1, 
+                  THREAD_CREATE_STACKTEST, 
+                  self_advertising_thread, 
+                  NULL, 
+                  "self_adverstising_thread"
+    );
 }

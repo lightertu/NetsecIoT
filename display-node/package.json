@@ -1,0 +1,14 @@
+{
+  "name": "display-node",
+  "version": "1.0.0",
+  "description": "A nodejs implementation of display node",
+  "main": "display.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rui Tu",
+  "license": "ISC",
+  "dependencies": {
+    "coap": "^0.19.0"
+  }
+}
