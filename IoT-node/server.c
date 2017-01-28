@@ -11,6 +11,7 @@
 #include "od.h"
 #include "fmt.h"
 #include "testbed-hardware.h"
+#define UNUSED(x) (void)(x)
 
 #define MAX_RESPONSE_LEN 100
 #define URI_MAX_LEN 64
@@ -230,7 +231,7 @@ void *self_advertising_thread(void* args) {
     char * port = "5683";
     int len;
 
-    printf("%s", (char*)args);
+    UNUSED(args);
 
     while (1) {
         uint8_t buf[GCOAP_PDU_BUF_SIZE];
