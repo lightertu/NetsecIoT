@@ -26,7 +26,7 @@ int main(void)
     /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     gcoap_cli_init();
-    puts("gcoap example app");
+    puts("example app");
 
     /* start shell */
     puts("All up, running the shell now");

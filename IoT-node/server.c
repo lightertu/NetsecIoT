@@ -197,7 +197,7 @@ int gcoap_cli_cmd(int argc, char **argv) {
                 return 0;
             }
             else {
-                printf("usage: %s <get|post|put> <addr> <port> <path> [data]\n",
+                printf("fuck: %s <get|post|put> <addr> <port> <path> [data]\n",
                                                                        argv[0]);
                 return 1;
             }
@@ -227,10 +227,11 @@ void *self_advertising_thread(void* args) {
     char * uri = "fe80::1ac0:ffee:1ac0:ffee";
     char * path = "/devices/nodes";
     char * greeting = "hello, world";
-    char * port = "8888";
+    char * port = "5683";
     int len;
 
     printf("%s", (char*)args);
+
     while (1) {
         uint8_t buf[GCOAP_PDU_BUF_SIZE];
         coap_pkt_t pdu;
@@ -251,6 +252,7 @@ void *self_advertising_thread(void* args) {
 
 
 void gcoap_cli_init(void) {
+    puts("Advertising thread is running");
     gcoap_register_listener(&_actuator_led_listener);
     gcoap_register_listener(&_request_stats_listener);
     gcoap_register_listener(&_sensor_temperature_listener);
