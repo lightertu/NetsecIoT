@@ -17,16 +17,15 @@ extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
 
 static const shell_command_t shell_commands[] = {
-    { "coap", "CoAP example", gcoap_cli_cmd },
+    { "coap", "CoAP Application", gcoap_cli_cmd },
     { NULL, NULL, NULL }
 };
 
-int main(void)
-{
+int main(void) {
     /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     gcoap_cli_init();
-    puts("example app");
+    puts("RIOT Node start");
 
     /* start shell */
     puts("All up, running the shell now");
