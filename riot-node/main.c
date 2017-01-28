@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "msg.h"
 
-#include "net/gnrc/coap.h"
+#include "net/gcoap.h"
 #include "kernel_types.h"
 #include "shell.h"
 

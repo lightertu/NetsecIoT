@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "net/gnrc/coap.h"
+#include "net/gcoap.h"
 #include "od.h"
 #include "fmt.h"
 #include "testbed-hardware.h"
@@ -31,6 +31,7 @@ static const coap_resource_t _resources[] = {
     { "/actuator/led", COAP_PUT, _actuator_led_handler },
     { "/cli/stats", COAP_GET, _stats_handler },
     { "/sensor/temperature", COAP_GET, _sensor_temperature_handler },
+    { NULL, 0, NULL}, // Mark as the end of the endpoints
 };
 
 static gcoap_listener_t _actuator_led_listener = {
@@ -51,6 +52,12 @@ static gcoap_listener_t _sensor_temperature_listener = {
     NULL
 };
 
+
+/* stack for the advertising thread */
+static char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
+
+/* advertising string */
+static char service_string[GCOAP_PDU_BUF_SIZE];
 
 /* Counts requests sent by CLI. */
 static uint16_t req_count = 0;
@@ -223,23 +230,20 @@ int gcoap_cli_cmd(int argc, char **argv) {
 }
 
 
-char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
 void *self_advertising_thread(void* args) {
-    char * uri = "fe80::1ac0:ffee:1ac0:ffee";
-    char * path = "/devices/nodes";
-    char * greeting = "hello, world";
-    char * port = "5683";
     int len;
-
-    UNUSED(args);
+    char *uri = "fe80::1ac0:ffee:1ac0:ffee";
+    char *path = "/devices/nodes";
+    char *payload = (char *) args;
+    char *port = "5683";
 
     while (1) {
         uint8_t buf[GCOAP_PDU_BUF_SIZE];
         coap_pkt_t pdu;
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_POST, path);
-        memcpy(pdu.payload, greeting, strlen(greeting));
-        len = gcoap_finish(&pdu, strlen(greeting), COAP_FORMAT_TEXT);
-        puts("Advertising thread is running");
+        memcpy(pdu.payload, payload, strlen(payload));
+        len = gcoap_finish(&pdu, strlen(payload), COAP_FORMAT_TEXT);
+        puts("Advertising");
         if (!_send(&buf[0], len, uri, port)) {
             puts("server: adversing message send failed");
             puts("re-advertise");
@@ -252,18 +256,38 @@ void *self_advertising_thread(void* args) {
  }
 
 
+int build_service_string(char * service_string, int bufsize) {
+    int i = 0, slen = 0;
+    while (_resources[i].path != NULL) {
+        if (slen >= bufsize) {
+            puts("String is too long");
+            return 0;
+        }
+
+        bufsize -= slen;
+        slen += snprintf(service_string + slen, (size_t) bufsize, "%s|%d,", _resources[i].path, _resources[i].methods);
+        ++i;
+    }
+
+    return 1;
+}
+
+
 void gcoap_cli_init(void) {
-    puts("Advertising thread is running");
     gcoap_register_listener(&_actuator_led_listener);
     gcoap_register_listener(&_request_stats_listener);
     gcoap_register_listener(&_sensor_temperature_listener);
 
-    thread_create(self_advertising_thread_stack, 
-                  sizeof(self_advertising_thread_stack),
-                  THREAD_PRIORITY_MAIN - 1, 
-                  THREAD_CREATE_STACKTEST, 
-                  self_advertising_thread, 
-                  NULL, 
-                  "self_adverstising_thread"
-    );
+    if (build_service_string(service_string, GCOAP_PDU_BUF_SIZE)) {
+        thread_create(self_advertising_thread_stack, 
+                      sizeof(self_advertising_thread_stack),
+                      THREAD_PRIORITY_MAIN - 1, 
+                      THREAD_CREATE_STACKTEST, 
+                      self_advertising_thread, 
+                      service_string, 
+                      "self_adverstising_thread"
+        );
+    }
+    
+    printf("%s\n", service_string);
 }
