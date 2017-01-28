@@ -9,6 +9,7 @@ server.on('request', function(req, res) {
         var deviceAddress = req.rsinfo.address;
         if (!devicesMap.has(deviceAddress)) {
             devicesMap.set(deviceAddress, {});
+            console.log("Found new node: " + deviceAddress);
             coap.request('coap://[' + deviceAddress + ']' + "/.well-known/core")
                 .on('response', function(response){
                     response.pipe(process.stdout);
