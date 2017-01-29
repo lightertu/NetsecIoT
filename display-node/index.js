@@ -1,6 +1,5 @@
 var coap        = require('coap'),
     HashMap     = require('hashmap'),
-    express     = require('express'),
     server      = coap.createServer({ type: 'udp6' });
 
 var devicesMap = new HashMap();
