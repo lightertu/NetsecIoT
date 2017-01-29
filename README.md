@@ -1,5 +1,3 @@
-Someone forgot to log out of their github account on this mlh laptop.
-
 # 6Lowpan-testbed
 An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
 
