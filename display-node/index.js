@@ -9,7 +9,7 @@ var bodyParser = require('body-parser');
 var router = express.Router();
 var appRoutes = require('./app/routes/api')(router);
 var path = require('path');
-var coapServer = require('./coapserver.js');
+var coapServer = require('./coap-server.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
