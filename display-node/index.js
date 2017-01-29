@@ -1,41 +1,40 @@
-var coap        = require('coap'),
-    HashMap     = require('hashmap'),
-    server      = coap.createServer({ type: 'udp6' });
+var express = require('express');
+var app = express();
+var port = process.env.PORT || 8080;
+var morgan = require('morgan');
+var mongoose = require('mongoose');
+var User = require('./app/models/user');
+var bodyParser = require('body-parser');
+var bodyParser = require('body-parser');
+var router = express.Router();
+var appRoutes = require('./app/routes/api')(router);
+var path = require('path');
+var coapServer = require('./coapserver.js');
 
-var devicesMap = new HashMap();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use(express.static(__dirname + '/public'));
+app.use('/api', appRoutes);
 
-var serviceStringParser = function (serviceString) {
-    var raw_services = serviceString.split(",");
-    var services = [];
-    raw_services.pop();
-    for (var i = 0; i < raw_services.length; i++) {
-        var s = raw_services[i].split("|");
-        var newService = {
-            path: s[0],
-            method: s[1]
-        };
-        services.push(newService);
-    }
-
-    return services;
-};
-
-server.on('request', function(req, res) {
-    if (req.url === "/devices/nodes") {
-        var deviceAddress = req.rsinfo.address;
-        if (!devicesMap.has(deviceAddress)) {
-            console.log("Found new node: " + deviceAddress);
-            var servicesArray = serviceStringParser(req.payload.toString('ascii'));
-            devicesMap.set(deviceAddress, servicesArray);
-            console.log(servicesArray);
-        }
-
+mongoose.connect('mongodb://localhost:27017/iotnodes', function(err) {
+    if (err) {
+        console.log("Not connected to database: " + err);
     } else {
-        console.log("Doesn't have endpoint: " + req.url);
+        console.log("Connected to mongodbs");
     }
 });
 
+app.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname + '/public/app/views/index.html'));
+    
+});
+
+app.listen(port, function() {
+    console.log('web server is running on ' + port);
+});
+
 // the default CoAP port is 5683
-server.listen(function() {
-    console.log("server start");
+coapServer.server.listen(function() {
+    console.log("coap server is running start");
 });
