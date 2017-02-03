@@ -232,8 +232,9 @@ int gcoap_cli_cmd(int argc, char **argv) {
 
 void *self_advertising_thread(void* args) {
     int len;
-    char *uri = "fe80::1ac0:ffee:1ac0:ffee";
+    /* char *uri = "fe80::1ac0:ffee:1ac0:ffee"; */
     /* char *uri = "fe80::864:f3ff:fea4:9fbb"; */
+    char *uri = "ff02:1/128";
     char *path = "/devices/nodes";
     char *payload = (char *) args;
     char *port = "5683";

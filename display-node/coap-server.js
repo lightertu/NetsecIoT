@@ -41,3 +41,6 @@ server.on('request', function(req, res) {
     }
 });
 
+server.listen(function() {
+    console.log("coap server is running start");
+});
