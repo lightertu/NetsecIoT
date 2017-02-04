@@ -1,33 +1,28 @@
-var React = require('react');
-var DeviceThumbNail = require('./DeviceThumbNail.js');
+import React from "react"
+import DeviceThumbnail from "./DeviceThumbnail.js"
 
-var DeviceGallery = React.createClass({
-    getDevicesinfo: function() {
-        return ([
-            {name: "samr21-xpro"},
-            {name: "rpi"},
-        ]);
-    },
-
-
-    createDevices: function() {
-        return (
-            this
-            .getDevicesinfo()
-            .map(function(deviceObj) {
-                return (<DeviceThumbNail name = deviceObj.name />);
-            }.bind(this))
-        );
+export default class DeviceGallery extends React.Component {
+    constructor(){
+        super();
     }
 
-    render: function() {
-        var thumbnails = this.createDevices();
+    render() {
         return (
             <div>
-                { thumbnails }
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">Devices
+                            <small></small>
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="row" >
+                    <DeviceThumbnail name="SAMR-x21" description="this is awesome"/>
+                </div>
+
             </div>
         );
     }
-});
-
-module.export = DeviceGallery;
+}

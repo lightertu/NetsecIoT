@@ -1,19 +1,18 @@
-var coap           = require('coap');
-var port           = 6666;
-var HashMap        = require('hashmap');
-var coapDevicesMap = new HashMap();
-var server         = coap.createServer({ type: 'udp6' });
-var coapDevicesMap = new HashMap();
+let coap           = require('coap');
+let port           = 6666;
+let HashMap        = require('hashmap');
+let server         = coap.createServer({ type: 'udp6' });
+let coapDevicesMap = new HashMap();
 
 function coapServicesStringParser(serviceString) {
-    var raw_services = serviceString.split(",");
+    let raw_services = serviceString.split(",");
 
-    var services = [];
+    let services = [];
     raw_services.pop();
 
-    for (var i = 0; i < raw_services.length; i++) {
-        var s = raw_services[i].split("|");
-        var newService = {
+    for (let i = 0; i < raw_services.length; i++) {
+        let s = raw_services[i].split("|");
+        let newService = {
             path: s[0],
             method: s[1]
         };
@@ -27,15 +26,15 @@ module.exports = {
     server: server,
     coapDevicesMap: coapDevicesMap,
     port: port
-}
+};
 
 server.on('request', function(req, res) {
-    var deviceAddress = req.rsinfo.address;
+    let deviceAddress = req.rsinfo.address;
     if (req.url == "/devices") {
         if (!coapDevicesMap.has(deviceAddress)) {
             console.log("Found new node: " + deviceAddress);
-            var serviceString = req.payload.toString('ascii');
-            var servicesArray = coapServicesStringParser(serviceString);
+            let serviceString = req.payload.toString('ascii');
+            let servicesArray = coapServicesStringParser(serviceString);
             coapDevicesMap.set(deviceAddress, servicesArray);
             console.log(servicesArray);
         }
