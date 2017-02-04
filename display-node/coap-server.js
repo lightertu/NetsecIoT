@@ -2,9 +2,7 @@ var coap           = require('coap');
 var port           = 6666;
 var HashMap        = require('hashmap');
 var coapDevicesMap = new HashMap();
-
 var server         = coap.createServer({ type: 'udp6' });
-
 var coapDevicesMap = new HashMap();
 
 function coapServicesStringParser(serviceString) {
