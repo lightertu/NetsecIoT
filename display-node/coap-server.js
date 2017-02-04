@@ -1,6 +1,8 @@
 var coap           = require('coap');
+var port           = 6666;
 var HashMap        = require('hashmap');
 var coapDevicesMap = new HashMap();
+
 var server         = coap.createServer({ type: 'udp6' });
 
 var coapDevicesMap = new HashMap();
@@ -26,11 +28,12 @@ function coapServicesStringParser(serviceString) {
 module.exports = {
     server: server,
     coapDevicesMap: coapDevicesMap,
+    port: port
 }
 
 server.on('request', function(req, res) {
     var deviceAddress = req.rsinfo.address;
-    if (req.url == "/devices/nodes") {
+    if (req.url == "/devices") {
         if (!coapDevicesMap.has(deviceAddress)) {
             console.log("Found new node: " + deviceAddress);
             var serviceString = req.payload.toString('ascii');
@@ -39,8 +42,4 @@ server.on('request', function(req, res) {
             console.log(servicesArray);
         }
     } 
-});
-
-server.listen(function() {
-    console.log("coap server is running start");
 });
