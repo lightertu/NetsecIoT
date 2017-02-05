@@ -6,6 +6,7 @@ let mongoose = require('mongoose');
 let deviceSchema = new mongoose.Schema({
     ipAddress: String,
     name: String,
+    nodeType: String,
     description: String,
     paths: [ { String, Number}  ]
 });
