@@ -1,21 +1,25 @@
 /**
  * Created by rui on 2/4/17.
  */
-var debug = process.env.NODE_ENV !== "production";
-var webpack = require('webpack');
+let debug = process.env.NODE_ENV !== "production";
+let webpack = require('webpack');
 
 module.exports = {
     context: __dirname,
     devtool: debug ? "inline-sourcemap" : null,
-    entry: "./app/src/index.js",
+    entry: [
+        'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000',
+        "./public/app/src/index.js",
+    ],
     output: {
-        path: __dirname + "/dist",
-        filename: "bundle.js"
+        path: __dirname + "public/dist",
+        filename: "bundle.js",
+        publicPath: "/"
     },
-    plugins: debug ? [] : [
-            new webpack.optimize.DedupePlugin(),
-            new webpack.optimize.OccurenceOrderPlugin(),
-            new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
+    plugins: [
+            new webpack.NoEmitOnErrorsPlugin(),
+            new webpack.optimize.OccurrenceOrderPlugin(),
+            new webpack.HotModuleReplacementPlugin()
         ],
     module: {
         loaders: [
