@@ -32,9 +32,9 @@ export default class DeviceGallery extends React.Component {
                                       description={ deviceObj.description } /> );
         });
         return (
-            <div>
+            <div class="container">
                 <PageHeader name="Devices" description="iott"/>
-                <div class="row" >
+                <div class="row">
                     { devicesComponentList }
                 </div>
             </div>

@@ -8,7 +8,6 @@ let path = require('path');
 let coapServer = require('./coap-server.js');
 
 (function() {
-
     // Step 1: Create & configure a webpack compiler
     let webpack = require('webpack');
     let webpackConfig = require(process.env.WEBPACK_CONFIG ? process.env.WEBPACK_CONFIG : './webpack.config');
