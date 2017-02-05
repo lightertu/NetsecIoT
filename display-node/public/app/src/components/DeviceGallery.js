@@ -1,22 +1,6 @@
 import React from "react"
 import DeviceThumbnail from "./DeviceThumbnail.js"
-class DeviceGalleryHeader extends React.Component {
-    constructor(){
-        super();
-    }
-
-    render() {
-        return (
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header">Devices
-                        <small> iot</small>
-                    </h1>
-                </div>
-            </div>
-        );
-    }
-}
+import PageHeader from "./PageHeader.js"
 
 export default class DeviceGallery extends React.Component {
     constructor(props, context) {
@@ -30,8 +14,12 @@ export default class DeviceGallery extends React.Component {
     getDevicesInfo() {
         return  (
             [
-                {name: "samrx-21", description: "cool stuff", ipAddr: "fe::01"},
-                {name: "raspberry pi", description: "cool stuff", ipAddr: "fe23:21::01"}
+                {name: "raspberry pi", description: "cool stuff", ipAddress: "fe23:21::01"},
+                {name: "raspberry pi", description: "cool stuff", ipAddress: "fe24:21::01"},
+                {name: "raspberry pi", description: "cool stuff", ipAddress: "fe25:21::01"},
+                {name: "raspberry pi", description: "cool stuff", ipAddress: "fe26:21::01"},
+                {name: "raspberry pi", description: "cool stuff", ipAddress: "fe27:21::01"},
+                {name: "raspberry pi", description: "cool stuff", ipAddress: "fe28:21::01"}
             ]
         );
     }
@@ -39,11 +27,13 @@ export default class DeviceGallery extends React.Component {
     render() {
         const { devices } = this.state;
         const devicesComponentList = devices.map(deviceObj =>{
-            return ( <DeviceThumbnail key={ deviceObj.ipAddr } name={ deviceObj.name } description={ deviceObj.description} /> );
+            return ( <DeviceThumbnail key={ deviceObj.ipAddress }
+                                      name={ deviceObj.name }
+                                      description={ deviceObj.description } /> );
         });
         return (
             <div>
-                <DeviceGalleryHeader />
+                <PageHeader name="Devices" description="iott"/>
                 <div class="row" >
                     { devicesComponentList }
                 </div>
