@@ -17,7 +17,7 @@ class App extends React.Component {
            <div>
                <NavBar />
                <Router history={ hashHistory }>
-                   <Route path={"/"} component={ DeviceGallery }></Route>
+                   <Route path={"/"} component={ DeviceGallery }/>
                    <Route path={ "/about" } component= { About } />
                </Router>
            </div>

@@ -1,12 +1,14 @@
+// dependencies
 let express = require('express');
 let app = express();
 let port = process.env.PORT || 8080;
 let morgan = require('morgan');
 let bodyParser = require('body-parser');
-let router = express.Router();
 let path = require('path');
 let coapServer = require('./coap-server.js');
+let mongoose = require('mongoose');
 
+// webpack hot loading
 (function() {
     // Step 1: Create & configure a webpack compiler
     let webpack = require('webpack');
@@ -24,16 +26,24 @@ let coapServer = require('./coap-server.js');
     }));
 })();
 
+// MongoDB
+// mongoose.connect('mongodb://localhost/iot');
+// let db = mongoose.connection;
+
+// express
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/public/dist'));
 app.use(express.static(__dirname + '/public'));
 
-app.get('*', function(req, res) {
+app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/app/index.html'));
 });
 
+app.use('/api', require('./server/routes/api'));
+
+// Start HTTP server
 app.listen(port, function() {
     console.log('web server is running on ' + port);
 });

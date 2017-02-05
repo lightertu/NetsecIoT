@@ -22,11 +22,6 @@ function coapServicesStringParser(serviceString) {
     return services;
 }
 
-module.exports = {
-    server: server,
-    coapDevicesMap: coapDevicesMap,
-    port: port
-};
 
 server.on('request', function(req, res) {
     let deviceAddress = req.rsinfo.address;
@@ -40,3 +35,27 @@ server.on('request', function(req, res) {
         }
     } 
 });
+
+coapDevicesMap.set(
+    "fe80::bc11:96ff:fedb:2717",
+    [
+        { path: '/actuator/led', method: '4' },
+        { path: '/cli/stats', method: '1' },
+        { path: '/sensor/temperature', method: '1' }
+    ]
+);
+
+coapDevicesMap.set(
+    "fe10::bc11:96ff:fedb:2717",
+    [
+        { path: '/actuator/led', method: '4' },
+        { path: '/cli/stats', method: '1' },
+        { path: '/sensor/temperature', method: '1' }
+    ]
+);
+
+module.exports = {
+    server: server,
+    coapDevicesMap: coapDevicesMap,
+    port: port
+};
