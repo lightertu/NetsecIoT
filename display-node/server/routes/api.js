@@ -5,36 +5,41 @@ let coapDevicesMap = coapServer.coapDevicesMap;
 
 // routes
 router.get('/devices', function(req, res){
-    let coapDeviceList = { list: [] };
+    let coapDeviceList = []
     coapDevicesMap.forEach(function(value, key){
-        coapDeviceList.list.push(
-            JSON.stringify({
+        coapDeviceList.push(
+            {
                 ipAddress: key,
-                paths: value
-            })
+                paths: value.paths,
+                name: value.name,
+                description: value.description,
+            }
         );
     });
 
-    res.send(JSON.stringify(coapDeviceList));
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(coapDeviceList), null, 3);
 });
 
-router.get('devices/:ipAddress', function(req, res){
+let findDeviceByAddress = function (ipAddress, callback) {
+    if (!coapDevicesMap.get(ipAddress)) {
+        return callback(new Error(
+                'No device found ' + ipAddress
+            )
+        );
+    }
+    return callback(null, coapDevicesMap.get(ipAddress));
+};
+
+router.get('/devices/:ipAddress', function(req, res, next){
     let deviceIPAddress = req.params.ipAddress;
-    res.send(JSON.stringify(coapDevicesMap.get(deviceIPAddress)));
-});
-
-// this will change the information of the device
-router.put('devices/:ipAddress', function(req, res, next){
-
-});
-
-// this will send commands to iot devices
-router.get('devices/:ipAddress/get', function(req, res, next){
-
-});
-
-router.put('devices/:ipAddress/put', function(req, res, next){
-
+    findDeviceByAddress(deviceIPAddress, function(error, device) {
+        if (error) {
+            return next(error);
+        }
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(coapDevicesMap.get(deviceIPAddress)));
+    })
 });
 
 module.exports = router;

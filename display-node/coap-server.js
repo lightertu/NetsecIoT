@@ -22,7 +22,6 @@ function coapServicesStringParser(serviceString) {
     return services;
 }
 
-
 server.on('request', function(req, res) {
     let deviceAddress = req.rsinfo.address;
     if (req.url == "/devices") {
@@ -36,22 +35,33 @@ server.on('request', function(req, res) {
     } 
 });
 
+/* fake test data */
 coapDevicesMap.set(
     "fe80::bc11:96ff:fedb:2717",
-    [
-        { path: '/actuator/led', method: '4' },
-        { path: '/cli/stats', method: '1' },
-        { path: '/sensor/temperature', method: '1' }
-    ]
+    {
+        paths: [
+            {path: '/actuator/led', method: '4'},
+            {path: '/cli/stats', method: '1'},
+            {path: '/sensor/temperature', method: '1'}
+        ],
+
+        name: "rasberry pi",
+        description: "a whatever device"
+    }
 );
 
 coapDevicesMap.set(
-    "fe10::bc11:96ff:fedb:2717",
-    [
-        { path: '/actuator/led', method: '4' },
-        { path: '/cli/stats', method: '1' },
-        { path: '/sensor/temperature', method: '1' }
-    ]
+    "fe10::bc11:96ff:fedb:3000",
+    {
+        paths: [
+            {path: '/actuator/led', method: '4'},
+            {path: '/cli/stats', method: '1'},
+            {path: '/sensor/temperature', method: '1'}
+        ],
+
+        name: "samr-xpro",
+        description: "a whatever device"
+    }
 );
 
 module.exports = {
