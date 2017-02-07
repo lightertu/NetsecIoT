@@ -6,10 +6,8 @@ let coapDevicesMap = new HashMap();
 
 function coapServicesStringParser(serviceString) {
     let raw_services = serviceString.split(",");
-
     let services = [];
     raw_services.pop();
-
     for (let i = 0; i < raw_services.length; i++) {
         let s = raw_services[i].split("|");
         let newService = {
@@ -18,7 +16,6 @@ function coapServicesStringParser(serviceString) {
         };
         services.push(newService);
     }
-
     return services;
 }
 
@@ -32,7 +29,7 @@ server.on('request', function(req, res) {
             coapDevicesMap.set(deviceAddress, servicesArray);
             console.log(servicesArray);
         }
-    } 
+    }
 });
 
 /* fake test data */
