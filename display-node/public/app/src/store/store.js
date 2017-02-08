@@ -3,7 +3,7 @@
  */
 import { applyMiddleware, createStore } from 'redux';
 import { iotControllerApp } from '../reducers/reducers';
-import { fetchDeviceList } from '../actions/actions';
+import { refreshDeviceList } from '../actions/actions';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 
@@ -18,8 +18,8 @@ let unsubscribe = store.subscribe(() =>
 
 setInterval( () => {
     store.dispatch((dispatch)=> {
-        fetchDeviceList()(dispatch);
+        (refreshDeviceList())(dispatch);
     });
-}, 2000);
+}, 1000);
 
 export default store;
