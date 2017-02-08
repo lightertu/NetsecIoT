@@ -33,7 +33,7 @@ export default class DeviceGallery extends React.Component {
         });
         return (
             <div class="container">
-                <PageHeader name="Devices" description="iott"/>
+                <PageHeader name="Devices" description = { "Online: " +  this.state.devices.length}/>
                 <div class="row">
                     { devicesComponentList }
                 </div>
