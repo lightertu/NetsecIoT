@@ -3,12 +3,22 @@ export default class DeviceThumbnail extends React.Component {
     constructor(){
         super();
     }
+    convertName (name) {
+        let convertedName = "";
+        for (let i = 0; i < name.length; i++) {
+            if (name[i] != ' ') {
+                convertedName += name[i].toLowerCase();
+            }
+        }
+
+        return convertedName;
+    }
     render() {
         return (
             <div class="col-md-4 portfolio-item">
                 <div>
                     <a href="#">
-                        <img class="img-responsive" width={ "700 "} height={ "500" } src={ "../../assets/imgs/" + this.props.name + ".jpg"} alt="" />
+                        <img class="img-responsive" width={ "700 "} height={ "500" } src={ "../../assets/imgs/" + this.convertName(this.props.name) + ".jpg"} alt="" />
                     </a>
                     <h3>
                         <a href={ "http://localhost:8080/api/devices/" + this.props.ipAddress }> { this.props.name} </a>

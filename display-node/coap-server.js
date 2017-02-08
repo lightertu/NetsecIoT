@@ -26,7 +26,13 @@ server.on('request', function(req, res) {
             console.log("Found new node: " + deviceAddress);
             let serviceString = req.payload.toString('ascii');
             let servicesArray = coapServicesStringParser(serviceString);
-            coapDevicesMap.set(deviceAddress, servicesArray);
+            coapDevicesMap.set(deviceAddress,
+                {
+                    paths: servicesArray,
+                    name: "samr21-xpro",
+                    description: "an awesome device"
+                }
+            );
             console.log(servicesArray);
         }
     }
@@ -42,7 +48,7 @@ coapDevicesMap.set(
             {path: '/sensor/temperature', method: '1'}
         ],
 
-        name: "raspberrypi",
+        name: "samr21-xpro",
         description: "a whatever device"
     }
 );
@@ -56,8 +62,11 @@ coapDevicesMap.set(
             {path: '/sensor/temperature', method: '1'}
         ],
 
-        name: "samr21-xpro",
-        description: "a whatever device"
+        name: "Raspberry Pi",
+        description: "The Raspberry Pi is a series of small single-board " +
+                     "computers developed in the United Kingdom by the Raspberry Pi " +
+                     "Foundation to promote the teaching of basic computer science in schools " +
+                     "and in developing countries."
     }
 );
 
