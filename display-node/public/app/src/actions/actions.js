@@ -6,9 +6,11 @@ export const RECEIVED_DEVICE_LIST = "REFRESH_DEVICE_LIST";
 export const FETCH_DEVICE_LIST_ERROR = "REFRESH_DEVICE_LIST";
 import axios from 'axios';
 
+const IOT_SERVER_URL = "http://localhost:8080";
+
 let refreshDeviceList = function() {
     return function(dispatch){
-        axios.get("http://localhost:8080/api/devices")
+        axios.get(IOT_SERVER_URL + "/api/devices")
             .then((response) => {
                 dispatch(receivedDeviceList(response.data));
             })
@@ -27,4 +29,3 @@ let receivedDeviceListError = function(error) {
 };
 
 export { refreshDeviceList, receivedDeviceList, receivedDeviceListError };
-
