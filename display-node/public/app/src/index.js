@@ -5,22 +5,26 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { Router, Route, IndexRoute, browserHistory, hashHistory} from "react-router"
+import { Provider } from "react-redux";
 
 /* custom files */
 import DeviceGallery from './components/DeviceGallery.js'
 import About from './components/About.js'
 import NavBar from './components/NavBar.js'
+import store from './store/store.js'
 
 class App extends React.Component {
     render() {
        return(
-           <div>
-               <NavBar />
-               <Router history={ hashHistory }>
-                   <Route path={"/"} component={ DeviceGallery }/>
-                   <Route path={ "/about" } component= { About } />
-               </Router>
-           </div>
+           <Provider store={ store }>
+               <div>
+                   <NavBar />
+                   <Router history={ hashHistory }>
+                       <Route path={"/"} component={ DeviceGallery }/>
+                       <Route path={ "/about" } component= { About } />
+                   </Router>
+               </div>
+           </Provider>
        );
     }
 }
