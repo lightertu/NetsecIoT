@@ -29,7 +29,7 @@ module.exports = {
                 loader: 'babel-loader',
                 query: {
                     presets: ['react', 'es2015', 'stage-2'],
-                    plugins: ['react-html-attrs', 'transform-class-properties']
+                    plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy']
                 }
             }
         ]
