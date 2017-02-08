@@ -8,7 +8,7 @@ export default class DeviceThumbnail extends React.Component {
             <div class="col-md-4 portfolio-item">
                 <div>
                     <a href="#">
-                        <img class="img-responsive" src={ "../../assets/imgs/" + this.props.name + ".jpg"} alt="" />
+                        <img class="img-responsive" width={ "700 "} height={ "500" } src={ "../../assets/imgs/" + this.props.name + ".jpg"} alt="" />
                     </a>
                     <h3>
                         <a href={ "http://localhost:8080/api/devices/" + this.props.ipAddress }> { this.props.name} </a>
