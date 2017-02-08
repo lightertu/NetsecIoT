@@ -42,7 +42,7 @@ coapDevicesMap.set(
             {path: '/sensor/temperature', method: '1'}
         ],
 
-        name: "rasberry pi",
+        name: "raspberrypi",
         description: "a whatever device"
     }
 );
@@ -56,7 +56,7 @@ coapDevicesMap.set(
             {path: '/sensor/temperature', method: '1'}
         ],
 
-        name: "samr-xpro",
+        name: "samr21-xpro",
         description: "a whatever device"
     }
 );
