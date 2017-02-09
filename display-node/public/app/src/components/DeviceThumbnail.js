@@ -1,4 +1,5 @@
 import React from "react"
+import { IOT_SERVER_URL }  from "../index"
 export default class DeviceThumbnail extends React.Component {
     constructor(){
         super();
@@ -21,7 +22,7 @@ export default class DeviceThumbnail extends React.Component {
                         <img class="img-responsive" width={ "700 "} height={ "500" } src={ "../../assets/imgs/" + this.convertName(this.props.name) + ".jpg"} alt="" />
                     </a>
                     <h3>
-                        <a href={ "http://localhost:8080/api/devices/" + this.props.ipAddress }> { this.props.name} </a>
+                        <a href={ IOT_SERVER_URL + "/api/devices/" + this.props.ipAddress }> { this.props.name} </a>
                     </h3>
                     <p>{ this.props.description } </p>
                     <p><code>{ this.props.ipAddress }</code></p>

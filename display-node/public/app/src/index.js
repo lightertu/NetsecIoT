@@ -13,6 +13,8 @@ import About from './components/About.js'
 import NavBar from './components/NavBar.js'
 import store from './store/store.js'
 
+export const IOT_SERVER_URL = "http://192.168.1.141:8080";
+
 class App extends React.Component {
     render() {
        return(
@@ -22,7 +24,7 @@ class App extends React.Component {
                    <Router history={ hashHistory }>
                        <Route path={"/"} component={ DeviceGallery }/>
                        <Route path={"/devices"} component={ DeviceGallery }/>
-                       <Route path={ "/about" } component= { About } />
+                       <Route path={ "/about" } component={ About } />
                    </Router>
                </div>
            </Provider>

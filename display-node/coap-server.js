@@ -20,6 +20,7 @@ function coapServicesStringParser(serviceString) {
 }
 
 server.on('request', function(req, res) {
+    console.log("got request from: " + req);
     let deviceAddress = req.rsinfo.address;
     if (req.url == "/devices") {
         if (!coapDevicesMap.has(deviceAddress)) {
