@@ -20,7 +20,6 @@ function coapServicesStringParser(serviceString) {
 }
 
 server.on('request', function(req, res) {
-    console.log("got request from: " + req);
     let deviceAddress = req.rsinfo.address;
     if (req.url == "/devices") {
         if (!coapDevicesMap.has(deviceAddress)) {
@@ -39,37 +38,37 @@ server.on('request', function(req, res) {
     }
 });
 
-/* fake test data */
-coapDevicesMap.set(
-    "fe80::bc11:96ff:fedb:2717",
-    {
-        paths: [
-            {path: '/actuator/led', method: '4'},
-            {path: '/cli/stats', method: '1'},
-            {path: '/sensor/temperature', method: '1'}
-        ],
+// /* fake test data */
+// coapDevicesMap.set(
+//     "fe80::bc11:96ff:fedb:2717",
+//     {
+//         paths: [
+//             {path: '/actuator/led', method: '4'},
+//             {path: '/cli/stats', method: '1'},
+//             {path: '/sensor/temperature', method: '1'}
+//         ],
 
-        name: "samr21-xpro",
-        description: "a whatever device"
-    }
-);
+//         name: "samr21-xpro",
+//         description: "a whatever device"
+//     }
+// );
 
-coapDevicesMap.set(
-    "fe10::bc11:96ff:fedb:3000",
-    {
-        paths: [
-            {path: '/actuator/led', method: '4'},
-            {path: '/cli/stats', method: '1'},
-            {path: '/sensor/temperature', method: '1'}
-        ],
+// coapDevicesMap.set(
+//     "fe10::bc11:96ff:fedb:3000",
+//     {
+//         paths: [
+//             {path: '/actuator/led', method: '4'},
+//             {path: '/cli/stats', method: '1'},
+//             {path: '/sensor/temperature', method: '1'}
+//         ],
 
-        name: "Raspberry Pi",
-        description: "The Raspberry Pi is a series of small single-board " +
-                     "computers developed in the United Kingdom by the Raspberry Pi " +
-                     "Foundation to promote the teaching of basic computer science in schools " +
-                     "and in developing countries."
-    }
-);
+//         name: "Raspberry Pi",
+//         description: "The Raspberry Pi is a series of small single-board " +
+//                      "computers developed in the United Kingdom by the Raspberry Pi " +
+//                      "Foundation to promote the teaching of basic computer science in schools " +
+//                      "and in developing countries."
+//     }
+// );
 
 module.exports = {
     server: server,

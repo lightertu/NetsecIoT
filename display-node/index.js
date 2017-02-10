@@ -24,6 +24,7 @@ let mongoose = require('mongoose');
     app.use(require("webpack-hot-middleware")(compiler, {
         log: console.log, path: '/__webpack_hmr', heartbeat: 10 * 1000
     }));
+
 })();
 
 // MongoDB
@@ -48,7 +49,7 @@ app.listen(port, function() {
     console.log('web server is running on ' + port);
 });
 
-// the default CoAP port is 5683
+// the default CoAP port is 6666
 coapServer.server.listen(coapServer.port, function() {
     console.log("coap server is running start, listening on port: " + coapServer.port);
 });

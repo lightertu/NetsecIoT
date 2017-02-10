@@ -22,7 +22,7 @@
     "babel-preset-stage-2": "^6.22.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.16.0",
-    "coap": "^0.2.0",
+    "coap": "^0.19.0",
     "express": "^4.14.1",
     "hashmap": "^2.0.6",
     "mongoose": "^4.8.1",
