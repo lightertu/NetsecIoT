@@ -1,12 +1,9 @@
 import React from "react"
-import { IOT_SERVER_URL }  from "../index"
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
-import Avatar from 'material-ui/Avatar';
-import Chip from 'material-ui/Chip';
 import FontIcon from 'material-ui/FontIcon';
-import SvgIconFace from 'material-ui/svg-icons/action/face';
-import {blue300, indigo900} from 'material-ui/styles/colors';
+import RaisedButton from 'material-ui/RaisedButton';
+import DeviceDashboard from "./DeviceDashboard"
 
 const styles = {
     chip: {
@@ -16,32 +13,21 @@ const styles = {
         display: 'flex',
         flexWrap: 'wrap',
     },
+    button: {
+        margin: 12,
+    },
 };
 
-import Toggle from 'material-ui/Toggle';
 export default class DeviceThumbnail extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            expanded: false,
+            dashboardOpen: false,
         };
     }
 
-    handleExpandChange = (expanded) => {
-        this.setState({expanded: expanded});
-    };
 
-    handleToggle = (event, toggle) => {
-        this.setState({expanded: toggle});
-    };
-
-    handleExpand = () => {
-        this.setState({expanded: true});
-    };
-
-    handleReduce = () => {
-        this.setState({expanded: false});
-    };
+    dashbordToggle = () => this.setState( { dashboardOpen: !this.state.dashboardOpen } );
 
     convertName (name) {
         let convertedName = "";
@@ -61,14 +47,17 @@ export default class DeviceThumbnail extends React.Component {
                     <img class="img-responsive" src={ "../../assets/imgs/" + this.convertName(this.props.name) + ".jpg"} alt="" />
                     </CardMedia>
                     <CardText>
-                        <Toggle
-                            toggled={this.state.expanded}
-                            onToggle={this.handleToggle}
-                            labelPosition="right"
-                            label="Control Panel"
+                        <RaisedButton
+                            icon={ <FontIcon className="material-icons">settings</FontIcon>}
+                            label="Control"
+                            secondary={ true }
+                            style={styles.button}
+                            onClick={ this.dashbordToggle } primary={true}
+                            target="_blank"
                         />
                     </CardText>
                 </Card>
+                <DeviceDashboard open={ this.state.dashboardOpen } toggle={ this.dashbordToggle }/>
             </div>
         );
     }
