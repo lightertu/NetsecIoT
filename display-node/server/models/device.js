@@ -8,7 +8,7 @@ let deviceSchema = new mongoose.Schema({
     name: String,
     nodeType: String,
     description: String,
-    paths: [ { String, Number}  ]
+    paths: [ { String, Number } ]
 });
 
 module.exports = mongoose.model('Device', deviceSchema);
