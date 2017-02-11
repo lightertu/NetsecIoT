@@ -14,10 +14,10 @@ import SideMenu from "./SideMenu"
 export default class NavBar extends React.Component {
     constructor(){
         super();
-        this.state = { open: false };
+        this.state = { drawerOpen: false };
     }
 
-    handleToggle = () => this.setState({open: !this.state.open});
+    handleToggle = () => this.setState( { drawerOpen: !this.state.drawerOpen } );
 
     render(){
         return (
@@ -29,7 +29,6 @@ export default class NavBar extends React.Component {
                         onLeftIconButtonTouchTap={ this.handleToggle }
                     />
                 </nav>
-                <SideMenu open={ this.state.open }/>
             </div>
         );
     }
