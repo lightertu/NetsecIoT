@@ -15,14 +15,17 @@ export default class DeviceGallery extends React.Component {
     }
 
     render() {
-        const devicesComponentList = this.props.deviceList.map(deviceObj =>{
+        let deviceList = this.props.deviceList;
+
+        const devicesComponentList = deviceList.map(deviceObj => {
             return ( <DeviceThumbnail
-                        key={ deviceObj.ipAddress }
-                        name={ deviceObj.name }
-                        description={ deviceObj.description }
-                        ipAddress={ deviceObj.ipAddress}
-                    /> );
+                key={ deviceObj.ipAddress }
+                name={ deviceObj.name }
+                description={ deviceObj.description }
+                ipAddress={ deviceObj.ipAddress}
+            /> )
         });
+
         return (
             <div class="container">
                 <PageHeader name="Devices" description = { "Online: " +  this.props.deviceList.length}/>

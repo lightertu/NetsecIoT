@@ -4,7 +4,7 @@
 /* library files */
 import React from "react"
 import ReactDOM from "react-dom"
-import { Router, Route, IndexRoute, browserHistory, hashHistory} from "react-router"
+import { Router, Route, hashHistory} from "react-router"
 import { Provider } from "react-redux";
 
 /* custom files */
@@ -13,7 +13,7 @@ import About from './components/About.js'
 import NavBar from './components/NavBar.js'
 import store from './store/store.js'
 
-export const IOT_SERVER_URL = "http://192.168.0.100:8080";
+export const IOT_SERVER_URL = "http://localhost:8080";
 
 class App extends React.Component {
     render() {
