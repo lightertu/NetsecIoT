@@ -14,7 +14,7 @@ const initialState = {
 let iotControllerApp = (state = initialState, action) => {
     switch (action.type) {
         case REFRESH_DEVICE_LIST:
-            return { deviceList: action.payload};
+            return { deviceList: action.payload };
         case RECEIVED_DEVICE_LIST:
             return state;
         case FETCH_DEVICE_LIST_ERROR:

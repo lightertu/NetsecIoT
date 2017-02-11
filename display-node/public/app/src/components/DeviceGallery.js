@@ -16,7 +16,6 @@ export default class DeviceGallery extends React.Component {
 
     render() {
         let deviceList = this.props.deviceList;
-
         const devicesComponentList = deviceList.map(deviceObj => {
             return ( <DeviceThumbnail
                 key={ deviceObj.ipAddress }

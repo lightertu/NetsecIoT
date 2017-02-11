@@ -2,7 +2,7 @@ let coap           = require('coap');
 let port           = 6666;
 let server         = coap.createServer({ type: 'udp6' });
 let nodeCache      = require('node-cache');
-let deviceMap      = new nodeCache( { stdTTL: 60, checkperiod: 60 } );
+let deviceMap      = new nodeCache( { stdTTL: 15, checkperiod: 15 } );
 
 let coapServicesStringParser = function(serviceString) {
     let rawServices = serviceString.split(",");
