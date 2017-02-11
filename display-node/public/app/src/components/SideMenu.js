@@ -16,9 +16,10 @@ export default class SideMenu extends React.Component {
             <div>
                 <Drawer
                     docked={ false }
-                    width={ 300 }
+                    width={ 350 }
                     open={ this.props.open }
                     onRequestChange={ this.props.toggle }
+                    disableSwipeToOpen={ true }
                 >
                     <Menu>
                         <MenuItem onTouchTap={ this.props.toggle } >Menu Item</MenuItem>

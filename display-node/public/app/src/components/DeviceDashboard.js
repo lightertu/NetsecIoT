@@ -19,7 +19,7 @@ const styles = {
     },
 
     block: {
-        maxWidth: 250,
+        maxWidth: 100,
     },
     toggle: {
     },
