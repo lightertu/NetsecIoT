@@ -4,8 +4,10 @@
 /* library files */
 import React from "react"
 import ReactDOM from "react-dom"
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Router, Route, hashHistory} from "react-router"
 import { Provider } from "react-redux";
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
 /* custom files */
 import DeviceGallery from './components/DeviceGallery.js'
@@ -15,19 +17,23 @@ import store from './store/store.js'
 
 export const IOT_SERVER_URL = "http://localhost:8080";
 
+injectTapEventPlugin();
+
 class App extends React.Component {
     render() {
        return(
-           <Provider store={ store }>
-               <div>
-                   <NavBar />
-                   <Router history={ hashHistory }>
-                       <Route path={"/"} component={ DeviceGallery }/>
-                       <Route path={"/devices"} component={ DeviceGallery }/>
-                       <Route path={ "/about" } component={ About } />
-                   </Router>
-               </div>
-           </Provider>
+           <MuiThemeProvider>
+               <Provider store={ store }>
+                   <div>
+                       <NavBar />
+                       <Router history={ hashHistory }>
+                           <Route path={"/"} component={ DeviceGallery }/>
+                           <Route path={"/devices"} component={ DeviceGallery }/>
+                           <Route path={ "/about" } component={ About } />
+                       </Router>
+                   </div>
+               </Provider>
+           </MuiThemeProvider>
        );
     }
 }
