@@ -14,6 +14,6 @@ setInterval( () => {
     store.dispatch((dispatch)=> {
         (refreshDeviceList())(dispatch);
     });
-}, 1000);
+}, 2000);
 
 export default store;

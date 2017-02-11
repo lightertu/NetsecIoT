@@ -3,9 +3,14 @@
  */
 import React from "react"
 import Drawer from 'material-ui/Drawer';
+import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 
 export default class SideMenu extends React.Component {
+    constructor(){
+        super();
+    }
+
     render(){
         return (
             <div>
@@ -13,10 +18,12 @@ export default class SideMenu extends React.Component {
                     docked={ false }
                     width={ 300 }
                     open={ this.props.open }
-                    onRequestChange={ (open) => this.setState({ open }) }
+                    onRequestChange={ this.props.toggle }
                 >
-                    <MenuItem onTouchTap={this.handleClose}>Menu Item</MenuItem>
-                    <MenuItem onTouchTap={this.handleClose}>Menu Item 2</MenuItem>
+                    <Menu>
+                        <MenuItem onTouchTap={ this.props.toggle } >Menu Item</MenuItem>
+                        <MenuItem onTouchTap={ this.props.toggle }>Menu Item 2</MenuItem>
+                    </Menu>
                 </Drawer>
             </div>
         );

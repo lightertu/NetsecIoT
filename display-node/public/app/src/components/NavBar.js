@@ -17,7 +17,7 @@ export default class NavBar extends React.Component {
         this.state = { drawerOpen: false };
     }
 
-    handleToggle = () => this.setState( { drawerOpen: !this.state.drawerOpen } );
+    drawerToggle = () => this.setState( { drawerOpen: !this.state.drawerOpen } );
 
     render(){
         return (
@@ -26,9 +26,10 @@ export default class NavBar extends React.Component {
                     <AppBar
                         title= "Netsec"
                         iconClassNameRight="muidocs-icon-navigation-expand-more"
-                        onLeftIconButtonTouchTap={ this.handleToggle }
+                        onLeftIconButtonTouchTap={ this.drawerToggle }
                     />
                 </nav>
+                <SideMenu open={ this.state.drawerOpen } toggle= { this.drawerToggle }/>
             </div>
         );
     }

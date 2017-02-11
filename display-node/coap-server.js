@@ -38,7 +38,6 @@ let getDeviceList = function() {
             }
         })
     }
-
     return deviceList;
 };
 
@@ -100,10 +99,6 @@ deviceMap.set(
                      "and in developing countries."
     }
 );
-
-setInterval(function(){
-    console.log(deviceMap.keys());
-}, 2000);
 
 module.exports = {
     server: server,
