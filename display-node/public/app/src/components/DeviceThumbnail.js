@@ -1,6 +1,5 @@
 import React from "react"
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 import DeviceDashboard from "./DeviceDashboard"
@@ -19,8 +18,8 @@ const styles = {
 };
 
 export default class DeviceThumbnail extends React.Component {
-    constructor(props){
-        super(props);
+    constructor(){
+        super();
         this.state = {
             dashboardOpen: false,
         };
@@ -29,22 +28,25 @@ export default class DeviceThumbnail extends React.Component {
 
     dashbordToggle = () => this.setState( { dashboardOpen: !this.state.dashboardOpen } );
 
-    convertName (name) {
+    convertName (deviceName) {
         let convertedName = "";
-        for (let i = 0; i < name.length; i++) {
-            if (name[i] != ' ') {
-                convertedName += name[i].toLowerCase();
+        for (let i = 0; i < deviceName.length; i++) {
+            if (deviceName[i] != ' ') {
+                convertedName += deviceName[i].toLowerCase();
             }
         }
 
         return convertedName;
     }
+
     render() {
+        let device = this.props.device;
+        let imageSrc = "../../assets/imgs/" + this.convertName(device.name) + ".jpg";
         return (
             <div class="col-md-4 portfolio-item">
                 <Card>
-                    <CardMedia overlay={ <CardTitle title={ this.props.name } subtitle={ <samp> { this.props.ipAddress } </samp> }/> }>
-                    <img class="img-responsive" src={ "../../assets/imgs/" + this.convertName(this.props.name) + ".jpg"} alt="" />
+                    <CardMedia overlay={ <CardTitle title={ device.name } subtitle={ <samp> { device.ipAddress } </samp> }/> }>
+                    <img class="img-responsive" src={ imageSrc } alt="" />
                     </CardMedia>
                     <CardText>
                         <RaisedButton
@@ -57,7 +59,12 @@ export default class DeviceThumbnail extends React.Component {
                         />
                     </CardText>
                 </Card>
-                <DeviceDashboard open={ this.state.dashboardOpen } toggle={ this.dashbordToggle }/>
+                <DeviceDashboard
+                    open={ this.state.dashboardOpen }
+                    toggle={ this.dashbordToggle }
+                    device={ device }
+                    imageSrc={ imageSrc }
+                />
             </div>
         );
     }

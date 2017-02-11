@@ -15,7 +15,7 @@ import About from './components/About.js'
 import NavBar from './components/NavBar.js'
 import store from './store/store.js'
 
-export const IOT_SERVER_URL = "http://192.168.1.141:8080";
+export const IOT_SERVER_URL = "http://localhost:8080";
 
 injectTapEventPlugin();
 
