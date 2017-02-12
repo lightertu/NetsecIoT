@@ -7,6 +7,28 @@ import { refreshDeviceList } from '../actions/actions';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 
+/*
+Device {
+    name: String,
+        ipAddress: String,
+        sensors: [ Sensor ],
+        actuators: [ Actuator ],
+}
+
+Actuator {
+    name: String,
+    path: String,
+    payloadType: String
+    status: String,
+}
+
+Sensor {
+    name: String,
+    path: String,
+    status: String
+}
+*/
+
 const middleware = applyMiddleware(thunk, logger());
 const store = createStore(iotControllerApp, middleware);
 

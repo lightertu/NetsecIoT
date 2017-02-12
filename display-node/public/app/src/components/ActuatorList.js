@@ -28,10 +28,11 @@ export default class ActuatorList extends React.Component {
 
     render() {
         let device = this.props.device;
+        let index = 0;
         const actuatorComponent = device.actuators.map((actuator) => {
             return (
                 <ListItem
-                    key={ actuator.name }
+                    key={ index++ }
                     disabled={ true }
                     insetChildren={ true }
                 >

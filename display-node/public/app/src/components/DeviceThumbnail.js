@@ -1,5 +1,5 @@
 import React from "react"
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 import DeviceDashboard from "./DeviceDashboard"
@@ -8,14 +8,8 @@ const styles = {
     chip: {
         margin: 4,
     },
-    wrapper: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    button: {
-        margin: 12,
-    },
 };
+
 
 export default class DeviceThumbnail extends React.Component {
     constructor(){
@@ -24,7 +18,6 @@ export default class DeviceThumbnail extends React.Component {
             dashboardOpen: false,
         };
     }
-
 
     dashbordToggle = () => this.setState( { dashboardOpen: !this.state.dashboardOpen } );
 
@@ -47,7 +40,10 @@ export default class DeviceThumbnail extends React.Component {
         return (
             <div class="col-md-4 portfolio-item">
                 <Card>
-                    <CardMedia overlay={ <CardTitle title={ device.name } subtitle={ <samp> { device.ipAddress } </samp> }/> }>
+                    <CardMedia overlay={ <CardTitle title={ device.name }
+                                                    subtitle={ <samp> { device.ipAddress } </samp> }
+                                         /> }
+                    >
                     <img class="img-responsive" src={ imageSrc } alt="" />
                     </CardMedia>
                     <CardText>
