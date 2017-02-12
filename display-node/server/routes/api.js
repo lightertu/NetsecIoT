@@ -32,6 +32,8 @@ router.get('/devices/:ipAddress', function(req, res, next){
     })
 });
 
+
+// routes talking to iot devices
 router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpResponse, next){
     let deviceIPAddress = httpRequest.params.ipAddress,
         sensorName = httpRequest.params.name;
@@ -39,7 +41,6 @@ router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpRespons
     deviceMap.get(deviceIPAddress, function(err, value){
         if (!err) {
             if (value == undefined) {
-                httpResponse.setHeader('Content-Type', 'text/plain');
                 httpResponse.send(deviceIPAddress + " is offline");
             } else {
                 let coapRequest = coap.request(
@@ -53,11 +54,17 @@ router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpRespons
 
                 coapRequest.on('response', function (coapResponse) {
                     let coapPayload = coapResponse.payload.toString('ascii');
-                    httpResponse.setHeader('Content-Type', 'application/json');
                     httpResponse.send(coapPayload);
                 });
 
+                coapRequest.on('error', function (error) {
+                    console.log(error);
+                });
+
                 coapRequest.end();
+                setTimeout(function(){
+                    httpResponse.send("request device: " + deviceIPAddress + " timeout");
+                }, 2000);
             }
         } else {
             httpResponse.send(err);
@@ -72,7 +79,6 @@ router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
     deviceMap.get(deviceIPAddress, function(err, value){
         if (!err) {
             if (value == undefined) {
-                httpResponse.setHeader('Content-Type', 'text/plain');
                 httpResponse.send(deviceIPAddress + " is offline");
             } else {
                 let coapRequest = coap.request(
@@ -84,13 +90,21 @@ router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
                     }
                 );
 
-                coapRequest.write(httpRequest.payload.toString('ascii'));
+                console.log(httpRequest);
+                coapRequest.write(httpRequest.body);
                 coapRequest.on('response', function (coapResponse) {
                     let coapPayload = coapResponse.payload.toString('ascii');
-                    httpResponse.setHeader('Content-Type', 'application/json');
                     httpResponse.send(coapPayload);
                 });
+
+                coapRequest.on('error', function (error) {
+                    console.log(error);
+                });
+
                 coapRequest.end();
+                setTimeout(function(){
+                    httpResponse.send("request device: " + deviceIPAddress + " timeout" + " got " + httpRequest.body );
+                }, 2000);
             }
         } else {
             httpResponse.send(err);
