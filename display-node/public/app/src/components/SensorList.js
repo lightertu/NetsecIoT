@@ -20,9 +20,9 @@ export default class SensorList extends React.Component {
    }
 
    render() {
-       let ipAddress = this.props.ipAddress,
-           sensors =  this.props.sensors;
-       const sensorComponents = sensors.map((sensor) => {
+       let device =  this.props.device;
+
+       const sensorComponents = device.sensors.map((sensor) => {
            return (
                <ListItem
                    key={ sensor.name }

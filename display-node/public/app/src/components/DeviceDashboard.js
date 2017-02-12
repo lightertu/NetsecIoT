@@ -16,12 +16,12 @@ export default class DeviceDashboard extends React.Component {
 
     render(){
         let device = this.props.device;
-        let sensors = [
+        device.sensors = [
             { name: "temperature" },
             { name: "fire" },
         ];
 
-        let actuators = [
+        device.actuators = [
             { name: "led" },
             { name: "fan" },
         ];
@@ -43,8 +43,8 @@ export default class DeviceDashboard extends React.Component {
                     <Divider />
 
                     <List>
-                        <SensorList ipAddress = { device.ipAddress } sensors={ sensors }/>
-                        <ActuatorList ipAddress = { device.ipAddress } actuators={ actuators }/>
+                        <SensorList ipAddress = { device.ipAddress } device={ device }/>
+                        <ActuatorList ipAddress = { device.ipAddress } device={ device }/>
                     </List>
                 </Drawer>
             </div>

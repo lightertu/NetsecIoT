@@ -41,7 +41,9 @@ export default class DeviceThumbnail extends React.Component {
 
     render() {
         let device = this.props.device;
+
         let imageSrc = "../../assets/imgs/" + this.convertName(device.name) + ".jpg";
+
         return (
             <div class="col-md-4 portfolio-item">
                 <Card>
@@ -50,10 +52,10 @@ export default class DeviceThumbnail extends React.Component {
                     </CardMedia>
                     <CardText>
                         <RaisedButton
-                            icon={ <FontIcon className="material-icons">settings</FontIcon>}
+                            icon={ <FontIcon className="material-icons">settings</FontIcon> }
                             label="Control"
                             secondary={ true }
-                            style={styles.button}
+                            style={ styles.button }
                             onClick={ this.dashbordToggle } primary={true}
                             target="_blank"
                         />

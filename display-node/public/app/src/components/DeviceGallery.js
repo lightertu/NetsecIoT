@@ -9,7 +9,6 @@ import PageHeader from "./PageHeader.js"
         deviceList: store.deviceList
     });
 })
-
 export default class DeviceGallery extends React.Component {
     constructor() {
         super();
@@ -17,10 +16,11 @@ export default class DeviceGallery extends React.Component {
 
     render() {
         let deviceList = this.props.deviceList;
-        const devicesThumbnailComponents = deviceList.map(deviceObj => {
+
+        const devicesThumbnailComponents = deviceList.map(device => {
             return ( <DeviceThumbnail
-                key={ deviceObj.ipAddress }
-                device= { deviceObj }
+                key={ device.ipAddress }
+                device= { device }
             /> )
         });
 
