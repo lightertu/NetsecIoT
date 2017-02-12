@@ -4,7 +4,6 @@
 import axios from 'axios';
 import { IOT_SERVER_URL } from "../index"
 
-
 let refreshDeviceList = function() {
     return function(dispatch){
         axios.get(IOT_SERVER_URL + "/api/devices")

@@ -8,6 +8,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Router, Route, hashHistory} from "react-router"
 import { Provider } from "react-redux";
 import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 
 /* custom files */
 import DeviceGallery from './components/DeviceGallery.js'
@@ -16,8 +17,6 @@ import NavBar from './components/NavBar.js'
 import store from './store/store.js'
 
 export const IOT_SERVER_URL = "http://localhost:8080";
-
-injectTapEventPlugin();
 
 class App extends React.Component {
     render() {
@@ -37,6 +36,7 @@ class App extends React.Component {
        );
     }
 }
+
 
 const app = document.getElementById("app");
 ReactDOM.render( <App/> ,app);

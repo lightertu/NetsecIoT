@@ -3,42 +3,11 @@
  */
 import React from "react"
 import Drawer from 'material-ui/Drawer';
-import Toggle from 'material-ui/Toggle';
 import List from 'material-ui/List/List';
-import ListItem from 'material-ui/List/ListItem';
 import Divider from 'material-ui/Divider';
-import Avatar from 'material-ui/Avatar';
-import FontIcon from 'material-ui/FontIcon';
-import Chip from 'material-ui/Chip';
-import Slider from 'material-ui/Slider';
 import { CardHeader } from 'material-ui/Card';
-
-const styles = {
-    chip: {
-        margin: 4,
-    },
-
-    block: {
-        maxWidth: 100,
-    },
-    toggle: {
-    },
-    thumbOff: {
-        backgroundColor: '#ffcccc',
-    },
-    trackOff: {
-        backgroundColor: '#ff9d9d',
-    },
-    thumbSwitched: {
-        backgroundColor: 'red',
-    },
-    trackSwitched: {
-        backgroundColor: '#ff9d9d',
-    },
-    labelStyle: {
-        color: 'red',
-    },
-};
+import SensorList from './SensorList';
+import ActuatorList from './ActuatorList';
 
 export default class DeviceDashboard extends React.Component {
     constructor(){
@@ -47,6 +16,16 @@ export default class DeviceDashboard extends React.Component {
 
     render(){
         let device = this.props.device;
+        let sensors = [
+            { name: "temperature" },
+            { name: "fire" },
+        ];
+
+        let actuators = [
+            { name: "led" },
+            { name: "fan" },
+        ];
+
         return (
             <div>
                 <Drawer
@@ -62,48 +41,10 @@ export default class DeviceDashboard extends React.Component {
                         avatar={ this.props.imageSrc }
                     />
                     <Divider />
+
                     <List>
-                        <ListItem
-                            disabled={true}
-                            leftAvatar={
-                                <Avatar icon={ <FontIcon className="material-icons">memory</FontIcon> } />
-                            }
-                        >
-                            Sensors
-                        </ListItem>
-                        <Divider inset={true} />
-
-                            <ListItem
-                                disabled={ true }
-                                insetChildren={ true }
-                                primaryText={ "Temperature:" }
-                                rightAvatar={ <Chip style = {styles.chip} > 99F</Chip>}
-                            >
-                            </ListItem>
-
-                        <ListItem
-                            disabled={true}
-                            leftAvatar={
-                                <Avatar icon={ <FontIcon className="material-icons">toys</FontIcon> } />
-                            }
-                        >
-                            Actuators
-                        </ListItem>
-                        <Divider inset={true} />
-                        <ListItem disabled={ true } insetChildren={ true }>
-                            <Toggle
-                                label="LED"
-                                style={styles.toggle}
-                            />
-                        </ListItem>
-                        <ListItem
-                            disabled={ true }
-                            insetChildren={ true }
-                            rightAvatar={ <Chip style = {styles.chip} > 99F</Chip>}
-                        >
-                            Thermostats
-                            <Slider step={0.10} value={0.5} />
-                        </ListItem>
+                        <SensorList ipAddress = { device.ipAddress } sensors={ sensors }/>
+                        <ActuatorList ipAddress = { device.ipAddress } actuators={ actuators }/>
                     </List>
                 </Drawer>
             </div>

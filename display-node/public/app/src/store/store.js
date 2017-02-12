@@ -10,12 +10,10 @@ import thunk from 'redux-thunk';
 const middleware = applyMiddleware(thunk, logger());
 const store = createStore(iotControllerApp, middleware);
 
-/*
 setInterval( () => {
     store.dispatch((dispatch)=> {
         (refreshDeviceList())(dispatch);
     });
 }, 2000);
-*/
 
 export default store;
