@@ -28,8 +28,8 @@ let mongoose = require('mongoose');
 })();
 
 // MongoDB
-// mongoose.connect('mongodb://localhost/iot');
-// let db = mongoose.connection;
+mongoose.connect('mongodb://localhost/iot');
+let db = mongoose.connection;
 
 // express
 app.use(bodyParser.json());

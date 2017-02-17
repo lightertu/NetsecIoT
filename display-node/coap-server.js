@@ -3,26 +3,11 @@ let port           = 6666;
 let server         = coap.createServer({ type: 'udp6' });
 let nodeCache      = require('node-cache');
 let deviceMap      = new nodeCache( { stdTTL: 12000, checkperiod: 1 } );
+let mongoose       = require('mongoose');
 
-/*
-Device {
-    name: String,
-    ipAddress: String,
-    sensors: [ Sensor ],
-    actuators: [ Actuator ],
-}
+// mongoose.createConnection('mongodb://localhost/iot');
+// let db = mongoose.connection;
 
-Actuator {
-    name: String,
-    path: String,
-    payloadType: String
-}
-
-Sensor {
-    name: String,
-    path: String,
-}
-*/
 let coapServicesStringParser = function(serviceString) {
     let rawServices = serviceString.split(",");
     let services = [];
@@ -37,11 +22,6 @@ let coapServicesStringParser = function(serviceString) {
     }
     return services;
 };
-
-let coapDeviceParser = function(serviceString) {
-
-};
-
 let getDeviceList = function() {
     let deviceList = [];
     deviceMap.keys( function( err, keys ){

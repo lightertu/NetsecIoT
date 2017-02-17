@@ -19,7 +19,7 @@ let refreshDeviceList = function() {
 let fetchSensorData = function(deviceIndex, sensorIndex, sensorName, ipAddress) {
     return function(dispatch) {
         axios.get(IOT_SERVER_URL + "/api/devices/" + ipAddress + "/" + sensorName)
-            .then((response)=>{
+            .then((response)=> {
                 dispatch(receivedSensorData(deviceIndex, sensorIndex, response.data));
             })
             .catch((error) => {

@@ -1,14 +1,19 @@
 /**
  * Created by rui on 2/4/17.
  */
-// dependencies
+
 let mongoose = require('mongoose');
-let deviceSchema = new mongoose.Schema({
+let Schema = mongoose.Schema;
+
+let Sensor = require('./sensor');
+let Actuator = require('./actuator');
+
+let deviceSchema = new Schema({
     ipAddress: String,
     name: String,
-    nodeType: String,
     description: String,
-    paths: [ { String, Number } ]
+    sensorList: [ Sensor ],
+    actuatorList: [ Actuator ]
 });
 
 module.exports = mongoose.model('Device', deviceSchema);
