@@ -16,16 +16,6 @@ export default class DeviceDashboard extends React.Component {
 
     render(){
         let device = this.props.device;
-        device.sensors = [
-            { name: "temperature" },
-            { name: "fire" },
-        ];
-
-        device.actuators = [
-            { name: "led" },
-            { name: "fan" },
-        ];
-
         return (
             <div>
                 <Drawer

@@ -56,7 +56,7 @@ module.exports = {
 };
 
 /* test code */
-let exampleAdvertisingString = "/sensor/temperature,1|/actuator/led,4|/sensor/fire,1";
+let exampleAdvertisingString = "/sensor/temperature,1|/actuator/led,4|/sensor/water,1";
 let ip = "fe80::bc11:96ff:fedb:400";
 let ip2 = "fe90::bc11:96ff:fedb:3000";
 let ip3 = "fe80::bc11:96ff:fedb:7000";

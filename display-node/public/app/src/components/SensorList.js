@@ -21,16 +21,14 @@ export default class SensorList extends React.Component {
 
    render() {
        let device =  this.props.device;
-       let index = 0;
-
-       const sensorComponents = device.sensors.map((sensor) => {
+       const sensorComponents = device.sensorList.map((sensor) => {
            return (
                <ListItem
-                   key={ index++ }
+                   key={ sensor._id }
                    disabled={ true }
                    insetChildren={ true }
                    primaryText={ sensor.name }
-                   rightAvatar={ <Chip style = { styles.chip } > 99F</Chip> }
+                   rightAvatar={ <Chip style = { styles.chip } > { sensor.status }</Chip> }
                >
                </ListItem>
            );
