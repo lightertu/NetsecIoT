@@ -7,7 +7,7 @@
   <version>1.0</version>
   <packaging>jar</packaging>
 
-  <name>coap-client</name>
+  <name>rpi-node</name>
   <url>http://maven.apache.org</url>
 
   <properties>
