@@ -20,13 +20,18 @@ let fetchDeviceList = function() {
 
 let fetchSensorData = function(ipAddress, sensorIndex, sensorPath) {
     return function(dispatch) {
-        dispatch({ type: FETCH_SENSOR_DATA, ipAddress: ipAddress, sensorIndex: sensorIndex });
+        dispatch({
+            type: FETCH_SENSOR_DATA,
+            ipAddress: ipAddress,
+            sensorIndex: sensorIndex,
+            payload:  "fetching"
+        });
         axios.get(IOT_SERVER_URL + "/api/devices/" + ipAddress + sensorPath)
             .then((response)=> {
                 dispatch(receivedSensorData(ipAddress, sensorIndex, response.data));
             })
             .catch((error) => {
-                dispatch(receivedSensorDataError(error))
+                dispatch(receivedSensorDataError(ipAddress, error))
             });
     }
 };
@@ -51,12 +56,13 @@ let receivedDeviceListError = function(error) {
     return { type: RECEIVED_DEVICE_LIST_ERROR, payload: error };
 };
 
-let receivedSensorDataError = function(error) {
-    return { type: RECEIVED_SENSOR_DATA_ERROR, payload: error };
-};
-
-let dumpAction = function() {
-    return { type: "dumpactuin" };
+let receivedSensorDataError = function(ipAddress, sensorIndex) {
+    return {
+        type: RECEIVED_SENSOR_DATA,
+        ipAddress: ipAddress,
+        sensorIndex: sensorIndex,
+        payload: "error"
+    }
 };
 
 export {
@@ -68,9 +74,6 @@ export {
 
     receivedDeviceListError,
     receivedSensorDataError,
-
-    // test
-    dumpAction
 };
 
 /* fetching */

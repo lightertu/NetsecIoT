@@ -1,5 +1,5 @@
 import React from "react"
-import {Card, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import { Card, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 import DeviceDashboard from "./DeviceDashboard";
@@ -26,10 +26,14 @@ export default class DeviceThumbnail extends React.Component {
 
         // this logic is kind of strange
         if (!this.state.dashboardOpen) {
+            // execute immediately
             this.props.fetchSensorData(this.props.device);
+
+            // interval loop
             this.dataFetchingId = setInterval( () => {
                 this.props.fetchSensorData(this.props.device);
             }, 1000);
+
         } else {
             clearInterval(this.dataFetchingId);
         }

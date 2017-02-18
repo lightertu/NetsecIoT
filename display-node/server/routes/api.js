@@ -3,7 +3,7 @@ let coapServer = require('../coap/coapServer');
 let coap = require('coap');
 let router = express.Router();
 let Device = require('../models/device');
-let DEV_MODE = 1;
+let DEV_MODE = 0;
 
 /* routes */
 router.get('/devices', function(req, res){
@@ -16,7 +16,6 @@ router.get('/devices', function(req, res){
             res.send(JSON.stringify( deviceList ), null, 3);
         }
     });
-
 });
 
 router.get('/devices/:ipAddress', function(req, res, next){
@@ -67,7 +66,7 @@ router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpRespons
 
                     coapRequest.end();
                     setTimeout(function () {
-                        httpResponse.send("sensor get request timeout");
+                        httpResponse.send("timeout");
                     }, 2000);
 
                 }
@@ -114,7 +113,7 @@ router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
 
                     coapRequest.end();
                     setTimeout(function () {
-                        httpResponse.send("actuator put request time out");
+                        httpResponse.send("timeout");
                     }, 2000);
                 }
             }
