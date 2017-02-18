@@ -20,6 +20,8 @@ import * as actions from "../actions/actions"
                     actions.fetchSensorData(device.ipAddress, i, sensor.path)(dispatch);
                 }
             }
+
+            // TODO: implement controlling actuator
         }
     }
 )

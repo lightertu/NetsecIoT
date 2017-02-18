@@ -16,12 +16,15 @@ export default class DeviceThumbnail extends React.Component {
         this.state = {
             dashboardOpen: false,
         };
+
         this.dataFetchingId = 0;
     }
 
     dashbordToggle = () => {
         // here sensor data will be fetched
         this.setState( { dashboardOpen: !this.state.dashboardOpen } );
+
+        // this logic is kind of strange
         if (!this.state.dashboardOpen) {
             this.props.fetchSensorData(this.props.device);
             this.dataFetchingId = setInterval( () => {
