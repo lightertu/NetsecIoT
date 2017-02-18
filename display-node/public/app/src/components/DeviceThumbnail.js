@@ -19,7 +19,11 @@ export default class DeviceThumbnail extends React.Component {
         };
     }
 
-    dashbordToggle = () => this.setState( { dashboardOpen: !this.state.dashboardOpen } );
+    dashbordToggle = () => {
+        // here sensor data will be fetched
+
+        this.setState( { dashboardOpen: !this.state.dashboardOpen } );
+    };
 
     convertName (deviceName) {
         let convertedName = "";
