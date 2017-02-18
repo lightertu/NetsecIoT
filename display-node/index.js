@@ -5,7 +5,7 @@ let port = process.env.PORT || 8080;
 let morgan = require('morgan');
 let bodyParser = require('body-parser');
 let path = require('path');
-let coapServer = require('./coap-server.js');
+let coapServer = require('./server/coap/coapServer.js');
 let mongoose = require('mongoose');
 
 // webpack hot loading
@@ -24,12 +24,7 @@ let mongoose = require('mongoose');
     app.use(require("webpack-hot-middleware")(compiler, {
         log: console.log, path: '/__webpack_hmr', heartbeat: 10 * 1000
     }));
-
 })();
-
-// MongoDB
-mongoose.connect('mongodb://localhost/iot');
-let db = mongoose.connection;
 
 // express
 app.use(bodyParser.json());

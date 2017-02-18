@@ -5,15 +5,27 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
-let Sensor = require('./sensor');
-let Actuator = require('./actuator');
-
 let deviceSchema = new Schema({
-    ipAddress: String,
-    name: String,
-    description: String,
-    sensorList: [ Sensor ],
-    actuatorList: [ Actuator ]
+    ipAddress: { type: String },
+    name: { type: String, default: "samr21-xpro" },
+    description: { type: String, default: "riot device" },
+
+    sensorList: [
+        {
+            name: { type: String },
+            path: { type: String },
+            status: { type: String }
+        }
+    ],
+
+    actuatorList: [
+        {
+            name: { type: String },
+            path: { type: String },
+            dataFormat: { type: String },
+            status: { type: String }
+        }
+    ]
 });
 
 module.exports = mongoose.model('Device', deviceSchema);

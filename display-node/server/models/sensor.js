@@ -5,9 +5,10 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let sensorSchema = new Schema ({
-    name: String,
-    path: String,
-    status: String
+    name: { type: String },
+    path: { type: String },
+    status: { type: String, default: "null" }
 });
 
-module.exports = mongoose.model('Sensor', sensorSchema);
+let Sensor = mongoose.model('Sensor', sensorSchema);
+module.exports = Sensor;

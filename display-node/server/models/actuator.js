@@ -5,10 +5,11 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let actuatorSchema = new Schema ({
-    name: String,
-    path: String,
-    dataFormat: String,
-    status: String
+    name: { type: String },
+    path: { type: String },
+    dataFormat: { type: String },
+    status: { type: String, default: "null" }
 });
 
-module.exports = mongoose.model('Actuator', actuatorSchema);
+let Actuator = mongoose.model('Actuator', actuatorSchema);
+module.exports = Actuator;

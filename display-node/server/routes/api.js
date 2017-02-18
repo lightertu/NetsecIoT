@@ -1,51 +1,52 @@
 let express = require('express') ;
-let coapServer = require('../../coap-server');
+let coapServer = require('../coap/coapServer');
 let coap = require('coap');
 let router = express.Router();
-let deviceMap = coapServer.deviceMap;
+let Device = require('../models/device');
 
-// routes
+/* routes */
 router.get('/devices', function(req, res){
-    let deviceList = coapServer.getDeviceList();
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify( deviceList ), null, 3);
-});
+    //noinspection JSUnresolvedFunction
+    Device.find({}, function(err, deviceList){
+        if (err) {
+            throw err;
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify( deviceList ), null, 3);
+        }
+    });
 
-let findDeviceByAddress = function (ipAddress, callback) {
-    if (!deviceMap.get(ipAddress)) {
-        return callback(new Error(
-                'No device found ' + ipAddress
-            )
-        );
-    }
-    return callback(null, deviceMap.get(ipAddress));
-};
+});
 
 router.get('/devices/:ipAddress', function(req, res, next){
-    let deviceIPAddress = req.params.ipAddress;
-    findDeviceByAddress(deviceIPAddress, function(error, device) {
-        if (error) {
-            return next(error);
+    let deviceAddress = req.params.ipAddress;
+    //noinspection JSUnresolvedFunction
+    Device.findOne({ ipAddress: deviceAddress }, function(err, device) {
+        if (err) {
+            throw err;
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(device));
         }
-        res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify(deviceMap.get(deviceIPAddress)));
-    })
+    });
 });
-
 
 // routes talking to iot devices
 router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpResponse, next){
-    let deviceIPAddress = httpRequest.params.ipAddress,
+    let deviceAddress = httpRequest.params.ipAddress,
         sensorName = httpRequest.params.name;
 
-    deviceMap.get(deviceIPAddress, function(err, value){
-        if (!err) {
-            if (value == undefined) {
-                httpResponse.send(deviceIPAddress + " is offline");
+    //noinspection JSUnresolvedFunction
+    Device.findOne( { ipAddress: deviceAddress, 'sensorList.name': sensorName }, function(err, device) {
+        if (err) {
+            throw err;
+        } else {
+            if (device == null) {
+                httpResponse.send("device not found, or doesn't not have sensor: " + sensorName);
             } else {
                 let coapRequest = coap.request(
                     {
-                        hostname: deviceIPAddress,
+                        hostname: deviceAddress,
                         pathname: "sensor/" + sensorName,
                         port: 5683,
                         method: 'GET'
@@ -58,39 +59,41 @@ router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpRespons
                 });
 
                 coapRequest.on('error', function (error) {
+                    console.log("coap get request error");
                     console.log(error);
                 });
 
                 coapRequest.end();
                 setTimeout(function(){
-                    httpResponse.send("request device: " + deviceIPAddress + " timeout");
+                    httpResponse.send("sensor get request timeout");
                 }, 2000);
+
             }
-        } else {
-            httpResponse.send(err);
         }
     });
 });
 
 router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpResponse, next){
-    let deviceIPAddress = httpRequest.params.ipAddress,
+    let deviceAddress = httpRequest.params.ipAddress,
         actuatorName = httpRequest.params.name;
 
-    deviceMap.get(deviceIPAddress, function(err, value){
-        if (!err) {
-            if (value == undefined) {
-                httpResponse.send(deviceIPAddress + " is offline");
+    //noinspection JSUnresolvedFunction
+    Device.findOne( { ipAddress: deviceAddress, 'actuatorList.name': actuatorName }, function(err, device) {
+        if (err) {
+            throw err;
+        } else {
+            if (device == null) {
+                httpResponse.send("device not found, or doesn't not have actuator: " + actuatorName);
             } else {
                 let coapRequest = coap.request(
                     {
-                        hostname: deviceIPAddress,
+                        hostname: deviceAddress,
                         pathname: "actuator/" + actuatorName,
                         port: 5683,
                         method: 'PUT'
                     }
                 );
 
-                console.log(httpRequest);
                 coapRequest.write(httpRequest.body);
                 coapRequest.on('response', function (coapResponse) {
                     let coapPayload = coapResponse.payload.toString('ascii');
@@ -98,16 +101,15 @@ router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
                 });
 
                 coapRequest.on('error', function (error) {
+                    console.log("coap put request error");
                     console.log(error);
                 });
 
                 coapRequest.end();
                 setTimeout(function(){
-                    httpResponse.send("request device: " + deviceIPAddress + " timeout" + " got " + httpRequest.body );
+                    httpResponse.send("actuator put request time out");
                 }, 2000);
             }
-        } else {
-            httpResponse.send(err);
         }
     });
 });
