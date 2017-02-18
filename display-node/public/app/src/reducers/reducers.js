@@ -13,17 +13,36 @@ import {
 
 } from '../actions/actions';
 
-const initialState = {
-    deviceList: []
-};
+import { fromJS } from 'immutable';
+
+const initialState = fromJS({
+        deviceList: []
+    },
+);
 
 let iotControllerApp = (state = initialState, action) => {
     switch (action.type) {
         case RECEIVED_DEVICE_LIST:
-            return { deviceList: action.payload };
+            console.log(state);
+            return state.set( 'deviceList', fromJS(action.payload));
+        case RECEIVED_SENSOR_DATA:
+            let deviceIndex = state.get('deviceList')
+                .findIndex(function(device) {
+                    return device.get('ipAddress') === action.ipAddress;
+                });
+
+            let newState = state.setIn(['deviceList', deviceIndex, 'sensorList', action.sensorIndex, 'status'], action.payload);
+
+            return newState;
+        case FETCH_DEVICE_LIST:
+            return state;
+        case "dumpAction":
+            alert("dumpAction");
+            return state;
         default:
             return state;
     }
 };
 
 export { iotControllerApp };
+

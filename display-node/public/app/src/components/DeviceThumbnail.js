@@ -2,7 +2,7 @@ import React from "react"
 import {Card, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
-import DeviceDashboard from "./DeviceDashboard"
+import DeviceDashboard from "./DeviceDashboard";
 
 const styles = {
     chip: {
@@ -10,19 +10,26 @@ const styles = {
     },
 };
 
-
 export default class DeviceThumbnail extends React.Component {
     constructor(){
         super();
         this.state = {
             dashboardOpen: false,
         };
+        this.dataFetchingId = 0;
     }
 
     dashbordToggle = () => {
         // here sensor data will be fetched
-
         this.setState( { dashboardOpen: !this.state.dashboardOpen } );
+        if (!this.state.dashboardOpen) {
+            this.props.fetchSensorData(this.props.device);
+            this.dataFetchingId = setInterval( () => {
+                this.props.fetchSensorData(this.props.device);
+            }, 1000);
+        } else {
+            clearInterval(this.dataFetchingId);
+        }
     };
 
     convertName (deviceName) {

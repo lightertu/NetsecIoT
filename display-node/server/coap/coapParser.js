@@ -21,10 +21,13 @@ let createDevice = function ( ipAddress, advertisingString ) {
             serviceName = endpoints[i].split('/')[2].split(',')[0],
             servicePath = endpoints[i].split(',')[0];
 
+        let sensorIndex = 0,
+            actuatorIndex = 0;
         switch (serviceType){
 
             case("sensor"):
                 let newSensor = new Sensor({
+                    index: sensorIndex++,
                     name: serviceName,
                     path: servicePath,
                     status: "null"
@@ -35,6 +38,7 @@ let createDevice = function ( ipAddress, advertisingString ) {
 
             case("actuator"):
                 let newActuator = new Actuator({
+                    index: actuatorIndex++,
                     name: serviceName,
                     path: servicePath,
                     status: "null",

@@ -12,6 +12,7 @@ let deviceSchema = new Schema({
 
     sensorList: [
         {
+            index: { type: Number }, // this indicates the index of the this sensor in the sensorList
             name: { type: String },
             path: { type: String },
             status: { type: String }
@@ -20,6 +21,7 @@ let deviceSchema = new Schema({
 
     actuatorList: [
         {
+            index: { type: Number }, // this indicates the index of the this actuators in the actuatorList
             name: { type: String },
             path: { type: String },
             dataFormat: { type: String },

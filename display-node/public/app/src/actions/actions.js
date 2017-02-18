@@ -6,7 +6,7 @@ import { IOT_SERVER_URL } from "../index"
 
 /* fetching */
 let fetchDeviceList = function() {
-    return function(dispatch){
+    return function(dispatch) {
         dispatch({ type: FETCH_DEVICE_LIST });
         axios.get(IOT_SERVER_URL + "/api/devices")
             .then((response) => {
@@ -18,12 +18,12 @@ let fetchDeviceList = function() {
     };
 };
 
-let fetchSensorData = function(deviceId, sensorId, sensorName, ipAddress) {
+let fetchSensorData = function(ipAddress, sensorIndex, sensorPath) {
     return function(dispatch) {
-        dispatch({ type: FETCH_SENSOR_DATA, deviceId: deviceId, sensorId: sensorId });
-        axios.get(IOT_SERVER_URL + "/api/devices/" + ipAddress + "/" + sensorName)
+        dispatch({ type: FETCH_SENSOR_DATA, ipAddress: ipAddress, sensorIndex: sensorIndex });
+        axios.get(IOT_SERVER_URL + "/api/devices/" + ipAddress + sensorPath)
             .then((response)=> {
-                dispatch(receivedSensorData(deviceId, sensorId, response.data));
+                dispatch(receivedSensorData(ipAddress, sensorIndex, response.data));
             })
             .catch((error) => {
                 dispatch(receivedSensorDataError(error))
@@ -32,11 +32,11 @@ let fetchSensorData = function(deviceId, sensorId, sensorName, ipAddress) {
 };
 
 /* receive success */
-let receivedSensorData = function(deviceId, sensorId, payload) {
+let receivedSensorData = function(ipAddress, sensorIndex, payload) {
     return {
         type: RECEIVED_SENSOR_DATA,
-        deviceId: deviceId,
-        sensorId: sensorId,
+        ipAddress: ipAddress,
+        sensorIndex: sensorIndex,
         payload: payload
     }
 };
@@ -55,6 +55,10 @@ let receivedSensorDataError = function(error) {
     return { type: RECEIVED_SENSOR_DATA_ERROR, payload: error };
 };
 
+let dumpAction = function() {
+    return { type: "dumpactuin" };
+};
+
 export {
     fetchDeviceList,
     fetchSensorData,
@@ -64,7 +68,11 @@ export {
 
     receivedDeviceListError,
     receivedSensorDataError,
+
+    // test
+    dumpAction
 };
+
 /* fetching */
 export const FETCH_DEVICE_LIST = "FETCH_DEVICE_LIST";
 export const FETCH_SENSOR_DATA = "FETCH_SENSOR_DATA";
