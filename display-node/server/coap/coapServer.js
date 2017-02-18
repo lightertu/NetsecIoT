@@ -12,10 +12,12 @@ let Device           = require('../models/device');
 deviceDatabase.on('error', console.error.bind(console, 'connection error:'));
 deviceDatabase.once('open', function() {
     console.log("successfully connected to the database");
+    Device.remove().exec();
 });
 
 /* it checks if there is a duplicate device, if there is then does not add */
 let saveDevice = function(ip, advertisingString) {
+    //noinspection JSUnresolvedFunction
     Device.findOne({ ipAddress: ip }, function(error, device){
         if (error) {
             throw error;
@@ -45,6 +47,7 @@ server.on('request', function(req, res) {
     }
 });
 
+
 module.exports = {
     server: server,
     port: port,
@@ -54,10 +57,12 @@ module.exports = {
 
 /* test code */
 let exampleAdvertisingString = "/sensor/temperature,1|/actuator/led,4|/sensor/fire,1";
-let ip = "fe80::bc11:96ff:fedb:2717";
-let ip2 = "fe90::bc11:96ff:fedb:2717";
-saveDevice(ip, exampleAdvertisingString);
-saveDevice(ip2, exampleAdvertisingString);
+let ip = "fe80::bc11:96ff:fedb:400";
+let ip2 = "fe90::bc11:96ff:fedb:3000";
+let ip3 = "fe80::bc11:96ff:fedb:7000";
 
-
-
+setInterval(function() {
+    saveDevice(ip, exampleAdvertisingString);
+    saveDevice(ip2, exampleAdvertisingString);
+    saveDevice(ip3, exampleAdvertisingString);
+}, 4000);
