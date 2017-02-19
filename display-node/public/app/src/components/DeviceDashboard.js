@@ -34,7 +34,11 @@ export default class DeviceDashboard extends React.Component {
 
                     <List>
                         <SensorList ipAddress = { device.ipAddress } device={ device }/>
-                        <ActuatorList ipAddress = { device.ipAddress } device={ device }/>
+                        <ActuatorList
+                            ipAddress = { device.ipAddress }
+                            device = { device }
+                            controlActuator={ this.props.controlActuator }
+                        />
                     </List>
                 </Drawer>
             </div>

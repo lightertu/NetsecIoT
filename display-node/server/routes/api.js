@@ -125,7 +125,7 @@ router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
                 throw err;
             } else {
                 if (device == null) {
-                    httpResponse.send("device not found, or doesn't not have actuator: " + actuatorName);
+                    httpResponse.send("actuator not found" + actuatorName);
                 } else {
                     let coapRequest = coap.request(
                         {
@@ -136,7 +136,9 @@ router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
                         }
                     );
 
-                    coapRequest.write(httpRequest.body);
+                    // axios automatically converts string payload to json
+                    // therefore I added a payload property to the payload
+                    coapRequest.write(httpRequest.body.payload);
                     coapRequest.on('response', function (coapResponse) {
                         let coapPayload = coapResponse.payload.toString('ascii');
                         httpResponse.send(coapPayload);

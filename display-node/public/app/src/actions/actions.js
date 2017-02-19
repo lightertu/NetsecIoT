@@ -4,6 +4,8 @@
 import axios from 'axios';
 import { IOT_SERVER_URL } from "../index"
 
+// TODO: Using function factors to reduce redundant code
+
 /* fetching */
 let fetchDeviceList = function() {
     return function(dispatch) {
@@ -37,7 +39,7 @@ let fetchSensorStatus = function(ipAddress, sensorIndex, sensorPath) {
 };
 
 
-let fetchActuatorStatus = function(ipAddress, actuatorIndex, sensorPath) {
+let fetchActuatorStatus = function(ipAddress, actuatorIndex, actuatorPath) {
     return function(dispatch) {
         dispatch({
             type: FETCH_ACTUATOR_STATUS,
@@ -45,7 +47,7 @@ let fetchActuatorStatus = function(ipAddress, actuatorIndex, sensorPath) {
             sensorIndex: actuatorIndex,
             payload:  "fetching"
         });
-        axios.get(IOT_SERVER_URL + "/api/devices/" + ipAddress + sensorPath)
+        axios.get(IOT_SERVER_URL + "/api/devices/" + ipAddress + actuatorPath)
             .then((response)=> {
                 dispatch(receivedActuatorStatus(ipAddress, actuatorIndex, response.data));
             })
@@ -54,6 +56,26 @@ let fetchActuatorStatus = function(ipAddress, actuatorIndex, sensorPath) {
             });
     }
 };
+
+let controlActuator = function(ipAddress, actuatorIndex, actuatorPath, payload) {
+    return function(dispatch) {
+        dispatch({
+            type: CONTROL_ACTUATOR,
+            ipAddress: ipAddress,
+            sensorIndex: actuatorIndex,
+            payload:  "controlling"
+        });
+
+        axios.put(IOT_SERVER_URL + "/api/devices/" + ipAddress + actuatorPath, { payload: payload } )
+            .then((response)=> {
+                dispatch(receivedActuatorStatus(ipAddress, actuatorIndex, response.data));
+            })
+            .catch((error) => {
+                dispatch(receivedActuatorStatusError(ipAddress, error))
+            });
+    }
+};
+
 /* receive success */
 let receivedDeviceList = function(payload) {
     return { type: RECEIVED_DEVICE_LIST, payload: payload };
@@ -104,6 +126,8 @@ export {
     fetchSensorStatus,
     fetchActuatorStatus,
 
+    controlActuator,
+
     receivedDeviceList,
     receivedSensorStatus,
     receivedActuatorStatus,
@@ -117,6 +141,9 @@ export {
 export const FETCH_DEVICE_LIST = "FETCH_DEVICE_LIST";
 export const FETCH_SENSOR_STATUS = "FETCH_SENSOR_STATUS";
 export const FETCH_ACTUATOR_STATUS = "FETCH_ACTUATOR_STATUS";
+
+/* controlling */
+export const CONTROL_ACTUATOR = "CONTROL_ACTUATOR";
 
 /* receive success */
 export const RECEIVED_DEVICE_LIST = "RECEIVED_DEVICE_LIST";

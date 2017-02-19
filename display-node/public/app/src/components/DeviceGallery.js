@@ -26,6 +26,11 @@ import * as actions from "../actions/actions"
                     let actuator = device.actuatorList[i];
                     actions.fetchActuatorStatus(device.ipAddress, i, actuator.path)(dispatch);
                 }
+            },
+
+            controlActuator: (device, actuatorIndex, payload) => {
+                let actuatorPath = device.actuatorList[actuatorIndex].path;
+                actions.controlActuator(device.ipAddress, actuatorIndex, actuatorPath, payload)(dispatch);
             }
         }
     }
@@ -44,6 +49,7 @@ export default class DeviceGallery extends React.Component {
                 device= { device }
                 fetchSensorStatus = { this.props.fetchSensorStatus }
                 fetchActuatorStatus = { this.props.fetchActuatorStatus }
+                controlActuator = { this.props.controlActuator }
             /> )
         });
 

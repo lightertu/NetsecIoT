@@ -6,6 +6,8 @@ import {
     FETCH_SENSOR_STATUS,
     FETCH_ACTUATOR_STATUS,
 
+    CONTROL_ACTUATOR,
+
     RECEIVED_DEVICE_LIST,
     RECEIVED_SENSOR_STATUS,
     RECEIVED_ACTUATOR_STATUS,
@@ -53,6 +55,8 @@ let iotControllerApp = (state = initialState, action) => {
     switch (action.type) {
         case FETCH_SENSOR_STATUS:
             return updateSensorStatus(state, action);
+        case CONTROL_ACTUATOR:
+            return updateActuatorStatus(state, action);
         case RECEIVED_SENSOR_STATUS_ERROR:
             return updateSensorStatus(state, action);
         case RECEIVED_ACTUATOR_STATUS:

@@ -81,6 +81,7 @@ export default class DeviceThumbnail extends React.Component {
                     toggle={ this.dashbordToggle }
                     device={ device }
                     imageSrc={ imageSrc }
+                    controlActuator={ this.props.controlActuator }
                 />
             </div>
         );

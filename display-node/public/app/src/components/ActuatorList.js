@@ -21,13 +21,28 @@ const styles = {
     }
 };
 
+/*
+controlActuator: (device, actuatorIndex, payload) => {
+    let actuatorPath = device.actuatorList[i].path;
+    actions.controlActuator(device.ipAddress, actuatorIndex, actuatorPath, payload);
+}
+*/
+let createToggleHandler = (device, actuatorIndex, controlActuator) => {
+    return (event, toggled) => {
+        let payload = (toggled) ? "1" : "0";
+        controlActuator(device, actuatorIndex, payload);
+    }
+};
+
 export default class ActuatorList extends React.Component {
     constructor(){
         super();
     }
 
+
     render() {
         let device = this.props.device;
+        let actuatorIndex = 0;
         const actuatorComponent = device.actuatorList.map((actuator) => {
             return (
                 <ListItem
@@ -38,7 +53,8 @@ export default class ActuatorList extends React.Component {
                     <Toggle
                         label={ actuator.name }
                         style={ styles.toggle }
-                        defaultToggled={ actuator.status == "1"}
+                        toggled={ actuator.status == "1"}
+                        onToggle={ createToggleHandler(device, actuatorIndex, this.props.controlActuator) }
                     />
                 </ListItem>
             );
