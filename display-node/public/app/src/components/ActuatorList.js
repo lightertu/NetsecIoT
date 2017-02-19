@@ -37,7 +37,8 @@ export default class ActuatorList extends React.Component {
                 >
                     <Toggle
                         label={ actuator.name }
-                        style={styles.toggle}
+                        style={ styles.toggle }
+                        defaultToggled={ actuator.status == "1"}
                     />
                 </ListItem>
             );

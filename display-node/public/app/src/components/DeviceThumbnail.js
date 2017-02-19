@@ -28,10 +28,12 @@ export default class DeviceThumbnail extends React.Component {
         // this logic is kind of strange
         if (!this.state.dashboardOpen) {
             // execute immediately
-            this.props.fetchDeviceStatus(this.props.device);
+            this.props.fetchSensorStatus(this.props.device);
+            this.props.fetchActuatorStatus(this.props.device);
             // interval loop
             this.dataFetchingId = setInterval( () => {
-                this.props.fetchDeviceStatus(this.props.device);
+                this.props.fetchSensorStatus(this.props.device);
+                // interval loop
             }, 1000);
         } else {
             clearInterval(this.dataFetchingId);
