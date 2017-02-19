@@ -14,14 +14,16 @@ import * as actions from "../actions/actions"
     // mapDispatchToProps
     (dispatch) => {
         return {
-            fetchSensorData: (device) => {
+            fetchDeviceStatus: (device) => {
                 for (let i = 0; i < device.sensorList.length; i++) {
                     let sensor = device.sensorList[i];
-                    actions.fetchSensorData(device.ipAddress, i, sensor.path)(dispatch);
+                    actions.fetchSensorStatus(device.ipAddress, i, sensor.path)(dispatch);
+                }
+                for (let i = 0; i < device.actuatorList.length; i++) {
+                    let actuator = device.actuatorList[i];
+                    actions.fetchActuatorStatus(device.ipAddress, i, actuator.path)(dispatch);
                 }
             }
-
-            // TODO: implement controlling actuator
         }
     }
 )
@@ -37,7 +39,7 @@ export default class DeviceGallery extends React.Component {
             return ( <DeviceThumbnail
                 key={ device._id }
                 device= { device }
-                fetchSensorData = { this.props.fetchSensorData }
+                fetchDeviceStatus = { this.props.fetchDeviceStatus }
             /> )
         });
 

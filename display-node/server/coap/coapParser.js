@@ -42,7 +42,7 @@ let createDevice = function ( ipAddress, advertisingString ) {
                     name: serviceName,
                     path: servicePath,
                     status: "null",
-                    dataFormat: "null"
+                    dataFormat: "boolean"
                 });
 
                 newDevice.actuatorList.push(newActuator);

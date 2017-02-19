@@ -3,7 +3,7 @@
  */
 let coap             = require('coap');
 let port             = 6666;
-let server           = coap.createServer({ type: 'udp6' });
+let server           = coap.createServer({ type: 'udp6', multicast: true });
 let mongoose         = require('mongoose');
 let deviceDatabase   = mongoose.connect('mongodb://localhost/iot').connection;
 let coapParser       = require('./coapParser');
@@ -34,7 +34,7 @@ let saveDevice = function(ip, advertisingString) {
                     }
                 });
             } else {
-                console.log("device already existed: " + device.ipAddress);
+               // console.log("device already existed: " + device.ipAddress);
             }
         }
     });
@@ -44,7 +44,9 @@ server.on('request', function(req, res) {
     let deviceAddress = req.rsinfo.address;
     if (req.url == "/devices") {
         saveDevice(deviceAddress, req.payload.toString('ascii'));
+        res.end("Already have you");
     }
+    res.end("Added you to database");
 });
 
 
@@ -56,6 +58,7 @@ module.exports = {
 };
 
 /* test code */
+/*
 let exampleAdvertisingString = "/sensor/temperature,1|/actuator/led,4|/sensor/water,1";
 let ip = "fe80::bc11:96ff:fedb:400";
 let ip2 = "fe90::bc11:96ff:fedb:3000";
@@ -66,3 +69,4 @@ setInterval(function() {
     saveDevice(ip2, exampleAdvertisingString);
     saveDevice(ip3, exampleAdvertisingString);
 }, 4000);
+*/

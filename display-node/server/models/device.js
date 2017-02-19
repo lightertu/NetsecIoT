@@ -24,7 +24,7 @@ let deviceSchema = new Schema({
             index: { type: Number }, // this indicates the index of the this actuators in the actuatorList
             name: { type: String },
             path: { type: String },
-            dataFormat: { type: String },
+            dataFormat: { type: String }, // boolean, string,
             status: { type: String }
         }
     ]

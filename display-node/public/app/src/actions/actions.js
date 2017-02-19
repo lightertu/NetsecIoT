@@ -18,72 +18,112 @@ let fetchDeviceList = function() {
     };
 };
 
-let fetchSensorData = function(ipAddress, sensorIndex, sensorPath) {
+let fetchSensorStatus = function(ipAddress, sensorIndex, sensorPath) {
     return function(dispatch) {
         dispatch({
-            type: FETCH_SENSOR_DATA,
+            type: FETCH_SENSOR_STATUS,
             ipAddress: ipAddress,
             sensorIndex: sensorIndex,
             payload:  "fetching"
         });
         axios.get(IOT_SERVER_URL + "/api/devices/" + ipAddress + sensorPath)
             .then((response)=> {
-                dispatch(receivedSensorData(ipAddress, sensorIndex, response.data));
+                dispatch(receivedSensorStatus(ipAddress, sensorIndex, response.data));
             })
             .catch((error) => {
-                dispatch(receivedSensorDataError(ipAddress, error))
+                dispatch(receivedSensorStatusError(ipAddress, error))
             });
     }
 };
 
+
+let fetchActuatorStatus = function(ipAddress, actuatorIndex, sensorPath) {
+    return function(dispatch) {
+        dispatch({
+            type: FETCH_ACTUATOR_STATUS,
+            ipAddress: ipAddress,
+            sensorIndex: actuatorIndex,
+            payload:  "fetching"
+        });
+        axios.get(IOT_SERVER_URL + "/api/devices/" + ipAddress + sensorPath)
+            .then((response)=> {
+                dispatch(receivedActuatorStatus(ipAddress, actuatorIndex, response.data));
+            })
+            .catch((error) => {
+                dispatch(receivedActuatorStatusError(ipAddress, error))
+            });
+    }
+};
 /* receive success */
-let receivedSensorData = function(ipAddress, sensorIndex, payload) {
+let receivedDeviceList = function(payload) {
+    return { type: RECEIVED_DEVICE_LIST, payload: payload };
+};
+
+let receivedSensorStatus = function(ipAddress, sensorIndex, payload) {
     return {
-        type: RECEIVED_SENSOR_DATA,
+        type: RECEIVED_SENSOR_STATUS,
         ipAddress: ipAddress,
         sensorIndex: sensorIndex,
         payload: payload
     }
 };
 
-let receivedDeviceList = function(payload) {
-    return { type: RECEIVED_DEVICE_LIST, payload: payload };
+let receivedActuatorStatus = function(ipAddress, actuatorIndex, payload) {
+    return {
+        type: RECEIVED_ACTUATOR_STATUS,
+        ipAddress: ipAddress,
+        actuatorIndex: actuatorIndex,
+        payload: payload
+    }
 };
-
 
 /* receive failure */
 let receivedDeviceListError = function(error) {
     return { type: RECEIVED_DEVICE_LIST_ERROR, payload: error };
 };
 
-let receivedSensorDataError = function(ipAddress, sensorIndex) {
+let receivedSensorStatusError = function(ipAddress, sensorIndex) {
     return {
-        type: RECEIVED_SENSOR_DATA,
+        type: RECEIVED_SENSOR_STATUS,
         ipAddress: ipAddress,
         sensorIndex: sensorIndex,
         payload: "error"
     }
 };
 
+let receivedActuatorStatusError = function(ipAddress, actuatorIndex) {
+    return {
+        type: RECEIVED_ACTUATOR_STATUS_ERROR,
+        ipAddress: ipAddress,
+        actuatorIndex: actuatorIndex,
+        payload: "error"
+    }
+};
 export {
     fetchDeviceList,
-    fetchSensorData,
+    fetchSensorStatus,
+    fetchActuatorStatus,
 
     receivedDeviceList,
-    receivedSensorData,
+    receivedSensorStatus,
+    receivedActuatorStatus,
 
     receivedDeviceListError,
-    receivedSensorDataError,
+    receivedSensorStatusError,
+    receivedActuatorStatusError
 };
 
 /* fetching */
 export const FETCH_DEVICE_LIST = "FETCH_DEVICE_LIST";
-export const FETCH_SENSOR_DATA = "FETCH_SENSOR_DATA";
+export const FETCH_SENSOR_STATUS = "FETCH_SENSOR_STATUS";
+export const FETCH_ACTUATOR_STATUS = "FETCH_ACTUATOR_STATUS";
 
 /* receive success */
 export const RECEIVED_DEVICE_LIST = "RECEIVED_DEVICE_LIST";
-export const RECEIVED_SENSOR_DATA = "RECEIVED_SENSOR_DATA";
+export const RECEIVED_SENSOR_STATUS = "RECEIVED_SENSOR_STATUS";
+export const RECEIVED_ACTUATOR_STATUS = "RECEIVED_ACTUATOR_STATUS";
 
 /* receive failure */
 export const RECEIVED_DEVICE_LIST_ERROR = "RECEIVED_DEVICE_LIST_ERROR";
-export const RECEIVED_SENSOR_DATA_ERROR = "RECEIVED_SENSOR_DATA_ERROR";
+export const RECEIVED_SENSOR_STATUS_ERROR = "RECEIVED_SENSOR_STATUS_ERROR";
+export const RECEIVED_ACTUATOR_STATUS_ERROR = "RECEIVED_ACTUATOR_STATUS_ERROR";

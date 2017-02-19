@@ -4,49 +4,73 @@
  ******************************************************************************/
 package org.netsec.iottestbed.nonembedded;
 
+import java.net.*;
 import java.util.concurrent.Executors;
+import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.Request;
-import org.eclipse.californium.core.coap.Response;
 
-import org.netsec.iottestbed.nonembedded.resources.FibonacciResource;
-import org.netsec.iottestbed.nonembedded.resources.HelloWorldResource;
-import org.netsec.iottestbed.nonembedded.resources.ImageResource;
-import org.netsec.iottestbed.nonembedded.resources.LargeResource;
-import org.netsec.iottestbed.nonembedded.resources.MirrorResource;
-import org.netsec.iottestbed.nonembedded.resources.StorageResource;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.EndpointManager;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.netsec.iottestbed.nonembedded.resources.actuators.Actuator;
+import org.netsec.iottestbed.nonembedded.resources.sensors.Sensor;
 
-/**
- * This is an example server that contains a few resources for demonstration.
- */
-public class Server {
+class AdvertingRunnable implements Runnable {
+    private CoapClient _advertisingClient = new CoapClient();
+    private URI _broadcastURI;
 
-    public static void main(String[] args) throws Exception {
-        CoapServer server = new CoapServer();
-        server.setExecutor(Executors.newScheduledThreadPool(4));
+    AdvertingRunnable(){
+        // String uriString = "coap://[ff02::1]:6666/devices";
+        String uriString = "coap://localhost:6666/devices";
+        try {
+            _broadcastURI = new URI(uriString);
+        } catch (URISyntaxException e) {
+            System.err.println("Invalid URI: " + e.getMessage());
+            System.exit(-1);
+        }
 
-        server.add(new HelloWorldResource("hello"));
-        server.add(new FibonacciResource("fibonacci"));
-        server.add(new StorageResource("storage"));
-        server.add(new ImageResource("image"));
-        server.add(new MirrorResource("mirror"));
-        server.add(new LargeResource("large"));
-
-        server.start();
+        _advertisingClient = new CoapClient(_broadcastURI);
     }
 
-    /*
-     *  Sends a GET request to itself
-     */
-    public static void selfTest() {
-        try {
-            Request request = Request.newGet();
-            request.setURI("localhost:5683/hello");
-            request.send();
-            Response response = request.waitForResponse(1000);
-            System.out.println("received "+response);
-        } catch (Exception e) {
-            e.printStackTrace();
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //System.out.println("Advertising............................");
+            String exampleAdvertisingString = "/sensor/temperature,1|/actuator/led,4";
+            _advertisingClient.put(exampleAdvertisingString, 0);
         }
+    }
+}
+
+class Server extends CoapServer {
+    private static final int COAP_PORT = NetworkConfig.getStandard().getInt(NetworkConfig.Keys.COAP_PORT);
+    private Server() {
+        addEndpoints();
+    }
+    private void advertise() {
+        (new Thread(new AdvertingRunnable())).start();
+    }
+    private void addEndpoints() {
+        // IPv4 and IPv6 addresses and localhost
+        for (InetAddress addr : EndpointManager.getEndpointManager().getNetworkInterfaces()) {
+            if (addr instanceof Inet6Address || addr instanceof Inet4Address || addr.isLoopbackAddress()) {
+                InetSocketAddress bindToAddress = new InetSocketAddress(addr, COAP_PORT);
+                addEndpoint(new CoapEndpoint(bindToAddress));
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        Server server = new Server();
+        server.setExecutor(Executors.newScheduledThreadPool(4));
+        server.add(new Sensor());
+        server.add(new Actuator());
+        server.start();
+        server.advertise();
     }
 }

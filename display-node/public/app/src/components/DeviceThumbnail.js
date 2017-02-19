@@ -10,6 +10,7 @@ const styles = {
     },
 };
 
+
 export default class DeviceThumbnail extends React.Component {
     constructor(){
         super();
@@ -21,19 +22,17 @@ export default class DeviceThumbnail extends React.Component {
     }
 
     dashbordToggle = () => {
+
         // here sensor data will be fetched
         this.setState( { dashboardOpen: !this.state.dashboardOpen } );
-
         // this logic is kind of strange
         if (!this.state.dashboardOpen) {
             // execute immediately
-            this.props.fetchSensorData(this.props.device);
-
+            this.props.fetchDeviceStatus(this.props.device);
             // interval loop
             this.dataFetchingId = setInterval( () => {
-                this.props.fetchSensorData(this.props.device);
+                this.props.fetchDeviceStatus(this.props.device);
             }, 1000);
-
         } else {
             clearInterval(this.dataFetchingId);
         }
