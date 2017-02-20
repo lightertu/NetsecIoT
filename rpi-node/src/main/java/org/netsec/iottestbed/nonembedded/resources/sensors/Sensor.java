@@ -1,13 +1,11 @@
 package org.netsec.iottestbed.nonembedded.resources.sensors;
 
-import org.eclipse.californium.core.CoapResource;
+import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 
-/**
- * Created by rui on 2/18/17.
- */
-public class Sensor extends CoapResource{
+
+public class Sensor extends NetsecResource {
     public Sensor() {
-        super("sensor", false);
-        add(new Temperature());
+        super("sensor");
+        addChild(new Temperature());
     }
 }

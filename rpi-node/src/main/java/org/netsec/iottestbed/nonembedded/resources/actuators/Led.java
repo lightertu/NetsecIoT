@@ -1,13 +1,13 @@
 package org.netsec.iottestbed.nonembedded.resources.actuators;
 
-import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 
-class Led extends CoapResource{
+class Led extends NetsecResource {
     private String _status;
 
     Led() {
-        super("led");
+        super("led", "binary");
     }
 
     @Override
@@ -32,7 +32,6 @@ class Led extends CoapResource{
 
         exchange.respond(_status);
     }
-
 
     private void updateStatus() {
         _status = "1";

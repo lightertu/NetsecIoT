@@ -12,14 +12,17 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.EndpointManager;
 import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 import org.netsec.iottestbed.nonembedded.resources.actuators.Actuator;
 import org.netsec.iottestbed.nonembedded.resources.sensors.Sensor;
+
 
 class AdvertingRunnable implements Runnable {
     private CoapClient _advertisingClient = new CoapClient();
     private URI _broadcastURI;
+    private String _adString;
 
-    AdvertingRunnable(){
+    AdvertingRunnable(String adString){
         // String uriString = "coap://[ff02::1]:6666/devices";
         String uriString = "coap://localhost:6666/devices";
         try {
@@ -29,10 +32,10 @@ class AdvertingRunnable implements Runnable {
             System.exit(-1);
         }
 
+        _adString = adString;
         _advertisingClient = new CoapClient(_broadcastURI);
     }
 
-    @Override
     public void run() {
         while (true) {
             try {
@@ -40,21 +43,24 @@ class AdvertingRunnable implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //System.out.println("Advertising............................");
-            String exampleAdvertisingString = "/sensor/temperature,1|/actuator/led,4";
-            _advertisingClient.put(exampleAdvertisingString, 0);
+            System.out.println(_adString);
+            _advertisingClient.put(_adString, 0);
         }
     }
 }
 
 class Server extends CoapServer {
     private static final int COAP_PORT = NetworkConfig.getStandard().getInt(NetworkConfig.Keys.COAP_PORT);
+    private String _adString = "";
+
     private Server() {
         addEndpoints();
     }
+
     private void advertise() {
-        (new Thread(new AdvertingRunnable())).start();
+        (new Thread(new AdvertingRunnable(_adString))).start();
     }
+
     private void addEndpoints() {
         // IPv4 and IPv6 addresses and localhost
         for (InetAddress addr : EndpointManager.getEndpointManager().getNetworkInterfaces()) {
@@ -65,12 +71,23 @@ class Server extends CoapServer {
         }
     }
 
+    private void addResource(NetsecResource resource) {
+        add(resource);
+        for (String path: resource.getSubPaths()) {
+            _adString += path + ",";
+        }
+    }
+
+    public void start() {
+        super.start();
+        advertise();
+    }
+
     public static void main(String[] args) throws Exception {
         Server server = new Server();
         server.setExecutor(Executors.newScheduledThreadPool(4));
-        server.add(new Sensor());
-        server.add(new Actuator());
+        server.addResource(new Sensor());
+        server.addResource(new Actuator());
         server.start();
-        server.advertise();
     }
 }
