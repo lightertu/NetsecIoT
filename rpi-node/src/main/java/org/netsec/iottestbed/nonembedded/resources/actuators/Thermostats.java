@@ -3,7 +3,7 @@ package org.netsec.iottestbed.nonembedded.resources.actuators;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 
-public class Thermostats extends NetsecResource {
+class Thermostats extends NetsecResource {
     private String _status;
 
     Thermostats() {
