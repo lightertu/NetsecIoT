@@ -17,12 +17,12 @@ import org.netsec.iottestbed.nonembedded.resources.actuators.Actuator;
 import org.netsec.iottestbed.nonembedded.resources.sensors.Sensor;
 
 
-class AdvertingRunnable implements Runnable {
+class AdvertisingRunnable implements Runnable {
     private CoapClient _advertisingClient = new CoapClient();
     private URI _broadcastURI;
     private String _adString;
 
-    AdvertingRunnable(String adString){
+    AdvertisingRunnable(String adString){
         // String uriString = "coap://[ff02::1]:6666/devices";
         String uriString = "coap://localhost:6666/devices";
         try {
@@ -58,7 +58,7 @@ class Server extends CoapServer {
     }
 
     private void advertise() {
-        (new Thread(new AdvertingRunnable(_adString))).start();
+        (new Thread(new AdvertisingRunnable(_adString))).start();
     }
 
     private void addEndpoints() {
@@ -71,8 +71,8 @@ class Server extends CoapServer {
         }
     }
 
-    private void addResource(NetsecResource resource) {
-        add(resource);
+    private void add(NetsecResource resource) {
+        super.add(resource);
         for (String path: resource.getSubPaths()) {
             _adString += path + ",";
         }
@@ -86,8 +86,8 @@ class Server extends CoapServer {
     public static void main(String[] args) throws Exception {
         Server server = new Server();
         server.setExecutor(Executors.newScheduledThreadPool(4));
-        server.addResource(new Sensor());
-        server.addResource(new Actuator());
+        server.add(new Sensor());
+        server.add(new Actuator());
         server.start();
     }
 }

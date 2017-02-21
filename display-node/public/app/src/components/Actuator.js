@@ -25,6 +25,7 @@ let createToggleButton = (props) => {
             label   ={ actuator.name }
             style   ={ props.styles.toggle }
             toggled ={ actuator.status == "1"}
+            disabled={ actuator.status == "error"}
             onToggle={ createToggleHandler(props.device, props.actuatorIndex, props.controlActuator) }
         />
     );
@@ -35,12 +36,14 @@ let createSlideBar = (props) => {
     return (
         <div>
             { actuator.name }
+            { actuator.status }
             <Slider
                 min={ 0 }
                 max={ 100 }
                 step={ 1 }
                 defaultValue={ 50 }
                 value={ parseInt(actuator.status) }
+                disabled={ actuator.status == "error"}
                 onChange={createSliderHandler(props.device, props.actuatorIndex, props.controlActuator)}
             />
         </div>

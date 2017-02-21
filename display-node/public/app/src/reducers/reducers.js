@@ -57,8 +57,6 @@ let iotControllerApp = (state = initialState, action) => {
             return updateSensorStatus(state, action);
         case CONTROL_ACTUATOR:
             return updateActuatorStatus(state, action);
-        case RECEIVED_SENSOR_STATUS_ERROR:
-            return updateSensorStatus(state, action);
         case RECEIVED_ACTUATOR_STATUS:
             return updateActuatorStatus(state, action);
         case RECEIVED_DEVICE_LIST:
@@ -68,6 +66,10 @@ let iotControllerApp = (state = initialState, action) => {
             return updateSensorStatus(state, action);
         case FETCH_DEVICE_LIST:
             return state;
+        case RECEIVED_ACTUATOR_STATUS_ERROR:
+            return updateActuatorStatus(state, action);
+        case RECEIVED_SENSOR_STATUS_ERROR:
+            return updateSensorStatus(state, action);
         default:
             return state;
     }

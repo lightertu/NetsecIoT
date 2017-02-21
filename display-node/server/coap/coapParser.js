@@ -3,7 +3,7 @@
  */
 let Device = require('../models/device');
 
-let exampleAdvertisingString = "/sensor/temperature:number,/actuator/led:boolean,/sensor/fire:number,";
+// let exampleAdvertisingString = "/sensor/temperature:number,/actuator/led:boolean,/sensor/fire:number,";
 // create a Device Object
 
 let createDevice = function ( ipAddress, advertisingString ) {

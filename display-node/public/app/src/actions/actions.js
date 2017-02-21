@@ -71,7 +71,7 @@ let controlActuator = function(ipAddress, actuatorIndex, actuatorPath, payload) 
                 dispatch(receivedActuatorStatus(ipAddress, actuatorIndex, response.data));
             })
             .catch((error) => {
-                dispatch(receivedActuatorStatusError(ipAddress, error))
+                dispatch(receivedActuatorStatusError(ipAddress, actuatorIndex))
             });
     }
 };
@@ -106,7 +106,7 @@ let receivedDeviceListError = function(error) {
 
 let receivedSensorStatusError = function(ipAddress, sensorIndex) {
     return {
-        type: RECEIVED_SENSOR_STATUS,
+        type: RECEIVED_SENSOR_STATUS_ERROR,
         ipAddress: ipAddress,
         sensorIndex: sensorIndex,
         payload: "error"
