@@ -17,6 +17,6 @@ class Temperature extends NetsecResource {
     }
 
     private void updateStatus() {
-        _status = Double.toString(Math.random() * 50 + 30);
+        _status = Double.toString(Math.round(Math.random() * 65 + 60));
     }
 }

@@ -75,87 +75,79 @@ router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpRespons
 });
 
 router.get('/devices/:ipAddress/actuator/:name', function(httpRequest, httpResponse, next){
-    if (!DEV_MODE) {
-        let deviceAddress = httpRequest.params.ipAddress,
-            actuatorName = httpRequest.params.name;
+    let deviceAddress = httpRequest.params.ipAddress,
+        actuatorName = httpRequest.params.name;
 
-        //noinspection JSUnresolvedFunction
-        Device.findOne({ipAddress: deviceAddress, 'actuatorList.name': actuatorName}, function (err, device) {
-            if (err) {
-                throw err;
+    //noinspection JSUnresolvedFunction
+    Device.findOne({ipAddress: deviceAddress, 'actuatorList.name': actuatorName}, function (err, device) {
+        if (err) {
+            throw err;
+        } else {
+            if (device == null) {
+                httpResponse.send("device not found");
             } else {
-                if (device == null) {
-                    httpResponse.send("device not found");
-                } else {
-                    let coapRequest = coap.request(
-                        {
-                            hostname: deviceAddress,
-                            pathname: "actuator/" + actuatorName,
-                            port: 5683,
-                            method: 'GET'
-                        }
-                    );
+                let coapRequest = coap.request(
+                    {
+                        hostname: deviceAddress,
+                        pathname: "actuator/" + actuatorName,
+                        port: 5683,
+                        method: 'GET'
+                    }
+                );
 
-                    coapRequest.on('response', function (coapResponse) {
-                        let coapPayload = coapResponse.payload.toString('ascii');
-                        httpResponse.send(coapPayload);
-                    });
+                coapRequest.on('response', function (coapResponse) {
+                    let coapPayload = coapResponse.payload.toString('ascii');
+                    httpResponse.send(coapPayload);
+                });
 
-                    coapRequest.on('error', function (error) {
-                        httpResponse.send("timeout");
-                        next();
-                    });
-                    coapRequest.end();
-                }
+                coapRequest.on('error', function (error) {
+                    httpResponse.send("timeout");
+                    next();
+                });
+                coapRequest.end();
             }
-        });
-    } else {
-        0;
-    }
+        }
+    });
 });
 
 router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpResponse, next){
-    if (!DEV_MODE) {
-        let deviceAddress = httpRequest.params.ipAddress,
-            actuatorName = httpRequest.params.name;
+    let deviceAddress = httpRequest.params.ipAddress,
+        actuatorName = httpRequest.params.name;
 
-        //noinspection JSUnresolvedFunction
-        Device.findOne({ipAddress: deviceAddress, 'actuatorList.name': actuatorName}, function (err, device) {
-            if (err) {
-                throw err;
+    //noinspection JSUnresolvedFunction
+    Device.findOne({ipAddress: deviceAddress, 'actuatorList.name': actuatorName}, function (err, device) {
+        if (err) {
+            throw err;
+        } else {
+            if (device == null) {
+                httpResponse.send("actuator not found" + actuatorName);
             } else {
-                if (device == null) {
-                    httpResponse.send("actuator not found" + actuatorName);
-                } else {
-                    let coapRequest = coap.request(
-                        {
-                            hostname: deviceAddress,
-                            pathname: "actuator/" + actuatorName,
-                            port: 5683,
-                            method: 'PUT'
-                        }
-                    );
+                let coapRequest = coap.request(
+                    {
+                        hostname: deviceAddress,
+                        pathname: "actuator/" + actuatorName,
+                        port: 5683,
+                        method: 'PUT'
+                    }
+                );
 
-                    // axios automatically converts string payload to json
-                    // therefore I added a payload property to the payload
-                    coapRequest.write(httpRequest.body.payload);
-                    coapRequest.on('response', function (coapResponse) {
-                        let coapPayload = coapResponse.payload.toString('ascii');
-                        httpResponse.send(coapPayload);
-                    });
+                // axios automatically converts string payload to json
+                // therefore I added a payload property to the payload
+                coapRequest.write(httpRequest.body.payload);
+                coapRequest.on('response', function (coapResponse) {
+                    let coapPayload = coapResponse.payload.toString('ascii');
+                    httpResponse.send(coapPayload);
+                });
 
-                    coapRequest.on('error', function (error) {
-                        httpResponse.send("timeout");
-                        next();
-                    });
+                coapRequest.on('error', function (error) {
+                    httpResponse.send("timeout");
+                    next();
+                });
 
-                    coapRequest.end();
-                }
+                coapRequest.end();
             }
-        });
-    } else {
-        httpResponse.send("ON");
-    }
+        }
+    });
 });
 
 module.exports = router;

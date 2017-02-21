@@ -22,26 +22,28 @@ export default class ActuatorList extends React.Component {
         super();
     }
 
+    /*
+<ListItem
+key={ actuator._id }
+disabled={ true }
+insetChildren={ true }
+>
+
+     </ListItem>
+*/
 
     render() {
         let device = this.props.device;
         let actuatorIndex = 0;
         const actuatorComponent = device.actuatorList.map((actuator) => {
             return (
-                <ListItem
-                    key={ actuator._id }
-                    disabled={ true }
-                    insetChildren={ true }
-                >
-
                     <Actuator
+                        key = { actuator._id }
                         styles = { styles }
                         device = { this.props.device }
                         actuatorIndex = { actuatorIndex++ }
                         controlActuator = { this.props.controlActuator }
                     />
-
-                </ListItem>
             );
         });
 

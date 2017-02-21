@@ -33,6 +33,7 @@ client
 target/
 .idea/
 idea/
+out/
 
 # Logs
 logs

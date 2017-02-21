@@ -8,11 +8,11 @@ class Led extends NetsecResource {
 
     Led() {
         super("led", "boolean");
+        updateStatus();
     }
 
     @Override
     public void handleGET(CoapExchange exchange) {
-        updateStatus();
         exchange.respond(_status);
     }
 

@@ -8,11 +8,11 @@ class Thermostats extends NetsecResource {
 
     Thermostats() {
         super("thermostats", "number");
+        updateStatus();
     }
 
     @Override
     public void handleGET(CoapExchange exchange) {
-        updateStatus();
         exchange.respond(_status);
     }
 
