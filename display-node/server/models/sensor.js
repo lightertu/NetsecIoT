@@ -7,7 +7,8 @@ let Schema = mongoose.Schema;
 let sensorSchema = new Schema ({
     name: { type: String },
     path: { type: String },
-    status: { type: String, default: "null" }
+    status: { type: String, default: "null" },
+    dataFormat: { type: String }
 });
 
 let Sensor = mongoose.model('Sensor', sensorSchema);

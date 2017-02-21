@@ -21,7 +21,7 @@ export default class DeviceThumbnail extends React.Component {
         this.dataFetchingId = 0;
     }
 
-    dashbordToggle = () => {
+    dashboardToggle = () => {
 
         // here sensor data will be fetched
         this.setState( { dashboardOpen: !this.state.dashboardOpen } );
@@ -71,14 +71,14 @@ export default class DeviceThumbnail extends React.Component {
                             label="Control"
                             secondary={ true }
                             style={ styles.button }
-                            onClick={ this.dashbordToggle } primary={true}
+                            onClick={ this.dashboardToggle } primary={true}
                             target="_blank"
                         />
                     </CardText>
                 </Card>
                 <DeviceDashboard
                     open={ this.state.dashboardOpen }
-                    toggle={ this.dashbordToggle }
+                    toggle={ this.dashboardToggle }
                     device={ device }
                     imageSrc={ imageSrc }
                     controlActuator={ this.props.controlActuator }

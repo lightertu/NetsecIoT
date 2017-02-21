@@ -7,7 +7,7 @@ class Led extends NetsecResource {
     private String _status;
 
     Led() {
-        super("led", "binary");
+        super("led", "boolean");
     }
 
     @Override

@@ -3,10 +3,6 @@
  */
 import React from "react"
 import Toggle from 'material-ui/Toggle';
-import ListItem from 'material-ui/List/ListItem';
-import Divider from 'material-ui/Divider';
-import Avatar from 'material-ui/Avatar';
-import FontIcon from 'material-ui/FontIcon';
 import Slider from 'material-ui/Slider';
 
 let createToggleHandler = (device, actuatorIndex, controlActuator) => {
@@ -18,12 +14,56 @@ let createToggleHandler = (device, actuatorIndex, controlActuator) => {
 
 let createSliderHandler = (device, actuatorIndex, controlActuator) => {
     return (event, newValue) => {
-        controlActuator(device, actuatorIndex, payload);
+        controlActuator(device, actuatorIndex, newValue.toString());
     }
 };
 
-export default class ActuatorList extends React.Component {
+let createToggleButton = (props) => {
+    let actuator = props.device.actuatorList[props.actuatorIndex];
+    return (
+        <Toggle
+            label   ={ actuator.name }
+            style   ={ props.styles.toggle }
+            toggled ={ actuator.status == "1"}
+            onToggle={ createToggleHandler(props.device, props.actuatorIndex, props.controlActuator) }
+        />
+    );
+};
+
+let createSlideBar = (props) => {
+    let actuator = props.device.actuatorList[props.actuatorIndex];
+    return (
+        <div>
+            { actuator.name }
+            <Slider
+                min={ 0 }
+                max={ 100 }
+                step={ 1 }
+                defaultValue={ 50 }
+                value={ parseInt(actuator.status) }
+                onChange={createSliderHandler(props.device, props.actuatorIndex, props.controlActuator)}
+            />
+        </div>
+    );
+}
+
+
+export default class Actuator extends React.Component {
     constructor(){
         super();
+    }
+
+    render() {
+        let device = this.props.device,
+            actuator = device.actuatorList[this.props.actuatorIndex];
+
+        switch (actuator.dataFormat) {
+            case("boolean"):
+                return createToggleButton(this.props);
+            case("number"):
+                return createSlideBar(this.props);
+            default:
+                return (<div> {"does not support type: " + actuator.dataFormat} </div>)
+        }
     }
 }

@@ -1,16 +1,12 @@
 /**
  * Created by rui on 2/11/17.
  */
-/**
- * Created by rui on 2/11/17.
- */
 import React from "react"
-import Toggle from 'material-ui/Toggle';
 import ListItem from 'material-ui/List/ListItem';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
-import Slider from 'material-ui/Slider';
+import Actuator from './Actuator';
 
 const styles = {
     chip: {
@@ -18,19 +14,6 @@ const styles = {
     },
     toggle: {
         marginRight: 5
-    }
-};
-
-/*
-controlActuator: (device, actuatorIndex, payload) => {
-    let actuatorPath = device.actuatorList[i].path;
-    actions.controlActuator(device.ipAddress, actuatorIndex, actuatorPath, payload);
-}
-*/
-let createToggleHandler = (device, actuatorIndex, controlActuator) => {
-    return (event, toggled) => {
-        let payload = (toggled) ? "1" : "0";
-        controlActuator(device, actuatorIndex, payload);
     }
 };
 
@@ -50,12 +33,14 @@ export default class ActuatorList extends React.Component {
                     disabled={ true }
                     insetChildren={ true }
                 >
-                    <Toggle
-                        label={ actuator.name }
-                        style={ styles.toggle }
-                        toggled={ actuator.status == "1"}
-                        onToggle={ createToggleHandler(device, actuatorIndex, this.props.controlActuator) }
+
+                    <Actuator
+                        styles = { styles }
+                        device = { this.props.device }
+                        actuatorIndex = { actuatorIndex++ }
+                        controlActuator = { this.props.controlActuator }
                     />
+
                 </ListItem>
             );
         });

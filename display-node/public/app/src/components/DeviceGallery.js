@@ -4,6 +4,7 @@ import DeviceThumbnail from "./DeviceThumbnail.js"
 import PageHeader from "./PageHeader.js"
 import * as actions from "../actions/actions"
 
+
 @connect(
     // mapStateToProps
     (store) => {
@@ -11,7 +12,8 @@ import * as actions from "../actions/actions"
             deviceList: store.get('deviceList').toJS(),
         });
     },
-    // mapDispatchToProps
+
+    //
     (dispatch) => {
         return {
             fetchSensorStatus: (device) => {
@@ -43,14 +45,15 @@ export default class DeviceGallery extends React.Component {
     render() {
         let deviceList = this.props.deviceList;
         let deviceCount = deviceList.length;
-        const devicesThumbnailComponents = deviceList.map(device => {
+        const devicesThumbnailComponents = deviceList.map((device) => {
             return ( <DeviceThumbnail
-                key={ device._id }
-                device= { device }
-                fetchSensorStatus = { this.props.fetchSensorStatus }
-                fetchActuatorStatus = { this.props.fetchActuatorStatus }
-                controlActuator = { this.props.controlActuator }
-            /> )
+                        key={ device._id }
+                        device= { device }
+                        fetchSensorStatus = { this.props.fetchSensorStatus }
+                        fetchActuatorStatus = { this.props.fetchActuatorStatus }
+                        controlActuator = { this.props.controlActuator }
+                    />
+            )
         });
 
         return (

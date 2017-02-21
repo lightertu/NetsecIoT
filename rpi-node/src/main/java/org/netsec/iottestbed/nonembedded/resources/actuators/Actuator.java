@@ -6,5 +6,6 @@ public class Actuator extends NetsecResource {
     public Actuator() {
         super("actuator");
         addChild(new Led());
+        addChild(new Thermostats());
     }
 }

@@ -15,6 +15,7 @@ let deviceSchema = new Schema({
             index: { type: Number }, // this indicates the index of the this sensor in the sensorList
             name: { type: String },
             path: { type: String },
+            dataFormat: { type: String }, // boolean, string,
             status: { type: String }
         }
     ],

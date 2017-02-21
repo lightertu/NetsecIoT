@@ -9,7 +9,7 @@ public class NetsecResource extends CoapResource {
     private String _dataFormat;
 
     public NetsecResource(String name) {
-        super(name, true);
+        super(name, false);
         _dataFormat = "";
     }
     public NetsecResource(String name, String dataFormat) {
@@ -23,6 +23,7 @@ public class NetsecResource extends CoapResource {
     }
 
     protected void addChild(NetsecResource childResource) {
+        add(childResource);
         for (String path: childResource.getSubPaths()) {
             _childPaths.add("/" + getURI() + "/" + path);
         }
