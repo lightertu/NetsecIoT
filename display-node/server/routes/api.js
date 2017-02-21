@@ -57,6 +57,22 @@ router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpRespons
 
                     coapRequest.on('response', function (coapResponse) {
                         let coapPayload = coapResponse.payload.toString('ascii');
+                        Device.update(
+                            {
+                                "ipAddress": deviceAddress,
+                                "sensorList.name": sensorName,
+                            },
+                            {
+                                $set: {
+                                    "sensorList.$.status": coapPayload
+                                }
+                            },
+                            function(error, count, status) {
+                                if (error) {
+                                    console.log(error);
+                                }
+                            }
+                        );
                         httpResponse.send(coapPayload);
                     });
 
@@ -97,6 +113,22 @@ router.get('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
 
                 coapRequest.on('response', function (coapResponse) {
                     let coapPayload = coapResponse.payload.toString('ascii');
+                    Device.update(
+                        {
+                            "ipAddress": deviceAddress,
+                            "actuatorList.name": actuatorName,
+                        },
+                        {
+                            $set: {
+                                "actuatorList.$.status": coapPayload
+                            }
+                        },
+                        function(error, count, status) {
+                            if (error) {
+                                console.log(error);
+                            }
+                        }
+                    );
                     httpResponse.send(coapPayload);
                 });
 
@@ -136,6 +168,22 @@ router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
                 coapRequest.write(httpRequest.body.payload);
                 coapRequest.on('response', function (coapResponse) {
                     let coapPayload = coapResponse.payload.toString('ascii');
+                    Device.update(
+                        {
+                            "ipAddress": deviceAddress,
+                            "actuatorList.name": actuatorName,
+                        },
+                        {
+                            $set: {
+                                "actuatorList.$.status": httpRequest.body.payload
+                            }
+                        },
+                        function(error, count, status) {
+                            if (error) {
+                                console.log(error);
+                            }
+                        }
+                    );
                     httpResponse.send(coapPayload);
                 });
 
