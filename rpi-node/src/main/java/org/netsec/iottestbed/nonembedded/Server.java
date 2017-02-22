@@ -23,8 +23,8 @@ class AdvertisingRunnable implements Runnable {
     private String _adString;
 
     AdvertisingRunnable(String adString){
-        String uriString = "coap://[ff02::1]:6666/devices";
-        //String uriString = "coap://localhost:6666/devices";
+        //String uriString = "coap://[ff02::1]:6666/devices";
+        String uriString = "coap://localhost:6666/devices";
         try {
             _broadcastURI = new URI(uriString);
         } catch (URISyntaxException e) {
