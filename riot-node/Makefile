@@ -3,7 +3,7 @@
 # name of your application
 APPLICATION = gcoap
 
-include ../Makefile.testbed
+include ./Makefile.testbed
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..

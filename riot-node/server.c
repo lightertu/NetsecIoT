@@ -16,8 +16,13 @@
 #define MAX_RESPONSE_LEN 100
 #define URI_MAX_LEN 64
 
-static void _resp_handler(unsigned req_state, coap_pkt_t* pdu);
+typedef struct {
+    const char * path;
+    const char * data_format;
 
+} netsec_resource_t;
+
+static void _resp_handler(unsigned req_state, coap_pkt_t* pdu);
 static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _sensor_temperature_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _actuator_led_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
@@ -26,12 +31,20 @@ static ssize_t _actuator_led_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 /* uint8_t last_response_addr[URI_MAX_LEN]; */
 
 /* CoAP resources */
+
 /* the pathnames have to be sorted alphabetically */
 static const coap_resource_t _resources[] = {
     { "/actuator/led", COAP_PUT, _actuator_led_handler },
     { "/cli/stats", COAP_GET, _stats_handler },
     { "/sensor/temperature", COAP_GET, _sensor_temperature_handler },
     { NULL, 0, NULL}, // Mark as the end of the endpoints
+};
+
+static const netsec_resource_t _netsec_resources[] = {
+    { "/actuator/led", "boolean"},
+    { "/cli/stats", "unspecified"},
+    { "/sensor/temperature", "number"},
+    { NULL, NULL}, // Mark as the end of the endpoints
 };
 
 static gcoap_listener_t _actuator_led_listener = {
@@ -51,7 +64,6 @@ static gcoap_listener_t _sensor_temperature_listener = {
     sizeof(_resources) / sizeof(_resources[2]),
     NULL
 };
-
 
 /* stack for the advertising thread */
 static char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
@@ -233,6 +245,7 @@ int gcoap_cli_cmd(int argc, char **argv) {
 void *self_advertising_thread(void* args) {
     int len;
     char *uri = "ff02::1";
+    /* char *uri = "fe80::1ac0:ffee:1ac0:ffee"; */
     char *path = "/devices";
     char *payload = (char *) args;
     char *port = "6666";
@@ -258,14 +271,14 @@ void *self_advertising_thread(void* args) {
 
 int build_service_string(char * service_string, int bufsize) {
     int i = 0, slen = 0;
-    while (_resources[i].path != NULL) {
+    while (_netsec_resources[i].path != NULL) {
         if (slen >= bufsize) {
             puts("String is too long");
             return 0;
         }
 
         bufsize -= slen;
-        slen += snprintf(service_string + slen, (size_t) bufsize, "%s|%d,", _resources[i].path, _resources[i].methods);
+        slen += snprintf(service_string + slen, (size_t) bufsize, "%s:%s,", _netsec_resources[i].path, _netsec_resources[i].data_format);
         ++i;
     }
 
