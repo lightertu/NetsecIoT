@@ -23,8 +23,8 @@ class AdvertisingRunnable implements Runnable {
     private String _adString;
 
     AdvertisingRunnable(String adString){
-        // String uriString = "coap://[ff02::1]:6666/devices";
-        String uriString = "coap://localhost:6666/devices";
+        String uriString = "coap://[ff02::1]:6666/devices";
+        //String uriString = "coap://localhost:6666/devices";
         try {
             _broadcastURI = new URI(uriString);
         } catch (URISyntaxException e) {
@@ -43,7 +43,7 @@ class AdvertisingRunnable implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //System.out.println(_adString);
+            System.out.println(_adString);
             _advertisingClient.put(_adString, 0);
         }
     }
@@ -63,6 +63,17 @@ class Server extends CoapServer {
 
     private void addEndpoints() {
         // IPv4 and IPv6 addresses and localhost
+        InetAddress multicastAddr = null;
+        try {
+            multicastAddr = InetAddress.getByName("FF05::FD");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        InetSocketAddress multicastBindToAddress = new InetSocketAddress(multicastAddr, COAP_PORT);
+        CoapEndpoint multicast = new CoapEndpoint(multicastBindToAddress);
+
+        super.addEndpoint(multicast);
         for (InetAddress addr : EndpointManager.getEndpointManager().getNetworkInterfaces()) {
             if (addr instanceof Inet6Address || addr instanceof Inet4Address || addr.isLoopbackAddress()) {
                 InetSocketAddress bindToAddress = new InetSocketAddress(addr, COAP_PORT);
