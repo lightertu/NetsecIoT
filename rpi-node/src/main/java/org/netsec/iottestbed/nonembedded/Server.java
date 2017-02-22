@@ -43,7 +43,7 @@ class AdvertisingRunnable implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println(_adString);
+            //System.out.println(_adString);
             _advertisingClient.put(_adString, 0);
         }
     }
