@@ -3,7 +3,13 @@
  */
 let coap             = require('coap');
 
-let req = coap.request('coap://[ff05::fd]/.well-known/core');
+let req = coap.request({
+    //hostname: "ff05:0:0:0:0:0:0:fd",
+    hostname: "127.0.0.1",
+    pathname: "sensor/temperature",
+    multicast: true,
+    multicastTimeout: 2000,
+});
 
 req.on('response', function(res) {
     res.pipe(process.stdout);
