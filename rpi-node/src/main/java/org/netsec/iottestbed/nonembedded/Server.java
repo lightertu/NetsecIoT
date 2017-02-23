@@ -13,6 +13,7 @@ import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.EndpointManager;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
+import org.netsec.iottestbed.nonembedded.resources.about.About;
 import org.netsec.iottestbed.nonembedded.resources.actuators.Actuator;
 import org.netsec.iottestbed.nonembedded.resources.sensors.Sensor;
 
@@ -43,7 +44,7 @@ class AdvertisingRunnable implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //System.out.println(_adString);
+            System.out.println(_adString);
             _advertisingClient.put(_adString, 0);
         }
     }
@@ -65,7 +66,7 @@ class Server extends CoapServer {
         // IPv4 and IPv6 addresses and localhost
         InetAddress multicastAddr = null;
         try {
-            multicastAddr = InetAddress.getByName("FF05::FD");
+            multicastAddr = InetAddress.getByName("ff02::1");
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -99,6 +100,7 @@ class Server extends CoapServer {
         server.setExecutor(Executors.newScheduledThreadPool(4));
         server.add(new Sensor());
         server.add(new Actuator());
+        server.add(new About());
         server.start();
     }
 }
