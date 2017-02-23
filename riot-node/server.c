@@ -13,7 +13,7 @@
 #include "./hardware/hardware.h"
 #define UNUSED(x) (void)(x)
 
-#define MAX_PAYLOAD_SIZE 100
+#define MAX_PAYLOAD_SIZE 80
 #define URI_MAX_LEN 64
 
 typedef struct {
@@ -294,27 +294,28 @@ void *self_advertising_thread(void* args) {
 
 
 int build_advertising_string(char * advertising_string, int bufsize) {
-    int i = 0, slen = 0;
-    for (; i < RESOURCE_COUNT; i++) {
+    int i = 0, slen = 0, cur_bufsize = bufsize;
+    while (_netsec_resources[i].path != NULL) {
         if (slen >= bufsize) {
-            puts("String is too long");
-            return 1;
+            printf("String is too long, maxsize is %d, actual size is %d\n", bufsize, slen);
+            return 0;
         }
 
-        bufsize -= slen;
+        cur_bufsize -= slen;
         slen += snprintf(advertising_string + slen, 
-                         (size_t) bufsize, "%s:%s,", 
+                         (size_t) cur_bufsize, "%s:%s,", 
                          _netsec_resources[i].path, 
                          _netsec_resources[i].data_format);
+        i++;
     }
 
     return 1;
 }
 
 
+static char advertising_string[MAX_PAYLOAD_SIZE];
 void gcoap_cli_init(void) {
     gcoap_listener_t resource_listeners[RESOURCE_COUNT];
-    char advertising_string[MAX_PAYLOAD_SIZE];
 
     add_resource_listeners(resource_listeners);
     register_resource_listeners(resource_listeners);
