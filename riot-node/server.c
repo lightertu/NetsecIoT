@@ -32,20 +32,20 @@ static ssize_t _actuator_led_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t l
 static ssize_t _actuator_led_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _actuator_thermostat_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _actuator_thermostat_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _about_name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _about_description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
 /* CoAP resources */
 /* the pathnames have to be sorted alphabetically */
 #define RESOURCE_COUNT 8
 static const coap_resource_t _resources[RESOURCE_COUNT] = {
+    { "/about/description", COAP_GET, _about_description_GET_handler },
+    { "/about/name", COAP_GET, _about_name_GET_handler },
     { "/actuator/led", COAP_PUT, _actuator_led_PUT_handler },
     { "/actuator/led", COAP_GET, _actuator_led_GET_handler },
     { "/actuator/thermostat", COAP_PUT, _actuator_thermostat_PUT_handler },
     { "/actuator/thermostat", COAP_GET, _actuator_thermostat_GET_handler },
     { "/cli/stats", COAP_GET, _cli_stats_GET_handler },
-    { "/description", COAP_GET, _description_GET_handler },
-    { "/name", COAP_GET, _name_GET_handler },
     { "/sensor/temperature", COAP_GET, _sensor_temperature_GET_handler },
 };
 
@@ -164,7 +164,7 @@ static ssize_t _actuator_thermostat_GET_handler(coap_pkt_t* pdu, uint8_t *buf, s
     return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 }
 
-static ssize_t _name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+static ssize_t _about_name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     const char *riot_name = RIOT_BOARD;
     size_t payload_len = strlen(riot_name);
@@ -172,7 +172,7 @@ static ssize_t _name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 }
 
-static ssize_t _description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+static ssize_t _about_description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     const char *description = "This is a embedded device";
     size_t payload_len = strlen(description);
