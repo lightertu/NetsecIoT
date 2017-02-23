@@ -34,8 +34,8 @@ static ssize_t _actuator_thermostat_GET_handler(coap_pkt_t* pdu, uint8_t *buf, s
 
 /* CoAP resources */
 /* the pathnames have to be sorted alphabetically */
-int RESOURCE_COUNT = 6;
-static const coap_resource_t _resources[] = {
+#define RESOURCE_COUNT 6
+static const coap_resource_t _resources[RESOURCE_COUNT] = {
     { "/actuator/led", COAP_PUT, _actuator_led_PUT_handler },
     { "/actuator/led", COAP_GET, _actuator_led_GET_handler },
     { "/actuator/thermostat", COAP_PUT, _actuator_thermostat_PUT_handler },
@@ -50,45 +50,6 @@ static const netsec_resource_t _netsec_resources[] = {
     { "/sensor/temperature", "number"},
     { NULL, NULL}, // Mark as the end of the endpoints
 };
-
-
-/*
-static gcoap_listener_t _actuator_led_PUT_listener = {
-    (coap_resource_t *)&_resources[0],
-    sizeof(_resources) / sizeof(_resources[0]),
-    NULL
-};
-
-static gcoap_listener_t _actuator_led_GET_listener = {
-    (coap_resource_t *)&_resources[1],
-    sizeof(_resources) / sizeof(_resources[1]),
-    NULL
-};
-
-static gcoap_listener_t _actuator_thermostat_PUT_listener = {
-    (coap_resource_t *)&_resources[2],
-    sizeof(_resources) / sizeof(_resources[2]),
-    NULL
-};
-
-static gcoap_listener_t _actuator_thermostat_GET_listener = {
-    (coap_resource_t *)&_resources[2],
-    sizeof(_resources) / sizeof(_resources[2]),
-    NULL
-};
-
-static gcoap_listener_t _request_stats_GET_listener = {
-    (coap_resource_t *)&_resources[3],
-    sizeof(_resources) / sizeof(_resources[3]),
-    NULL
-};
-
-static gcoap_listener_t _sensor_temperature_GET_listener = {
-    (coap_resource_t *)&_resources[4],
-    sizeof(_resources) / sizeof(_resources[4]),
-    NULL
-};
-*/
 
 
 /* Counts requests sent by CLI. */
@@ -305,9 +266,7 @@ void register_resource_listeners(gcoap_listener_t* resource_listeners) {
 
 /* stack for the advertising thread */
 static char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
-
 /* advertising string */
-static char service_string[MAX_PAYLOAD_SIZE];
 void *self_advertising_thread(void* args) {
     int len;
     char *uri = "ff02::1";
@@ -333,7 +292,8 @@ void *self_advertising_thread(void* args) {
     return NULL;
  }
 
-int build_service_string(char * service_string, int bufsize) {
+
+int build_advertising_string(char * advertising_string, int bufsize) {
     int i = 0, slen = 0;
     for (; i < RESOURCE_COUNT; i++) {
         if (slen >= bufsize) {
@@ -342,7 +302,7 @@ int build_service_string(char * service_string, int bufsize) {
         }
 
         bufsize -= slen;
-        slen += snprintf(service_string + slen, 
+        slen += snprintf(advertising_string + slen, 
                          (size_t) bufsize, "%s:%s,", 
                          _netsec_resources[i].path, 
                          _netsec_resources[i].data_format);
@@ -353,26 +313,22 @@ int build_service_string(char * service_string, int bufsize) {
 
 
 void gcoap_cli_init(void) {
-    /* gcoap_register_listener(&_actuator_led_PUT_listener); */
-    /* gcoap_register_listener(&_actuator_led_GET_listener); */
-    /* gcoap_register_listener(&_actuator_thermostat_PUT_listener); */
-    /* gcoap_register_listener(&_request_stats_GET_listener); */
-    /* gcoap_register_listener(&_sensor_temperature_GET_listener); */
-
     gcoap_listener_t resource_listeners[RESOURCE_COUNT];
+    char advertising_string[MAX_PAYLOAD_SIZE];
+
     add_resource_listeners(resource_listeners);
     register_resource_listeners(resource_listeners);
 
-    if (build_service_string(service_string, MAX_PAYLOAD_SIZE)) {
+    if (build_advertising_string(advertising_string, MAX_PAYLOAD_SIZE)) {
         thread_create(self_advertising_thread_stack, 
                       sizeof(self_advertising_thread_stack),
                       THREAD_PRIORITY_MAIN - 1, 
                       THREAD_CREATE_STACKTEST, 
                       self_advertising_thread, 
-                      service_string, 
+                      advertising_string, 
                       "self_advertising_thread"
         );
     }
     
-    printf("%s\n", service_string);
+    printf("%s\n", advertising_string);
 }
