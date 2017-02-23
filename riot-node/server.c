@@ -23,9 +23,12 @@ typedef struct {
 } netsec_resource_t;
 
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu);
-static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _sensor_temperature_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _actuator_led_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
+/* resources */
+static ssize_t _stats_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _sensor_temperature_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _actuator_led_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _actuator_led_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
 /* this saves the address of the last requester */
 /* uint8_t last_response_addr[URI_MAX_LEN]; */
@@ -33,11 +36,13 @@ static ssize_t _actuator_led_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 /* CoAP resources */
 
 /* the pathnames have to be sorted alphabetically */
+
+int RESOURCE_COUNT = 4;
 static const coap_resource_t _resources[] = {
-    { "/actuator/led", COAP_PUT, _actuator_led_handler },
-    { "/cli/stats", COAP_GET, _stats_handler },
-    { "/sensor/temperature", COAP_GET, _sensor_temperature_handler },
-    { NULL, 0, NULL}, // Mark as the end of the endpoints
+    { "/actuator/led", COAP_PUT, _actuator_led_PUT_handler },
+    { "/actuator/led", COAP_GET, _actuator_led_GET_handler },
+    { "/cli/stats", COAP_GET, _stats_GET_handler },
+    { "/sensor/temperature", COAP_GET, _sensor_temperature_GET_handler },
 };
 
 static const netsec_resource_t _netsec_resources[] = {
@@ -47,29 +52,30 @@ static const netsec_resource_t _netsec_resources[] = {
     { NULL, NULL}, // Mark as the end of the endpoints
 };
 
-static gcoap_listener_t _actuator_led_listener = {
+static gcoap_listener_t _actuator_led_PUT_listener = {
     (coap_resource_t *)&_resources[0],
     sizeof(_resources) / sizeof(_resources[0]),
     NULL
 };
 
-static gcoap_listener_t _request_stats_listener = {
+static gcoap_listener_t _actuator_led_GET_listener = {
     (coap_resource_t *)&_resources[1],
     sizeof(_resources) / sizeof(_resources[1]),
     NULL
 };
 
-static gcoap_listener_t _sensor_temperature_listener = {
-    (coap_resource_t *)&_resources[2],
+static gcoap_listener_t _request_stats_GET_listener = {
+    (coap_resource_t *)&_resources[1],
     sizeof(_resources) / sizeof(_resources[2]),
     NULL
 };
 
-/* stack for the advertising thread */
-static char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
+static gcoap_listener_t _sensor_temperature_GET_listener = {
+    (coap_resource_t *)&_resources[2],
+    sizeof(_resources) / sizeof(_resources[3]),
+    NULL
+};
 
-/* advertising string */
-static char service_string[GCOAP_PDU_BUF_SIZE];
 
 /* Counts requests sent by CLI. */
 static uint16_t req_count = 0;
@@ -116,7 +122,7 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu) {
  * Server callback for /cli/stats. Returns the count of packets sent by the
  * CLI.
  */
-static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+static ssize_t _stats_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
     size_t payload_len = fmt_u16_dec((char *)pdu->payload, req_count);
@@ -125,39 +131,45 @@ static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
 }
 
 /* callback for handling temperature data */
-static ssize_t _sensor_temperature_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+static ssize_t _sensor_temperature_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
-    size_t payload_len = fmt_u16_dec((char *)pdu->payload, read_temperature_dummy());
+    /* size_t payload_len = fmt_u16_dec((char *)pdu->payload, read_temperature_dummy()); */
+    size_t payload_len = fmt_u16_dec((char *)pdu->payload, 20);
 
     return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 }
 
 /* callback for handling led data */
-static ssize_t _actuator_led_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
-    char ledstats[MAX_RESPONSE_LEN] = {0};
-    int ledstats_out;
-    memcpy(ledstats, pdu->payload, pdu->payload_len);
+static int LED_STATUS = 1;
+static ssize_t _actuator_led_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    char ledstats_in[MAX_RESPONSE_LEN] = { 0 };
 
+    memcpy(ledstats_in, pdu->payload, pdu->payload_len);
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
-
-    if (strcmp(ledstats, "ON") == 0) {
+    if (strcmp(ledstats_in, "1") == 0) {
         led_switch(ON);
-        ledstats_out = 1;
-    } else if (strcmp(ledstats, "OFF") == 0) {
+        LED_STATUS = 1;
+    } else if (strcmp(ledstats_in, "0") == 0) {
         led_switch(OFF);
-        ledstats_out = 0;
+        LED_STATUS = 0;
     } else {
-        ledstats_out = -1;
+        puts("unknown command");
     }
-    
      
-    size_t payload_len = fmt_u16_dec((char *)pdu->payload, ledstats_out);
-
+    size_t payload_len = fmt_u16_dec((char *)pdu->payload, LED_STATUS);
     return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 }
 
+static ssize_t _actuator_led_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+    size_t payload_len = fmt_u16_dec((char *)pdu->payload, LED_STATUS);
+    return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+}
+
+
+/* ********************************* utility functions ********************************* */
 static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str) {
 
     ipv6_addr_t addr;
@@ -242,10 +254,14 @@ int gcoap_cli_cmd(int argc, char **argv) {
 }
 
 
+/* stack for the advertising thread */
+static char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
+
+/* advertising string */
+static char service_string[GCOAP_PDU_BUF_SIZE];
 void *self_advertising_thread(void* args) {
     int len;
     char *uri = "ff02::1";
-    /* char *uri = "fe80::1ac0:ffee:1ac0:ffee"; */
     char *path = "/devices";
     char *payload = (char *) args;
     char *port = "6666";
@@ -268,10 +284,9 @@ void *self_advertising_thread(void* args) {
     return NULL;
  }
 
-
 int build_service_string(char * service_string, int bufsize) {
     int i = 0, slen = 0;
-    while (_netsec_resources[i].path != NULL) {
+    for (; i < RESOURCE_COUNT; i++) {
         if (slen >= bufsize) {
             puts("String is too long");
             return 0;
@@ -287,9 +302,10 @@ int build_service_string(char * service_string, int bufsize) {
 
 
 void gcoap_cli_init(void) {
-    gcoap_register_listener(&_actuator_led_listener);
-    gcoap_register_listener(&_request_stats_listener);
-    gcoap_register_listener(&_sensor_temperature_listener);
+    gcoap_register_listener(&_actuator_led_PUT_listener);
+    gcoap_register_listener(&_actuator_led_GET_listener);
+    gcoap_register_listener(&_request_stats_GET_listener);
+    gcoap_register_listener(&_sensor_temperature_GET_listener);
 
     if (build_service_string(service_string, GCOAP_PDU_BUF_SIZE)) {
         thread_create(self_advertising_thread_stack, 
