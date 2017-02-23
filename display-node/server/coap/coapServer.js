@@ -43,7 +43,9 @@ let saveDevice = function(ip, advertisingString) {
 server.on('request', function(req, res) {
     let deviceAddress = req.rsinfo.address;
     if (req.url == "/devices") {
-        saveDevice(deviceAddress, req.payload.toString('ascii'));
+        let payload = req.payload.toString('ascii');
+        console.log(payload);
+        saveDevice(deviceAddress, payload);
         res.end("Already have you");
     }
     res.end("Added you to database");

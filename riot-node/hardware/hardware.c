@@ -8,14 +8,16 @@
 #include <xtimer.h>
 #include "periph_conf.h"
 #include "periph/i2c.h"
-#include "testbed-hardware.h"
+#include "hardware.h"
 #include <stdio.h>
 
 
+static uint32_t SEED = 20;
 uint32_t read_temperature_dummy(void) {
-    random_init(20);
+    random_init(SEED);
     uint32_t curtmp;
     curtmp = random_uint32_range(20, 30);
+    SEED = curtmp;
 
     return curtmp;
 }

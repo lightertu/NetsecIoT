@@ -1,12 +1,12 @@
 /**
  * Created by rui on 2/21/17.
  */
-let coap             = require('coap');
+let coap = require('coap');
 
 let req = coap.request({
     //hostname: "ff05:0:0:0:0:0:0:fd",
-    hostname: "127.0.0.1",
-    pathname: "sensor/temperature",
+    hostname: "ff02::1%tap0",
+    pathname: ".well-known/core",
     multicast: true,
     multicastTimeout: 2000,
 });

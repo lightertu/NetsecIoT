@@ -49,6 +49,10 @@ USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += ps
 
+# Add RPL
+USEMODULE += gnrc_rpl
+USEMODULE += auto_init_gnrc_rpl
+
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
 # development process:
