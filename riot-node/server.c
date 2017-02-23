@@ -13,7 +13,7 @@
 #include "./hardware/hardware.h"
 #define UNUSED(x) (void)(x)
 
-#define MAX_PAYLOAD_SIZE 80
+#define MAX_PAYLOAD_SIZE 120
 #define URI_MAX_LEN 64
 
 typedef struct {
@@ -45,9 +45,9 @@ static const coap_resource_t _resources[RESOURCE_COUNT] = {
 };
 
 static const netsec_resource_t _netsec_resources[] = {
+    { "/sensor/temperature", "number"},
     { "/actuator/led", "boolean"},
     { "/actuator/thermostat", "number" },
-    { "/sensor/temperature", "number"},
     { NULL, NULL}, // Mark as the end of the endpoints
 };
 
