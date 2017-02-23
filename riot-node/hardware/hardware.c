@@ -8,7 +8,7 @@
 #include <xtimer.h>
 #include "periph_conf.h"
 #include "periph/i2c.h"
-#include "hardware.h"
+#include "./hardware.h"
 #include <stdio.h>
 
 

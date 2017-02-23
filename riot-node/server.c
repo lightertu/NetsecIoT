@@ -10,6 +10,7 @@
 #include "net/gcoap.h"
 #include "od.h"
 #include "fmt.h"
+
 #include "./hardware/hardware.h"
 #define UNUSED(x) (void)(x)
 
@@ -25,22 +26,26 @@ typedef struct {
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu);
 
 /* resources */
-static ssize_t _stats_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _cli_stats_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _sensor_temperature_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _actuator_led_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _actuator_led_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _actuator_thermostat_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _actuator_thermostat_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
 /* CoAP resources */
 /* the pathnames have to be sorted alphabetically */
-#define RESOURCE_COUNT 6
+#define RESOURCE_COUNT 8
 static const coap_resource_t _resources[RESOURCE_COUNT] = {
     { "/actuator/led", COAP_PUT, _actuator_led_PUT_handler },
     { "/actuator/led", COAP_GET, _actuator_led_GET_handler },
     { "/actuator/thermostat", COAP_PUT, _actuator_thermostat_PUT_handler },
     { "/actuator/thermostat", COAP_GET, _actuator_thermostat_GET_handler },
-    { "/cli/stats", COAP_GET, _stats_GET_handler },
+    { "/cli/stats", COAP_GET, _cli_stats_GET_handler },
+    { "/description", COAP_GET, _description_GET_handler },
+    { "/name", COAP_GET, _name_GET_handler },
     { "/sensor/temperature", COAP_GET, _sensor_temperature_GET_handler },
 };
 
@@ -58,7 +63,8 @@ static uint16_t req_count = 0;
 /*
  * Response callback.
  */
-static void _resp_handler(unsigned req_state, coap_pkt_t* pdu) {
+static void _resp_handler(unsigned req_state, coap_pkt_t* pdu)
+{
     if (req_state == GCOAP_MEMO_TIMEOUT) {
         printf("gcoap: timeout for msg ID %02u\n", coap_get_id(pdu));
         return;
@@ -96,7 +102,7 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu) {
  * Server callback for /cli/stats. Returns the count of packets sent by the
  * CLI.
  */
-static ssize_t _stats_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+static ssize_t _cli_stats_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     size_t payload_len = fmt_u16_dec((char *)pdu->payload, req_count);
     return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
@@ -145,6 +151,7 @@ static ssize_t _actuator_thermostat_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, s
     memcpy(themostat_in, pdu->payload, pdu->payload_len);
 
     THEMOSTAT = atoi(themostat_in);
+    printf("new themostat: %d\n", THEMOSTAT);
 
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     size_t payload_len = fmt_u16_dec((char *)pdu->payload, THEMOSTAT);
@@ -157,27 +164,46 @@ static ssize_t _actuator_thermostat_GET_handler(coap_pkt_t* pdu, uint8_t *buf, s
     return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 }
 
+static ssize_t _name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+    const char *riot_name = RIOT_BOARD;
+    size_t payload_len = strlen(riot_name);
+    memcpy(pdu->payload, riot_name, payload_len);
+    return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+}
+
+static ssize_t _description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+    const char *description = "This is a embedded device";
+    size_t payload_len = strlen(description);
+    memcpy(pdu->payload, description, payload_len);
+    return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+}
+
 /* ********************************* utility functions ********************************* */
 static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str) {
-
     ipv6_addr_t addr;
-    uint16_t port;
     size_t bytes_sent;
+    sock_udp_ep_t remote;
+
+    remote.family = AF_INET6;
+    remote.netif  = SOCK_ADDR_ANY_NETIF;
 
     /* parse destination address */
     if (ipv6_addr_from_str(&addr, addr_str) == NULL) {
         puts("gcoap_cli: unable to parse destination address");
         return 0;
     }
+    memcpy(&remote.addr.ipv6[0], &addr.u8[0], sizeof(addr.u8));
+
     /* parse port */
-    port = (uint16_t)atoi(port_str);
-    if (port == 0) {
+    remote.port = (uint16_t)atoi(port_str);
+    if (remote.port == 0) {
         puts("gcoap_cli: unable to parse destination port");
         return 0;
     }
 
-    bytes_sent = gcoap_req_send(buf, len, &addr, port, _resp_handler);
-    /* print("bytes sent, %d", bytes_sent); */
+    bytes_sent = gcoap_req_send2(buf, len, &remote, _resp_handler);
     if (bytes_sent > 0) {
         req_count++;
     }
@@ -185,7 +211,6 @@ static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str) {
 }
 
 int gcoap_cli_cmd(int argc, char **argv) {
-
     /* Ordered like the RFC method code numbers, but off by 1. GET is code 0. */
     char *method_codes[] = {"get", "post", "put"};
     uint8_t buf[GCOAP_PDU_BUF_SIZE];
@@ -240,9 +265,9 @@ int gcoap_cli_cmd(int argc, char **argv) {
     printf("usage: %s <get|post|put|info>\n", argv[0]);
     return 1;
 }
-
 /* ************************************ custom utiliy functions**************************************** */
 
+static gcoap_listener_t resource_listeners[RESOURCE_COUNT];
 void add_resource_listeners(gcoap_listener_t* resource_listeners) {
     int i = 0;
     for (; i < RESOURCE_COUNT; i++) {
@@ -265,6 +290,7 @@ void register_resource_listeners(gcoap_listener_t* resource_listeners) {
 
 
 /* stack for the advertising thread */
+static char advertising_string[MAX_PAYLOAD_SIZE];
 static char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
 /* advertising string */
 void *self_advertising_thread(void* args) {
@@ -313,10 +339,8 @@ int build_advertising_string(char * advertising_string, int bufsize) {
 }
 
 
-static char advertising_string[MAX_PAYLOAD_SIZE];
-void gcoap_cli_init(void) {
-    gcoap_listener_t resource_listeners[RESOURCE_COUNT];
 
+void gcoap_cli_init(void) {
     add_resource_listeners(resource_listeners);
     register_resource_listeners(resource_listeners);
 
