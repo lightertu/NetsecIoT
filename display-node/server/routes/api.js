@@ -77,6 +77,7 @@ router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpRespons
                     });
 
                     coapRequest.on('error', function (error) {
+                        console.log(error);
                         httpResponse.send("timeout");
                         next();
                     });
@@ -133,6 +134,7 @@ router.get('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
                 });
 
                 coapRequest.on('error', function (error) {
+                    console.log(error);
                     httpResponse.send("timeout");
                     next();
                 });
