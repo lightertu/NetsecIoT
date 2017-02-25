@@ -1,5 +1,5 @@
 HOSTDIR=./
-REMOTEDIR=~/Projects/NetsecIoT/device-scanner
+REMOTEDIR=~/Projects/NetsecIoT/gateway-node/coap-scanner
 RSYNC_FLAG=-rt
 REMOTE_ADDR=pi@6lbr
 EXCLUDE=".*"

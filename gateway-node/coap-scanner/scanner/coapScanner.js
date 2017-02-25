@@ -2,39 +2,32 @@
  * Created by rui on 2/21/17.
  */
 
-let mongoose           = require('mongoose');
-let deviceDatabase     = mongoose.connect('mongodb://localhost/iot').connection;
-let coapParser         = require('./serviceParser');
-let Device             = require('../models/device');
+let coapParser       = require('./serviceParser');
+let NodeCache        = require('node-cache');
+let deviceCache      = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 const multicastAddress = "ff02::1%lowpan0";
-const scannPeriod = 3000;
-
-deviceDatabase.on('error', console.error.bind(console, 'connection error:'));
-deviceDatabase.once('open', function() {
-    console.log("successfully connected to the database");
-    Device.remove().exec();
-});
+const scanPeriod = 3000;
 
 let saveDevice = function(ipAddress, name, description, services) {
-    Device.findOne({ ipAddress: ipAddress }, function(error, device){
-        if (error) {
-            throw error;
-        } else {
-            if (device == null) {
+    deviceCache.get(ipAddress, function(err, value){
+        if( !err ){
+            if(value == undefined){
                 let newDevice = coapParser.createDevice(ipAddress, name, description, services);
-                newDevice.save(function(error, device){
-                    if(error) {
-                        return console.error(error);
+
+                deviceCache.set( ipAddress, newDevice, function( err, success ) {
+                    if (!err && success) {
+                        console.log(success);
                     } else {
-                        if (device != null) {
-                            console.log("saving device successful");
-                        }
+                        console.log(err);
                     }
                 });
-            } else {
-                console.log("device already existed: " + device.ipAddress);
+
+            }else{
+                console.log( "device " + ipAddress + "is already in" );
             }
+        } else {
+            console.log("cache error")
         }
     });
 };
@@ -111,9 +104,10 @@ let scan = function() {
             console.log(error) ;
         });
         nameRequest.end();
-    }, scannPeriod);
+    }, scanPeriod);
 };
 
 module.exports = {
-    scan: scan
+    scan: scan,
+    deviceCache: deviceCache
 };

@@ -1,20 +1,18 @@
 /**
  * Created by rui on 2/17/17.
  */
-let Device = require('../models/device');
-
 // let exampleAdvertisingString = "/sensor/temperature:number,/actuator/led:boolean,/sensor/fire:number,";
 // create a Device Object
 
 let createDevice = function ( ipAddress, name, description, servicesString ) {
     let endpoints = servicesString.split(',');
-    let newDevice = new Device({
+    let newDevice = {
         name: name,
         description: description,
         ipAddress: ipAddress,
-        sensorList: [ ],
-        actuatorList: [ ]
-    });
+        sensorList: {},
+        actuatorList: {}
+    };
 
     for (let i = 0; i < endpoints.length - 1; i++) {
         let serviceType = endpoints[i].split('/')[1],
@@ -36,7 +34,7 @@ let createDevice = function ( ipAddress, name, description, servicesString ) {
                     dataFormat: serviceDataFormat
                 };
 
-                newDevice.sensorList.push(newSensor);
+                newDevice.sensorList[serviceName] = newSensor;
                 break;
 
             case("actuator"):
@@ -48,7 +46,7 @@ let createDevice = function ( ipAddress, name, description, servicesString ) {
                     dataFormat: serviceDataFormat
                 };
 
-                newDevice.actuatorList.push(newActuator);
+                newDevice.actuatorList[serviceName] = newActuator;
                 break;
 
             default:

@@ -3,12 +3,12 @@
  */
 let express = require('express') ;
 let router = express.Router();
-let Device = require('../models/device');
+let deviceCache = require('../scanner/coapScanner').deviceCache;
+
 
 /* routes */
 router.get('/devices', function(req, res){
-    //noinspection JSUnresolvedFunction
-    Device.find({}, function(err, deviceList){
+    deviceCache.mget(deviceCache.keys(), function(err, deviceList){
         if (err) {
             throw err;
         } else {
@@ -20,14 +20,15 @@ router.get('/devices', function(req, res){
 
 router.get('/devices/:ipAddress', function(req, res, next){
     let deviceAddress = req.params.ipAddress;
-    //noinspection JSUnresolvedFunction
-    Device.findOne({ ipAddress: deviceAddress }, function(err, device) {
-        if (err) {
-            next();
-            console.log(err);
-        } else {
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(device));
+    deviceCache.get(deviceAddress, function(err, device){
+        if( !err ){
+            if(device == undefined){
+                res.send("device not found");
+                next();
+            }else{
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify( device ), null, 3);
+            }
         }
     });
 });
