@@ -39,48 +39,43 @@ class DeviceScanner {
                 System.out.println("Advertising");
 
                 // ASYNCHRONOUS
-                final String ipUri = MULTICAST_ADDR + IP_PATH;
-                (new CoapClient(ipUri)).get(new CoapHandler() {
-                    public void onLoad(final CoapResponse response) {
-                        final String ip = response.getResponseText(),
-                                     nameUriString = COAP + ip + NAME_PATH;
+                final String nameUriString = MULTICAST_ADDR + NAME_PATH;
+                try {
+                    URI nameUri = new URI(nameUriString);
+                    (new CoapClient(nameUri)).get(new CoapHandler() {
+                        public void onLoad(CoapResponse coapResponse) {
+                            final String name = coapResponse.getResponseText(),
+                                         ip = coapResponse.advanced().getSource().getHostAddress(),
+                                         descriptionUri = COAP + ip + DESCRIPTION_PATH;
 
-                        System.out.println(ip);
-                        try {
-                            URI nameUri = new URI(nameUriString);
-                            (new CoapClient(nameUri)).get(new CoapHandler() {
+                            System.out.println(ip);
+                            System.out.println(name);
+
+                            (new CoapClient(descriptionUri)).get(new CoapHandler() {
                                 public void onLoad(CoapResponse coapResponse) {
-                                    final String name = coapResponse.getResponseText(),
-                                            descriptionUri = COAP + ip + DESCRIPTION_PATH;
+                                    final String description = coapResponse.getResponseText(),
+                                            serviceUri = COAP + ip + SERVICES_PATH;
 
-                                    System.out.println(name);
+                                    System.out.println(description);
 
-                                    (new CoapClient(descriptionUri)).get(new CoapHandler() {
+                                    (new CoapClient(serviceUri)).get(new CoapHandler() {
                                         public void onLoad(CoapResponse coapResponse) {
-                                            final String description = coapResponse.getResponseText(),
-                                                    serviceUri = COAP + ip + SERVICES_PATH;
-
-                                            System.out.println(description);
-
-                                            (new CoapClient(serviceUri)).get(new CoapHandler() {
-                                                public void onLoad(CoapResponse coapResponse) {
-                                                    final String service = coapResponse.getResponseText();
-                                                /* here save the device information to the database*/
-                                                    System.out.println(service);
-                                                }
-                                                public void onError() { System.err.println("GETTING DESCRIPTION of " + ip + "failed"); }
-                                            });
+                                            final String service = coapResponse.getResponseText();
+                                        /* here save the device information to the database*/
+                                            System.out.println(service);
                                         }
                                         public void onError() { System.err.println("GETTING DESCRIPTION of " + ip + "failed"); }
                                     });
                                 }
-                                public void onError() { System.err.println("GETTING NAME of " + ip + "failed"); }
+                                public void onError() { System.err.println("GETTING DESCRIPTION of " + ip + "failed"); }
                             });
-                        } catch (URISyntaxException e) {
-                            e.printStackTrace();
                         }
-                    } public void onError() { System.err.println("GETTING IP FAILED"); }
-                });
+                        public void onError() {
+                            System.err.println("GETTING NAME failed"); }
+                    });
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
