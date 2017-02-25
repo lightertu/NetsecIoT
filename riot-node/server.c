@@ -34,13 +34,15 @@ static ssize_t _actuator_thermostat_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, s
 static ssize_t _actuator_thermostat_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _about_name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _about_description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _about_services_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
 /* CoAP resources */
 /* the pathnames have to be sorted alphabetically */
-#define RESOURCE_COUNT 8
+#define RESOURCE_COUNT 9
 static const coap_resource_t _resources[RESOURCE_COUNT] = {
     { "/about/description", COAP_GET, _about_description_GET_handler },
     { "/about/name", COAP_GET, _about_name_GET_handler },
+    { "/about/services", COAP_GET, _about_services_GET_handler },
     { "/actuator/led", COAP_PUT, _actuator_led_PUT_handler },
     { "/actuator/led", COAP_GET, _actuator_led_GET_handler },
     { "/actuator/thermostat", COAP_PUT, _actuator_thermostat_PUT_handler },
@@ -59,6 +61,9 @@ static const netsec_resource_t _netsec_resources[] = {
 
 /* Counts requests sent by CLI. */
 static uint16_t req_count = 0;
+
+static char services_string[MAX_PAYLOAD_SIZE];
+static gcoap_listener_t resource_listeners[RESOURCE_COUNT];
 
 /*
  * Response callback.
@@ -180,6 +185,12 @@ static ssize_t _about_description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, siz
     return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 }
 
+static ssize_t _about_services_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+    size_t payload_len = strlen(services_string);
+    memcpy(pdu->payload, services_string, payload_len);
+    return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+}
 /* ********************************* utility functions ********************************* */
 static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str) {
     ipv6_addr_t addr;
@@ -267,7 +278,6 @@ int gcoap_cli_cmd(int argc, char **argv) {
 }
 /* ************************************ custom utiliy functions**************************************** */
 
-static gcoap_listener_t resource_listeners[RESOURCE_COUNT];
 void add_resource_listeners(gcoap_listener_t* resource_listeners) {
     int i = 0;
     for (; i < RESOURCE_COUNT; i++) {
@@ -290,36 +300,34 @@ void register_resource_listeners(gcoap_listener_t* resource_listeners) {
 
 
 /* stack for the advertising thread */
-static char advertising_string[MAX_PAYLOAD_SIZE];
-static char self_advertising_thread_stack[THREAD_STACKSIZE_MAIN];
 /* advertising string */
-void *self_advertising_thread(void* args) {
-    int len;
-    char *uri = "ff02::1";
-    char *path = "/devices";
-    char *payload = (char *) args;
-    char *port = "6666";
+/* void *self_advertising_thread(void* args) { */
+/*     int len; */
+/*     char *uri = "ff02::1"; */
+/*     char *path = "/devices"; */
+/*     char *payload = (char *) args; */
+/*     char *port = "6666"; */
 
-    while (1) {
-        uint8_t buf[MAX_PAYLOAD_SIZE];
-        coap_pkt_t pdu;
-        gcoap_req_init(&pdu, &buf[0], MAX_PAYLOAD_SIZE, COAP_POST, path);
-        memcpy(pdu.payload, payload, strlen(payload));
-        len = gcoap_finish(&pdu, strlen(payload), COAP_FORMAT_TEXT);
-        if (!_send(&buf[0], len, uri, port)) {
-            puts("server: adversing message send failed");
-            puts("re-advertise");
-        } 
+/*     while (1) { */
+/*         uint8_t buf[MAX_PAYLOAD_SIZE]; */
+/*         coap_pkt_t pdu; */
+/*         gcoap_req_init(&pdu, &buf[0], MAX_PAYLOAD_SIZE, COAP_POST, path); */
+/*         memcpy(pdu.payload, payload, strlen(payload)); */
+/*         len = gcoap_finish(&pdu, strlen(payload), COAP_FORMAT_TEXT); */
+/*         if (!_send(&buf[0], len, uri, port)) { */
+/*             puts("server: adversing message send failed"); */
+/*             puts("re-advertise"); */
+/*         } */ 
 
-        xtimer_sleep(10);
-        puts("advertising");
-    }
+/*         xtimer_sleep(10); */
+/*         puts("advertising"); */
+/*     } */
 
-    return NULL;
- }
+/*     return NULL; */
+/*  } */
 
 
-int build_advertising_string(char * advertising_string, int bufsize) {
+int build_services_string(char * services_string, int bufsize) {
     int i = 0, slen = 0, cur_bufsize = bufsize;
     while (_netsec_resources[i].path != NULL) {
         if (slen >= bufsize) {
@@ -328,7 +336,7 @@ int build_advertising_string(char * advertising_string, int bufsize) {
         }
 
         cur_bufsize -= slen;
-        slen += snprintf(advertising_string + slen, 
+        slen += snprintf(services_string + slen, 
                          (size_t) cur_bufsize, "%s:%s,", 
                          _netsec_resources[i].path, 
                          _netsec_resources[i].data_format);
@@ -341,19 +349,20 @@ int build_advertising_string(char * advertising_string, int bufsize) {
 
 
 void gcoap_cli_init(void) {
+    build_services_string(services_string, MAX_PAYLOAD_SIZE);
     add_resource_listeners(resource_listeners);
     register_resource_listeners(resource_listeners);
 
-    if (build_advertising_string(advertising_string, MAX_PAYLOAD_SIZE)) {
-        thread_create(self_advertising_thread_stack, 
-                      sizeof(self_advertising_thread_stack),
-                      THREAD_PRIORITY_MAIN - 1, 
-                      THREAD_CREATE_STACKTEST, 
-                      self_advertising_thread, 
-                      advertising_string, 
-                      "self_advertising_thread"
-        );
-    }
+    /* if (build_services_string(services_string, MAX_PAYLOAD_SIZE)) { */
+    /*     thread_create(self_advertising_thread_stack, */ 
+    /*                   sizeof(self_advertising_thread_stack), */
+    /*                   THREAD_PRIORITY_MAIN - 1, */ 
+    /*                   THREAD_CREATE_STACKTEST, */ 
+    /*                   self_advertising_thread, */ 
+    /*                   services_string, */ 
+    /*                   "self_advertising_thread" */
+    /*     ); */
+    /* } */
     
-    printf("%s\n", advertising_string);
+    printf("%s\n", services_string);
 }
