@@ -1,21 +1,12 @@
 package org.netsec.iottestbed.nonembedded;
-
 import java.io.IOException;
-import java.net.*;
-
 import org.eclipse.californium.core.*;
-import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.EndpointManager;
-import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.eclipse.californium.core.server.resources.CoapExchange;
-
 import org.eclipse.californium.proxy.DirectProxyCoapResolver;
 import org.eclipse.californium.proxy.ProxyHttpServer;
 import org.eclipse.californium.proxy.resources.ForwardingResource;
 import org.eclipse.californium.proxy.resources.ProxyCoapClientResource;
 import org.eclipse.californium.proxy.resources.ProxyHttpClientResource;
 
-import static org.eclipse.californium.core.network.config.NetworkConfig.Keys.COAP_PORT;
 
 /**
  * Http2CoAP: Insert in browser:
@@ -32,7 +23,8 @@ import static org.eclipse.californium.core.network.config.NetworkConfig.Keys.COA
 
 
 public class CoapProxy {
-    private static final int PORT = 6666;
+    private static final int PORT = 5683;
+    private static final String MULTICAST_ADDR = "ff02::1";
     private CoapServer _proxyServer;
     public CoapProxy() throws IOException {
         ForwardingResource coap2coap = new ProxyCoapClientResource("coap2coap");
@@ -45,19 +37,13 @@ public class CoapProxy {
         _proxyServer.add(coap2http);
         _proxyServer.add(http2coap);
 
-        ProxyHttpServer httpServer = new ProxyHttpServer(8080);
+        ProxyHttpServer httpServer = new ProxyHttpServer(PORT);
         httpServer.setProxyCoapResolver(new DirectProxyCoapResolver(coap2coap));
         System.out.println("CoAP resource \"target\" available over HTTP at: http://localhost:8080/proxy/coap://ipv6address:PORT/path");
     }
 
     private void start() {
         _proxyServer.start();
-        scanDevices();
-    }
-
-    private void scanDevices() {
-        DeviceScanner scanner = new DeviceScanner("0:0:0:0:0:0:0:1", 5683);
-        scanner.scan();
     }
 
     public static void main(String[] args) throws Exception {

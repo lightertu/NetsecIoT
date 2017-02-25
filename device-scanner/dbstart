@@ -1,0 +1,4 @@
+#!/bin/bash
+killall -15 mongodo
+export LC_ALL=C
+sudo mongod

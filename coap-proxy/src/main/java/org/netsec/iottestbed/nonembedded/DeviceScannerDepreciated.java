@@ -6,7 +6,7 @@ import org.eclipse.californium.core.CoapResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-class DeviceScanner {
+class DeviceScannerDepreciated {
     private String _multicastAddress;
     private int _port;
 
@@ -14,7 +14,7 @@ class DeviceScanner {
         new Thread(new ScannerRunnable()).run();
     }
 
-    DeviceScanner(String multicastAddress, int port){
+    DeviceScannerDepreciated(String multicastAddress, int port){
         _multicastAddress = multicastAddress;
         _port = port;
     }
