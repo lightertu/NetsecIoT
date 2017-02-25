@@ -5,7 +5,5 @@ import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 public class Actuator extends NetsecResource {
     public Actuator() {
         super("actuator");
-        add(new Led());
-        add(new Thermostats());
     }
 }

@@ -3,10 +3,10 @@ package org.netsec.iottestbed.nonembedded.resources.actuators;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 
-class Led extends NetsecResource {
+public class Led extends NetsecResource {
     private String _status;
 
-    Led() {
+    public Led() {
         super("led", "boolean");
         updateStatus();
     }

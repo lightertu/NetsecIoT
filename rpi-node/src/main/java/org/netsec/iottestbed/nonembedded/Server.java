@@ -4,67 +4,38 @@
  ******************************************************************************/
 package org.netsec.iottestbed.nonembedded;
 
-import java.net.*;
-import java.util.concurrent.Executors;
-import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
-
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.EndpointManager;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 import org.netsec.iottestbed.nonembedded.resources.about.About;
+import org.netsec.iottestbed.nonembedded.resources.about.IPAddress;
+import org.netsec.iottestbed.nonembedded.resources.about.Name;
+import org.netsec.iottestbed.nonembedded.resources.about.Services;
 import org.netsec.iottestbed.nonembedded.resources.actuators.Actuator;
+import org.netsec.iottestbed.nonembedded.resources.actuators.Led;
+import org.netsec.iottestbed.nonembedded.resources.actuators.Thermostats;
 import org.netsec.iottestbed.nonembedded.resources.sensors.Sensor;
+import org.netsec.iottestbed.nonembedded.resources.sensors.Temperature;
 
-
-class AdvertisingRunnable implements Runnable {
-    private CoapClient _advertisingClient = new CoapClient();
-    private URI _broadcastURI;
-    private String _adString;
-
-    AdvertisingRunnable(String adString){
-        //String uriString = "coap://[ff02::1]:6666/devices";
-        String uriString = "coap://localhost:6666/devices";
-        try {
-            _broadcastURI = new URI(uriString);
-        } catch (URISyntaxException e) {
-            System.err.println("Invalid URI: " + e.getMessage());
-            System.exit(-1);
-        }
-
-        _adString = adString;
-        _advertisingClient = new CoapClient(_broadcastURI);
-    }
-
-    public void run() {
-        while (true) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println(_adString);
-            _advertisingClient.put(_adString, 0);
-        }
-    }
-}
+import java.net.*;
+import java.util.concurrent.Executors;
 
 class Server extends CoapServer {
-    private static final int COAP_PORT = NetworkConfig.getStandard().getInt(NetworkConfig.Keys.COAP_PORT);
-    private String _adString = "";
+    private static final int COAP_PORT = 5683;
+    private String _ifaceName;
+    private String _serviceString = "";
 
-    private Server() {
+    private Server(String interfaceName) {
+        _ifaceName = interfaceName;
         addEndpoints();
-    }
-
-    private void advertise() {
-        (new Thread(new AdvertisingRunnable(_adString))).start();
+        addResources();
     }
 
     private void addEndpoints() {
         // IPv4 and IPv6 addresses and localhost
         InetAddress multicastAddr = null;
+
         try {
             multicastAddr = InetAddress.getByName("ff02::1");
         } catch (UnknownHostException e) {
@@ -86,21 +57,36 @@ class Server extends CoapServer {
     private void add(NetsecResource resource) {
         super.add(resource);
         for (String path: resource.getSubPaths()) {
-            _adString += path + ",";
+            _serviceString += path + ",";
         }
     }
 
     public void start() {
         super.start();
-        advertise();
+    }
+
+    private void addResources() {
+        Actuator actuator = new Actuator();
+        actuator.add(new Led());
+        actuator.add(new Thermostats());
+        add(actuator);
+
+        NetsecResource sensor = new Sensor();
+        sensor.add(new Temperature());
+        add(sensor);
+
+        // add about resource at last, otherwise it won't expose services added before
+        NetsecResource about = new About();
+        about.add(new Services(_serviceString));
+        about.add(new org.netsec.iottestbed.nonembedded.resources.about.Description());
+        about.add(new IPAddress(_ifaceName));
+        about.add(new Name());
+        add(about);
     }
 
     public static void main(String[] args) throws Exception {
-        Server server = new Server();
+        Server server = new Server("en0");
         server.setExecutor(Executors.newScheduledThreadPool(4));
-        server.add(new Sensor());
-        server.add(new Actuator());
-        server.add(new About());
         server.start();
     }
 }

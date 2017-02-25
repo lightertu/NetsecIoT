@@ -5,7 +5,7 @@ let coap = require('coap');
 
 let req = coap.request({
     //hostname: "ff05:0:0:0:0:0:0:fd",
-    hostname: "ff02::1%tap0",
+    hostname: "localhost",
     pathname: "sensor/temperature",
     multicast: true,
     multicastTimeout: 2000,

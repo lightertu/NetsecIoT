@@ -3,8 +3,8 @@ package org.netsec.iottestbed.nonembedded.resources.about;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 
-class Description extends NetsecResource {
-    Description() {
+public class Description extends NetsecResource {
+    public Description() {
         super("description", "text");
     }
 

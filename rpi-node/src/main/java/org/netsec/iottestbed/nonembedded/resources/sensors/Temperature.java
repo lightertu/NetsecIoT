@@ -3,10 +3,10 @@ package org.netsec.iottestbed.nonembedded.resources.sensors;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 
-class Temperature extends NetsecResource {
+public class Temperature extends NetsecResource {
     private String _status;
 
-    Temperature() {
+    public Temperature() {
         super("temperature", "number");
     }
 

@@ -22,7 +22,7 @@ public class NetsecResource extends CoapResource {
         return _dataFormat;
     }
 
-    protected void add(NetsecResource childResource) {
+    public void add(NetsecResource childResource) {
         super.add(childResource);
         for (String path: childResource.getSubPaths()) {
             _childPaths.add("/" + getURI() + "/" + path);
