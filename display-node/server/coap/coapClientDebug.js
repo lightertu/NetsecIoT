@@ -1,25 +1,57 @@
 /**
  * Created by rui on 2/21/17.
  */
-let coap = require('coap');
 
-let req = coap.request({
-    //hostname: "ff05:0:0:0:0:0:0:fd",
-    hostname: "localhost",
-    pathname: "sensor/temperature",
-    multicast: true,
-    multicastTimeout: 2000,
-});
-
-req.on('response', function(res) {
-    res.pipe(process.stdout);
-    res.on('end', function() {
-        process.exit(0)
-    })
-
-    res.on('error', function(error){
-       console.log(error);
+setInterval(function() {
+    let coap = require('coap');
+    let nameRequest = coap.request({
+        hostname: "ff02::1%lowpan0",
+        pathname: "about/name",
+        multicast: true,
+        multicastTimeout: 2000,
     });
-});
+    nameRequest.on('response', function(nameResponse) {
+        let name = nameResponse.payload.toString();
+        let descriptionRequest = coap.request({
+            hostname: nameResponse.rsinfo.address,
+            pathname: "about/description",
+            multicast: true,
+            multicastTimeout: 2000,
+        });
 
-req.end();
+        descriptionRequest.on('response', function(descriptionResponse) {
+            let description = descriptionResponse.payload.toString();
+
+            let servicesRequest = coap.request({
+                hostname: descriptionResponse.rsinfo.address,
+                pathname: "about/services",
+                multicast: true,
+                multicastTimeout: 2000,
+            });
+
+            servicesRequest.on('response', function(servicesResponse) {
+                let services = servicesResponse.payload.toString(); 
+
+
+                // save this crap to database
+        
+                console.log(name);
+                console.log(description);
+                console.log(services);
+
+
+
+                servicesResponse.on('error', function(error){
+                   console.log(error);
+                });
+            });
+
+            servicesRequest.end();
+        });
+        descriptionRequest.end();
+        nameResponse.on('error', function(error){
+           console.log(error);
+        });
+    });
+    nameRequest.end();
+}, 1000);
