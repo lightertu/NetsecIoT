@@ -56,7 +56,7 @@ public class CoapProxy {
     }
 
     private void scanDevices() {
-        DeviceScanner scanner = new DeviceScanner("ff02::1", 5683);
+        DeviceScanner scanner = new DeviceScanner("0:0:0:0:0:0:0:1", 5683);
         scanner.scan();
     }
 

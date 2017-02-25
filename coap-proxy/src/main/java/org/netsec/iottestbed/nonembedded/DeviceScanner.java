@@ -46,7 +46,8 @@ class DeviceScanner {
                         public void onLoad(CoapResponse coapResponse) {
                             final String name = coapResponse.getResponseText(),
                                          ipString = coapResponse.advanced().getSource().getHostAddress(),
-                                         ip = ipString.substring(0, ipString.indexOf('%')),
+                                         ip = ipString.substring(0, (ipString.indexOf('%') == -1) ?
+                                                 ipString.length() : ipString.indexOf('%')),
                                          descriptionUri = COAP + ip + DESCRIPTION_PATH;
 
                             System.out.println(ip);
