@@ -25,25 +25,11 @@ class Server extends CoapServer {
     private String _serviceString = "";
 
     private Server() {
-        //addEndpoints();
         addResources();
     }
 
     private void addEndpoints() {
         // IPv4 and IPv6 addresses and localhost
-
-        InetAddress multicastAddr = null;
-
-        try {
-            multicastAddr = InetAddress.getByName("ff02::1");
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-        InetSocketAddress multicastBindToAddress = new InetSocketAddress(multicastAddr, COAP_PORT);
-        CoapEndpoint multicast = new CoapEndpoint(multicastBindToAddress);
-        super.addEndpoint(multicast);
-
         for (InetAddress addr : EndpointManager.getEndpointManager().getNetworkInterfaces()) {
             if (addr instanceof Inet6Address || addr instanceof Inet4Address || addr.isLoopbackAddress()) {
                 InetSocketAddress bindToAddress = new InetSocketAddress(addr, COAP_PORT);
