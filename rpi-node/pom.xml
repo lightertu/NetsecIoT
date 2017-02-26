@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.netsec.iottestbed.nonembedded</groupId>
-  <artifactId>coap-client</artifactId>
+  <artifactId>rpi-node</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
 

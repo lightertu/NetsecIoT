@@ -26,6 +26,7 @@ class Server extends CoapServer {
     private String _serviceString = "";
 
     private Server() {
+        addEndpoints();
         addResources();
     }
 
