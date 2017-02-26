@@ -60,16 +60,17 @@ let createDevice = function ( ipAddress, name, description, servicesString ) {
     return newDevice;
 };
 
-let updateDeviceCollection = function( deviceList, httpResponse ) {
+let updateDeviceCollection = function( deviceList ) {
     for (let key in deviceList) {
         if (deviceList.hasOwnProperty(key)) {
             DeviceCollection.findOne({ "ipAddress": key }, function(err, device) {
                 if (!err) {
                     if (!device) {
-                        let newDevice = createDevice(deviceList[key].ipAddress,
+                        let newDevice = createDevice(
+                            deviceList[key].ipAddress,
                             deviceList[key].name,
                             deviceList[key].description,
-                            deviceList[key].services
+                            deviceList[key].servicesString
                         );
 
                         newDevice.save(function(error, device){
@@ -100,7 +101,7 @@ router.get('/devices', function(httpRequest, httpResponse){
             return console.error('get devices failed');
         }
 
-        updateDeviceCollection(JSON.parse(body), httpResponse);
+        updateDeviceCollection(JSON.parse(body));
 
         DeviceCollection.find({}, function(err, deviceList){
             if (err) {
