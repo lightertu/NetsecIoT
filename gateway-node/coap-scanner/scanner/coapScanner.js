@@ -2,12 +2,11 @@
  * Created by rui on 2/21/17.
  */
 
-let coapParser       = require('./serviceParser');
 let NodeCache        = require('node-cache');
 let deviceCache      = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 const multicastAddress = "ff02::1%lowpan0";
-const scanPeriod = 3000;
+const scanPeriod = 10000;
 
 let saveDevice = function(ipAddress, name, description, services) {
     deviceCache.get(ipAddress, function(err, value){
