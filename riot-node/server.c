@@ -165,11 +165,12 @@ static ssize_t _actuator_thermostat_PUT_handler(coap_pkt_t* pdu, uint8_t *buf, s
 
 static ssize_t _actuator_thermostat_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-    size_t payload_len = fmt_u16_dec((char *)pdu->payload, LED_STATUS);
+    size_t payload_len = fmt_u16_dec((char *)pdu->payload, THEMOSTAT);
     return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 }
 
 static ssize_t _about_name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    puts("get name fired");
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     const char *riot_name = RIOT_BOARD;
     size_t payload_len = strlen(riot_name);
@@ -178,6 +179,7 @@ static ssize_t _about_name_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len
 }
 
 static ssize_t _about_description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    puts("get description fired");
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     const char *description = "This is a embedded device";
     size_t payload_len = strlen(description);
@@ -186,6 +188,7 @@ static ssize_t _about_description_GET_handler(coap_pkt_t* pdu, uint8_t *buf, siz
 }
 
 static ssize_t _about_services_GET_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    puts("get service fired");
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     size_t payload_len = strlen(services_string);
     memcpy(pdu->payload, services_string, payload_len);
