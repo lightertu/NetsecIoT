@@ -11,6 +11,7 @@ import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 import org.netsec.iottestbed.nonembedded.resources.about.About;
 import org.netsec.iottestbed.nonembedded.resources.about.Name;
 import org.netsec.iottestbed.nonembedded.resources.about.Services;
+import org.netsec.iottestbed.nonembedded.resources.about.Description;
 import org.netsec.iottestbed.nonembedded.resources.actuators.Actuator;
 import org.netsec.iottestbed.nonembedded.resources.actuators.Led;
 import org.netsec.iottestbed.nonembedded.resources.actuators.Thermostats;
@@ -59,10 +60,10 @@ class Server extends CoapServer {
         sensor.add(new Temperature());
         add(sensor);
 
-        // add about resource at last, otherwise it won't expose services added before
+        // !!!! add about resource at last, otherwise it won't expose services added before
         NetsecResource about = new About();
         about.add(new Services(_serviceString));
-        about.add(new org.netsec.iottestbed.nonembedded.resources.about.Description());
+        about.add(new Description());
         about.add(new Name());
         add(about);
     }
