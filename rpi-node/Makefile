@@ -1,7 +1,7 @@
 HOSTDIR=./
-REMOTEDIR=~/Projects/6lowpan_testbed/client-apps/Non-Embedded/coap-client
+REMOTEDIR=~/Projects/NetsecIoT/rpi-node
 RSYNC_FLAG=-rt
-REMOTE_ADDR=pi@192.168.1.218
+REMOTE_ADDR=pi@6lbr
 EXCLUDE=".*"
 
 all:

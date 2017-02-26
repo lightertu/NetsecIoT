@@ -9,7 +9,6 @@ import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.EndpointManager;
 import org.netsec.iottestbed.nonembedded.resources.NetsecResource;
 import org.netsec.iottestbed.nonembedded.resources.about.About;
-import org.netsec.iottestbed.nonembedded.resources.about.IPAddress;
 import org.netsec.iottestbed.nonembedded.resources.about.Name;
 import org.netsec.iottestbed.nonembedded.resources.about.Services;
 import org.netsec.iottestbed.nonembedded.resources.actuators.Actuator;
@@ -23,17 +22,16 @@ import java.util.concurrent.Executors;
 
 class Server extends CoapServer {
     private static final int COAP_PORT = 5683;
-    private String _ifaceName;
     private String _serviceString = "";
 
-    private Server(String interfaceName) {
-        _ifaceName = interfaceName;
-        addEndpoints();
+    private Server() {
+        //addEndpoints();
         addResources();
     }
 
     private void addEndpoints() {
         // IPv4 and IPv6 addresses and localhost
+
         InetAddress multicastAddr = null;
 
         try {
@@ -44,8 +42,8 @@ class Server extends CoapServer {
 
         InetSocketAddress multicastBindToAddress = new InetSocketAddress(multicastAddr, COAP_PORT);
         CoapEndpoint multicast = new CoapEndpoint(multicastBindToAddress);
-
         super.addEndpoint(multicast);
+
         for (InetAddress addr : EndpointManager.getEndpointManager().getNetworkInterfaces()) {
             if (addr instanceof Inet6Address || addr instanceof Inet4Address || addr.isLoopbackAddress()) {
                 InetSocketAddress bindToAddress = new InetSocketAddress(addr, COAP_PORT);
@@ -79,13 +77,12 @@ class Server extends CoapServer {
         NetsecResource about = new About();
         about.add(new Services(_serviceString));
         about.add(new org.netsec.iottestbed.nonembedded.resources.about.Description());
-        about.add(new IPAddress(_ifaceName));
         about.add(new Name());
         add(about);
     }
 
     public static void main(String[] args) throws Exception {
-        Server server = new Server("en0");
+        Server server = new Server();
         server.setExecutor(Executors.newScheduledThreadPool(4));
         server.start();
     }
