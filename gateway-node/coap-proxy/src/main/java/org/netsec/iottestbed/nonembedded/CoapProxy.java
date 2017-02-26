@@ -24,7 +24,6 @@ import org.eclipse.californium.proxy.resources.ProxyHttpClientResource;
 
 public class CoapProxy {
     private static final int PORT = 5683;
-    private static final String MULTICAST_ADDR = "ff02::1";
     private CoapServer _proxyServer;
     public CoapProxy() throws IOException {
         ForwardingResource coap2coap = new ProxyCoapClientResource("coap2coap");
