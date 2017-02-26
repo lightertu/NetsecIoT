@@ -1,5 +1,5 @@
 HOSTDIR=./
-REMOTEDIR=~/Projects/NetsecIoT/coap-proxy
+REMOTEDIR=~/Projects/NetsecIoT/gateway-node/coap-proxy
 RSYNC_FLAG=-rt
 REMOTE_ADDR=pi@6lbr
 EXCLUDE=".*"

@@ -38,6 +38,7 @@
     "redux": "latest",
     "redux-logger": "^2.8.1",
     "redux-thunk": "latest",
+    "request": "^2.79.0",
     "webpack": "^2.2.1",
     "webpack-dev-middleware": "latest",
     "webpack-hot-middleware": "latest"

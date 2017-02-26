@@ -13,7 +13,14 @@ let saveDevice = function(ipAddress, name, description, services) {
     deviceCache.get(ipAddress, function(err, value){
         if( !err ){
             if(value == undefined){
-                let newDevice = coapParser.createDevice(ipAddress, name, description, services);
+                //let newDevice = coapParser.createDevice(ipAddress, name, description, services);
+
+                let newDevice = {
+                    ipAddress: ipAddress,
+                    name: name,
+                    description: description,
+                    servicesString: services,
+                };
 
                 deviceCache.set( ipAddress, newDevice, function( err, success ) {
                     if (!err && success) {
