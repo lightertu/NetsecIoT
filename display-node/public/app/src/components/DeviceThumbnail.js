@@ -34,7 +34,7 @@ export default class DeviceThumbnail extends React.Component {
             this.dataFetchingId = setInterval( () => {
                 this.props.fetchSensorStatus(this.props.device);
                 // interval loop
-            }, 1000);
+            }, 5000);
         } else {
             clearInterval(this.dataFetchingId);
         }

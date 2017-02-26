@@ -96,7 +96,7 @@ router.get('/devices', function(httpRequest, httpResponse){
         timeout: 3000
     }, function(error, coapScannerResponse, body) {
         if (error) {
-            next();
+            httpResponse.send("scanner timeout");
             return console.error('get devices failed');
         }
 
@@ -120,7 +120,7 @@ router.get('/devices/:ipAddress', function(httpRequest, httpResponse, next){
         uri: coapScannerUrl + "api/devices/" + deviceAddress,
     }, function(error, coapScannerResponse, body) {
         if (error) {
-            httpResponse.send("Scanner timeout");
+            httpResponse.send("scanner timeout");
             return console.error('get devices failed');
         }
 
@@ -138,9 +138,10 @@ router.get('/devices/:ipAddress/sensor/:name', function(httpRequest, httpRespons
     request({
         method: 'GET',
         uri: coapProxyUrl + "coap://[" + deviceAddress + "]" + "/sensor/" + sensorName,
+        timeout: 2000
     }, function(error, response, body) {
         if (error) {
-            httpResponse.send("Proxy timeout");
+            httpResponse.send("proxy timeout");
             return console.error("get sensor" + deviceAddress + " failed");
         }
 
@@ -173,9 +174,10 @@ router.get('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
     request({
         method: 'GET',
         uri: coapProxyUrl + "coap://[" + deviceAddress + "]" + "/actuator/" + actuatorName,
+        timeout: 2000
     }, function(error, response, body) {
         if (error) {
-            httpResponse.send("Proxy timeout");
+            httpResponse.send("proxy timeout");
             return console.error("get actuator" + deviceAddress + " failed");
         }
 
@@ -210,8 +212,10 @@ router.put('/devices/:ipAddress/actuator/:name', function(httpRequest, httpRespo
         uri: coapProxyUrl + "coap://[" + deviceAddress + "]" + "/actuator/" + actuatorName,
         'content-type': 'text/plain',
         body: httpRequest.body.payload, // payload property is added from the client
+        timeout: 2000
     }, function(error, response, body) {
         if (error) {
+            httpResponse.send("proxy timeout");
             return console.error("put actuator" + deviceAddress + " failed");
         }
 
