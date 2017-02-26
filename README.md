@@ -12,7 +12,7 @@ An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
     - An access point to the testbed, it translates Http requests to CoAP request, so the outside world can
       can control the nodes in the testbed.
       
-* Embedded IoT Node
+* RIOT IoT Node
   - Implements Netsec IoT Protocol
   - Implemented using RIOT OS, constrained device
   
