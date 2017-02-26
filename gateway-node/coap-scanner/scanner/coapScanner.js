@@ -23,14 +23,14 @@ let saveDevice = function(ipAddress, name, description, services) {
 
                 deviceCache.set( ipAddress, newDevice, function( err, success ) {
                     if (!err && success) {
-                        console.log(success);
+                        console.log("Successfully added " + ipAddress + " to cache");
                     } else {
                         console.log(err);
                     }
                 });
 
             }else{
-                console.log( "device " + ipAddress + "is already in" );
+                console.log( "Device " + ipAddress + " is already in cache" );
             }
         } else {
             console.log("cache error")
@@ -87,11 +87,14 @@ let scan = function() {
                         (name != null && name.length != 0)               &&
                         (description != null && description.length != 0) &&
                         (services != null && services.length != 0)) {
+
+
+                        console.log();
                         console.log(name);
                         console.log(description);
                         console.log(services);
 
-                        console.log("three ip addresses should match");
+                        console.log("Three ip addresses should match");
                         console.log(nameResponse.rsinfo.address);
                         console.log(descriptionResponse.rsinfo.address);
                         console.log(servicesResponse.rsinfo.address);
