@@ -55,9 +55,9 @@ let createScanner = function(multicastAddress, interfaceName) {
                       });
 
                       let name = nameResponse.payload.toString();
-                      let ipAddress = nameResponse.rsinfo.address + interfaceName;
+                      let ipAddress = nameResponse.rsinfo.address;
                       let descriptionRequest = coap.request({
-                          hostname: ipAddress,
+                          hostname: ipAddress + interfaceName,
                           pathname: "about/description",
                           multicast: true,
                           multicastTimeout: 2000,
@@ -70,7 +70,7 @@ let createScanner = function(multicastAddress, interfaceName) {
 
                           let description = descriptionResponse.payload.toString();
                           let servicesRequest = coap.request({
-                              hostname: ipAddress,
+                              hostname: ipAddress + interfaceName,
                               pathname: "about/services",
                               multicast: true,
                               multicastTimeout: 2000,
