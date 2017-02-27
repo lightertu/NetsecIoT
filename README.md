@@ -19,8 +19,8 @@ An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
   - Runs non-embedded operating system, like Raspberry Pi
 
 ## Hardware
-* Raspberry Pi 2 + Openlab 805.15.4 Radio Module
-* 10 x Atmel SAM R21 Xplained Pro Evaluation Kit
+* Raspberry Pi 2 + [Openlab 805.15.4 Radio Module](http://openlabs.co/store/Raspberry-Pi-802.15.4-radio)
+* 10 x [Atmel SAM R21 Xplained Pro Evaluation Kit](http://www.atmel.com/tools/ATSAMD21-XPRO.aspx)
   - Power constrained IoT nodes
   
 ## Software
