@@ -2,3 +2,4 @@
 
 Gateway node provides to main funcitons
 * A **Scanner** which gathers information of availible CoAP devices that implements **NetsecIoT Testbed Protocol** in the network and provides `/devices` API for outsiders to gain knowledge of the testbed.
+* A **CoAP Proxy** which allows http clients to talk to CoAP node using `http://gatwaynodeIp:5863/proxy/coap://[IoTdeviceIPAddress]:5863/sensor/temperature`
