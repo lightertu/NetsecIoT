@@ -2,21 +2,20 @@
 An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
 
 ## Components:
-* Display Node
+* [Display Node](https://github.com/lightertu/NetsecIoT/tree/master/display-node)
   - A http client including a web interface to control the IoT devices in the testbed
 * Gateway Node
-  - Coap Scanner
+  - [Coap Scanner](https://github.com/lightertu/NetsecIoT/tree/master/gateway-node/coap-scanner)
     - Periodcially Scans CoAP devices in the network and store the information of alive nodes in a cache
     - Provides `/api/devices` API to the outside world to get devices information
-  - Coap Proxy
+  - [Coap Proxy](https://github.com/lightertu/NetsecIoT/tree/master/gateway-node/coap-proxy)
     - An access point to the testbed, it translates Http requests to CoAP request, so the outside world can
       can control the nodes in the testbed.
-      
-* RIOT IoT Node
+* [RIOT IoT Node](https://github.com/lightertu/NetsecIoT/tree/master/riot-node)
   - Implements Netsec IoT Protocol
   - Implemented using RIOT OS, constrained device
   
-* Non-Embedded IoT Node
+* [Non-Embedded IoT Node](https://github.com/lightertu/NetsecIoT/tree/master/rpi-node)
   - Implements Netsec IoT Protocol
   - Runs non-embedded operating system, like Raspberry Pi
 
@@ -30,10 +29,3 @@ An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
 * Node Coap (CoAP in Node.js)
 * Californium (CoAP in Java)
 * ReactJS (Client front-end framework)
-
-## How to setup the testbed
-* [Setup RIOT-OS development environment on Ubuntu for SAMR21-XPO Board](https://github.com/Lightertu/6Lowpan-testbed/tree/master/setups/AtmelSAMR21-RIOT-Ubuntu)
-* Setup a 6Lowpan and Openlab 802.15.4 radio enabled RPi
-  - [Compile a new Kernal](https://github.com/Lightertu/6Lowpan-testbed/tree/master/setups/RPi-802.15.4/6Lowpan-Kernel)
-  - [Raspberry pi for 6Lowpan and libcoap](https://github.com/Lightertu/6Lowpan-testbed/tree/master/setups/RPi-802.15.4/Config-RPi)
-  - [Turn RPi a 6Lowpan Border Router](https://github.com/Lightertu/6Lowpan-testbed/tree/master/setups/RPi-802.15.4/RPi-6LBR)
