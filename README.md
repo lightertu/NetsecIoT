@@ -2,9 +2,9 @@
 An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
 
 ## Components:
-* **[Display Node]**(https://github.com/lightertu/NetsecIoT/tree/master/display-node)
+* **[Display Node](https://github.com/lightertu/NetsecIoT/tree/master/display-node)**
   - A http client including a web interface to control the IoT devices in the testbed
-* **[Gateway Node]**(https://github.com/lightertu/NetsecIoT/tree/master/gateway-node)
+* **[Gateway Node](https://github.com/lightertu/NetsecIoT/tree/master/gateway-node)**
   - **[Coap Scanner]**(https://github.com/lightertu/NetsecIoT/tree/master/gateway-node/coap-scanner)
     - Periodcially Scans CoAP devices in the network and store the information of alive nodes in a cache
     - Provides `/api/devices` API to the outside world to get devices information
