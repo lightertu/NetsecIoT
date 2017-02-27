@@ -13,8 +13,7 @@ An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
       can control the nodes in the testbed.
 * [RIOT IoT Node](https://github.com/lightertu/NetsecIoT/tree/master/riot-node)
   - Implements Netsec IoT Protocol
-  - Implemented using RIOT OS, constrained device
-  
+  - Implemented using RIOT OS, constrained device  
 * [Non-Embedded IoT Node](https://github.com/lightertu/NetsecIoT/tree/master/rpi-node)
   - Implements Netsec IoT Protocol
   - Runs non-embedded operating system, like Raspberry Pi
