@@ -1,4 +1,5 @@
 # Display Node
+This node is a web interface of NetsecIoT Testbed, it uses Node.js, Mongodb, and React.js. It sends requests to the Gateway node to gain knowledge of IoT devices in the testbed and generate User Interface based on the services IoT devices provide. 
 
 #### Install Node.js and Mongodb
 Before you run Display Node make sure that you Mongodb is running at the background
