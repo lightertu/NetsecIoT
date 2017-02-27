@@ -4,8 +4,9 @@ let http = require('http');
 let router = express.Router();
 let DeviceCollection = require("../models/device");
 
-const coapProxyUrl = "http://192.168.1.216:5683/proxy/";
-const coapScannerUrl = "http://192.168.1.216:8080/";
+const gatewayIpAddress = "192.168.0.100";
+const coapProxyUrl = "http://" + gatewayIpAddress + ":5683/proxy/";
+const coapScannerUrl = "http://" + gatewayIpAddress + ":8080/";
 
 let createDevice = function ( ipAddress, name, description, servicesString ) {
     let endpoints = servicesString.split(',');
