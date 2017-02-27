@@ -1,5 +1,6 @@
 # NetsecIoT 6lowpan testbed
-An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
+An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol. If you want to use this testbed
+checkout the [Wiki](https://github.com/lightertu/NetsecIoT/wiki)
 
 ## Components:
 * **[Display Node](https://github.com/lightertu/NetsecIoT/tree/master/display-node)**
