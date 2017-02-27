@@ -15,5 +15,5 @@ app.use('/api', require('./routes/api'));
 
 app.listen(port, function() {
     console.log('web server is running on ' + port);
-    CoapScanner.scan();
+    CoapScanner.scan("ff02::1", "%lowpan0");
 });
