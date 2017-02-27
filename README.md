@@ -9,7 +9,7 @@ An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
     - Periodcially Scans CoAP devices in the network and store the information of alive nodes in a cache
     - Provides `/api/devices` API to the outside world to get devices information
   - [Coap Proxy](https://github.com/lightertu/NetsecIoT/tree/master/gateway-node/coap-proxy)
-    - An access point to the testbed, it translates Http requests to CoAP request, so the outside world can
+    - An access point to the testbed, it translates HTTP requests to CoAP request, so the outside world can
       can control the nodes in the testbed.
 * **[RIOT IoT Node](https://github.com/lightertu/NetsecIoT/tree/master/riot-node)**
   - Implements Netsec IoT Protocol
