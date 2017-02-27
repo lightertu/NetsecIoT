@@ -1,7 +1,7 @@
 # CoAP Scanner
 
 ## Install Node.js
-[Guess what](http://lmgtfy.com/?q=How+to+install+nodejs)
+* [How to Install Node.js](http://lmgtfy.com/?q=How+to+install+nodejs)
 
 ## Install Node.js Dependencies
 * `npm install -g nodemon`
