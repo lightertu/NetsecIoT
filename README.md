@@ -24,7 +24,7 @@ An IoT testbed using RIOT OS featuring 6lowpan (805.15.4) protcol.
   - Power constrained IoT nodes
   
 ## Software
-* RIOT OS (RTOS that runs on embedded IoT devices)
-* Node Coap (CoAP in Node.js)
-* Californium (CoAP in Java)
-* ReactJS (Client front-end framework)
+* [RIOT OS](https://github.com/RIOT-OS/RIOT) (RTOS that runs on embedded IoT devices)
+* [Node Coap](https://github.com/mcollina/node-coap) (CoAP in Node.js)
+* [Californium](https://github.com/eclipse/californium) (CoAP in Java)
+* [ReactJS](https://facebook.github.io/react/) (Client front-end framework)
